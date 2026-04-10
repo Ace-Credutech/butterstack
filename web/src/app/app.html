@@ -1,0 +1,52 @@
+<div class="flex flex-col h-screen overflow-hidden font-sans bg-gray-50">
+
+  <!-- Top bar -->
+  <header class="h-12 bg-white border-b border-gray-200 flex items-center px-4 gap-4 shrink-0 z-10">
+    <div class="flex items-center gap-2 mr-2">
+      <div class="w-6 h-6 bg-green-600 rounded-md flex items-center justify-center">
+        <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+        </svg>
+      </div>
+      <span class="font-semibold text-sm text-gray-900 tracking-tight">butterstack</span>
+    </div>
+    <div class="w-px h-5 bg-gray-200"></div>
+    <span class="text-xs text-gray-400">Requirement Entry</span>
+    <div class="flex-1"></div>
+    <div class="flex items-center gap-1.5">
+      <div class="w-1.5 h-1.5 rounded-full bg-green-500" [class.animate-pulse]="loading"></div>
+      <span class="text-xs text-gray-400">{{ loading ? 'Generating...' : 'Live' }}</span>
+    </div>
+    <div class="w-7 h-7 rounded-full bg-green-600 flex items-center justify-center text-white text-xs font-semibold">BA</div>
+  </header>
+
+  <!-- Three-column layout -->
+  <div class="flex flex-1 overflow-hidden">
+
+    <!-- Left: Requirement Input — fixed 380px -->
+    <app-requirement-input
+      class="w-96 flex flex-col border-r border-gray-200 bg-white shrink-0"
+      style="display: flex; flex-direction: column;"
+      (inputChanged)="onInputChanged($event)"
+      (regenerate)="onRegenerate($event)"/>
+
+    <!-- Center: Prototype Preview — fills remaining space -->
+    <app-prototype-preview
+      class="flex flex-col flex-1 min-w-0 bg-gray-50"
+      style="display: flex; flex-direction: column;"
+      [tokens]="tokens"
+      [loading]="loading"
+      [source]="source"/>
+
+    <!-- Right: Version Timeline — fixed 224px -->
+    <app-version-timeline
+      class="w-56 flex flex-col border-l border-gray-200 bg-white shrink-0"
+      style="display: flex; flex-direction: column;"
+      [versions]="versions"
+      [meetingActive]="meetingActive"
+      [meetingTime]="meetingTime"
+      (restore)="onRestoreVersion($event)"
+      (toggleMeeting)="onToggleMeeting()"/>
+
+  </div>
+</div>

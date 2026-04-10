@@ -1,0 +1,16 @@
+{
+  "name": "butterstack-api",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot index.ts"
+  },
+  "dependencies": {
+    "hono": "^4.6.0",
+    "openai": "^4.67.0",
+    "pg": "^8.20.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.20.0"
+  }
+}

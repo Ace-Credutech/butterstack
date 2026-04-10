@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Butterstack — Requirement Entry</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:  '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              900: '#14532d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { height: 100vh; overflow: hidden; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 99px; }
+
+    /* Textarea reset */
+    textarea { resize: none; outline: none; }
+    textarea:focus { outline: none; box-shadow: none; }
+
+    /* Typing cursor blink */
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .cursor { display: inline-block; width: 2px; height: 1em; background: #16a34a; animation: blink 1s infinite; vertical-align: text-bottom; margin-left: 1px; }
+
+    /* Fade in for prototype content */
+    @keyframes fadeIn { from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)} }
+    .fade-in { animation: fadeIn 0.25s ease forwards; }
+
+    /* Pulse dot for live */
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .pulse-dot { animation: pulse 1.5s infinite; }
+
+    /* Version item hover */
+    .version-item:hover { background: #f0fdf4; }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 flex flex-col">
+
+  <!-- TOP BAR -->
+  <header class="h-12 bg-white border-b border-gray-200 flex items-center px-4 gap-4 shrink-0 z-10">
+
+    <!-- Logo -->
+    <div class="flex items-center gap-2 mr-2">
+      <div class="w-6 h-6 bg-brand-600 rounded-md flex items-center justify-center">
+        <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+        </svg>
+      </div>
+      <span class="font-semibold text-sm text-gray-900 tracking-tight">butterstack</span>
+    </div>
+
+    <div class="w-px h-5 bg-gray-200"></div>
+
+    <!-- Project -->
+    <div class="flex items-center gap-1.5 cursor-pointer group">
+      <span class="text-xs text-gray-400">Project</span>
+      <div class="flex items-center gap-1 bg-gray-100 hover:bg-gray-200 transition rounded-md px-2 py-1">
+        <span class="text-xs font-medium text-gray-700">Butterstack Platform</span>
+        <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+      </div>
+    </div>
+
+    <!-- Module -->
+    <div class="flex items-center gap-1.5 cursor-pointer">
+      <span class="text-xs text-gray-400">Module</span>
+      <div class="flex items-center gap-1 bg-gray-100 hover:bg-gray-200 transition rounded-md px-2 py-1">
+        <span class="text-xs font-medium text-gray-700">Requirement Entry</span>
+        <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+      </div>
+    </div>
+
+    <div class="flex-1"></div>
+
+    <!-- Live indicator -->
+    <div class="flex items-center gap-1.5">
+      <div class="w-1.5 h-1.5 rounded-full bg-brand-500 pulse-dot"></div>
+      <span class="text-xs text-gray-400">Live</span>
+    </div>
+
+    <!-- Meeting button -->
+    <button id="meetingBtn" onclick="toggleMeeting()"
+      class="flex items-center gap-1.5 bg-white border border-gray-200 hover:border-brand-500 hover:text-brand-600 text-gray-600 text-xs font-medium px-3 py-1.5 rounded-lg transition">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+      <span id="meetingLabel">Start Meeting</span>
+    </button>
+
+    <!-- Avatar -->
+    <div class="w-7 h-7 rounded-full bg-brand-600 flex items-center justify-center text-white text-xs font-semibold">BA</div>
+  </header>
+
+  <!-- MAIN LAYOUT -->
+  <div class="flex flex-1 overflow-hidden">
+
+    <!-- LEFT — Requirement Input -->
+    <div class="w-[42%] flex flex-col border-r border-gray-200 bg-white">
+
+      <!-- Panel header -->
+      <div class="flex items-center justify-between px-4 py-2.5 border-b border-gray-100">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-semibold text-gray-600 uppercase tracking-wider">Requirement</span>
+          <span id="wordCount" class="text-xs text-gray-300">0 words</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <!-- Context tag -->
+          <span class="text-xs bg-brand-50 text-brand-700 border border-brand-100 rounded-md px-2 py-0.5 font-medium">BA View</span>
+          <button class="text-gray-300 hover:text-gray-500 transition p-1 rounded">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Feature / Page title -->
+      <div class="px-4 pt-3 pb-1">
+        <input
+          type="text"
+          placeholder="Feature or page name..."
+          class="w-full text-lg font-semibold text-gray-800 placeholder-gray-200 border-none outline-none bg-transparent"
+          id="featureTitle"
+          oninput="onTitleInput()"
+        />
+      </div>
+
+      <!-- Main textarea -->
+      <div class="flex-1 px-4 pb-4 overflow-hidden flex flex-col">
+        <textarea
+          id="reqInput"
+          class="flex-1 w-full text-sm text-gray-700 placeholder-gray-300 leading-relaxed bg-transparent border-none"
+          placeholder="Type your requirement here... Hinglish, Minglish, English — anything goes.
+
+Example: muje ek clean dashboard chahiye jisme left side pe navigation ho, upar search bar ho, aur main area mein cards show ho project-wise..."
+          oninput="onRequirementInput(this)"
+        ></textarea>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="flex items-center justify-between px-4 py-2 border-t border-gray-100">
+        <div class="flex items-center gap-1">
+          <button class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition" title="Add context">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </button>
+          <button class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition" title="Attach file">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+          </button>
+          <button class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition" title="Voice input (coming soon)">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+          </button>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="autoStatus" class="text-xs text-gray-300 italic">auto-generating...</span>
+          <div id="genDot" class="w-1.5 h-1.5 rounded-full bg-gray-200"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER — Live Prototype Preview -->
+    <div class="flex-1 flex flex-col bg-gray-50">
+
+      <!-- Panel header -->
+      <div class="flex items-center justify-between px-4 py-2.5 bg-white border-b border-gray-100">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-semibold text-gray-600 uppercase tracking-wider">Prototype</span>
+          <span id="protoVersion" class="text-xs text-gray-300">—</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Viewport toggles -->
+          <div class="flex items-center bg-gray-100 rounded-lg p-0.5 gap-0.5">
+            <button onclick="setViewport('desktop')" id="vpDesktop" class="px-2 py-1 rounded-md text-xs font-medium text-gray-600 bg-white shadow-sm transition">Desktop</button>
+            <button onclick="setViewport('tablet')" id="vpTablet" class="px-2 py-1 rounded-md text-xs font-medium text-gray-400 transition">Tablet</button>
+            <button onclick="setViewport('mobile')" id="vpMobile" class="px-2 py-1 rounded-md text-xs font-medium text-gray-400 transition">Mobile</button>
+          </div>
+          <button onclick="copyProtoCode()" class="text-xs text-gray-400 hover:text-brand-600 transition px-2 py-1 rounded-md hover:bg-brand-50">Copy HTML</button>
+        </div>
+      </div>
+
+      <!-- Preview area -->
+      <div class="flex-1 overflow-auto flex items-start justify-center p-6">
+        <div id="protoWrapper" class="w-full transition-all duration-300 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" style="min-height: 400px;">
+          <!-- Empty state -->
+          <div id="protoEmpty" class="flex flex-col items-center justify-center h-full min-h-96 text-center p-8">
+            <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mb-3">
+              <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1 1 .03 2.699-1.32 2.43l-1.406-.301M5 14.5l-1.403 1.403c-1 1-.03 2.699 1.32 2.43l1.407-.301"/>
+              </svg>
+            </div>
+            <p class="text-sm font-medium text-gray-400">Prototype will appear here</p>
+            <p class="text-xs text-gray-300 mt-1">Start typing a requirement on the left</p>
+          </div>
+          <!-- Prototype content renders here -->
+          <div id="protoContent" class="hidden w-full"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT — Version Timeline -->
+    <div class="w-56 flex flex-col border-l border-gray-200 bg-white">
+
+      <div class="flex items-center justify-between px-3 py-2.5 border-b border-gray-100">
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wider">History</span>
+        <span id="versionCount" class="text-xs text-gray-300">0 versions</span>
+      </div>
+
+      <!-- Module label -->
+      <div class="px-3 py-2 border-b border-gray-50">
+        <span class="text-xs text-gray-400">Requirement Entry</span>
+      </div>
+
+      <!-- Version list -->
+      <div id="versionList" class="flex-1 overflow-y-auto py-1">
+        <div class="flex flex-col items-center justify-center h-32 text-center px-4">
+          <p class="text-xs text-gray-300">No versions yet</p>
+        </div>
+      </div>
+
+      <!-- Meeting info -->
+      <div id="meetingInfo" class="hidden px-3 py-2 border-t border-gray-100">
+        <div class="flex items-center gap-1.5 mb-1">
+          <div class="w-1.5 h-1.5 rounded-full bg-brand-500 pulse-dot"></div>
+          <span class="text-xs font-medium text-brand-600">Meeting active</span>
+        </div>
+        <span id="meetingTimer" class="text-xs text-gray-400 font-mono">00:00</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3000';
+
+    // ─── State ───────────────────────────────────────────────────────────────
+    let debounceTimer = null;
+    let versions = [];
+    let versionCounter = 0;
+    let currentViewport = 'desktop';
+    let meetingActive = false;
+    let meetingStart = null;
+    let meetingInterval = null;
+    let currentProtoHTML = '';
+
+    // ─── Prototype Templates (local fallback only) ────────────────────────────
+    const generators = [
+      {
+        keys: ['dashboard', 'home', 'main', 'overview'],
+        generate: (title) => `
+          <div class="flex h-screen font-sans bg-gray-50">
+            <aside class="w-56 bg-white border-r border-gray-100 flex flex-col p-4 gap-1">
+              <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 px-2">Navigation</div>
+              ${['Dashboard','Projects','Requirements','Prototypes','Settings'].map((n,i) =>
+                `<a href="#" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${i===0?'bg-green-50 text-green-700 font-medium':'text-gray-500 hover:bg-gray-50'} transition">${n}</a>`
+              ).join('')}
+            </aside>
+            <div class="flex-1 flex flex-col overflow-hidden">
+              <header class="h-14 bg-white border-b border-gray-100 flex items-center justify-between px-6">
+                <div class="relative"><input type="text" placeholder="Search..." class="pl-8 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg w-64 focus:outline-none"/><svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+                <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white text-xs font-bold">BA</div></div>
+              </header>
+              <main class="flex-1 p-6 overflow-auto">
+                <h1 class="text-xl font-bold text-gray-800 mb-5">${title || 'Dashboard'}</h1>
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                  ${[['Projects','12','↑ 2 this week'],['Requirements','84','↑ 11 today'],['Prototypes','37','↑ 5 today']].map(([l,v,s])=>
+                    `<div class="bg-white rounded-xl border border-gray-100 p-4 shadow-sm"><p class="text-xs text-gray-400 mb-1">${l}</p><p class="text-2xl font-bold text-gray-800">${v}</p><p class="text-xs text-green-600 mt-1">${s}</p></div>`
+                  ).join('')}
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="bg-white rounded-xl border border-gray-100 p-4 shadow-sm"><p class="text-sm font-semibold text-gray-700 mb-3">Recent Activity</p>${[['Login Page requirement added','2m ago'],['Dashboard prototype v3 saved','11m ago'],['Meeting ended — 4 decisions','1h ago']].map(([t,s])=>`<div class="flex items-start justify-between py-2 border-b border-gray-50 last:border-0"><p class="text-xs text-gray-600">${t}</p><span class="text-xs text-gray-300 ml-2 whitespace-nowrap">${s}</span></div>`).join('')}</div>
+                  <div class="bg-white rounded-xl border border-gray-100 p-4 shadow-sm"><p class="text-sm font-semibold text-gray-700 mb-3">Open Decisions</p>${[['Auth flow finalisation','High'],['Prototype language lock','Done'],['Voice input deferral','Done']].map(([t,s])=>`<div class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0"><p class="text-xs text-gray-600">${t}</p><span class="text-xs px-2 py-0.5 rounded-full font-medium ${s==='High'?'bg-red-50 text-red-600':s==='Done'?'bg-green-50 text-green-600':'bg-gray-100 text-gray-500'}">${s}</span></div>`).join('')}</div>
+                </div>
+              </main>
+            </div>
+          </div>
+        `
+      },
+      {
+        keys: ['login','signin','sign in','auth','authentication'],
+        generate: (title) => `
+          <div class="min-h-screen bg-gradient-to-br from-green-50 to-white flex items-center justify-center p-8 font-sans">
+            <div class="w-full max-w-sm">
+              <div class="flex items-center gap-2 justify-center mb-8">
+                <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center"><svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg></div>
+                <span class="font-bold text-gray-800">butterstack</span>
+              </div>
+              <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+                <h1 class="text-xl font-bold text-gray-800 mb-1">${title || 'Welcome back'}</h1>
+                <p class="text-sm text-gray-400 mb-6">Sign in to continue</p>
+                <div class="space-y-4">
+                  <div><label class="block text-xs font-medium text-gray-600 mb-1.5">Email</label><input type="email" placeholder="you@company.com" class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-green-400 transition"/></div>
+                  <div><label class="block text-xs font-medium text-gray-600 mb-1.5">Password</label><input type="password" placeholder="••••••••" class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-green-400 transition"/></div>
+                  <button class="w-full bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2.5 rounded-lg transition">Sign In</button>
+                </div>
+                <p class="text-xs text-center text-gray-400 mt-4">Forgot password? <a href="#" class="text-green-600">Reset</a></p>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        keys: ['form','create','add','new','entry','input'],
+        generate: (title) => `
+          <div class="min-h-screen bg-gray-50 p-8 font-sans">
+            <div class="max-w-xl mx-auto">
+              <div class="mb-6 flex items-center gap-2">
+                <button class="text-gray-400 hover:text-gray-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></button>
+                <h1 class="text-lg font-bold text-gray-800">${title || 'New Entry'}</h1>
+              </div>
+              <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
+                ${[['Title','text','Enter title...'],['Description','textarea','Describe in detail...'],['Category','select',''],['Priority','select','']].map(([label,type,ph]) =>
+                  type === 'textarea'
+                    ? `<div><label class="block text-xs font-medium text-gray-600 mb-1.5">${label}</label><textarea placeholder="${ph}" rows="3" class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none resize-none"></textarea></div>`
+                    : type === 'select'
+                    ? `<div><label class="block text-xs font-medium text-gray-600 mb-1.5">${label}</label><select class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none text-gray-400"><option>Select ${label.toLowerCase()}...</option></select></div>`
+                    : `<div><label class="block text-xs font-medium text-gray-600 mb-1.5">${label}</label><input type="${type}" placeholder="${ph}" class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none"/></div>`
+                ).join('')}
+                <div class="flex gap-3 pt-2">
+                  <button class="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2.5 rounded-lg transition">Save</button>
+                  <button class="px-4 py-2.5 text-sm font-medium text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 transition">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        keys: ['list','table','manage','view all','records'],
+        generate: (title) => `
+          <div class="min-h-screen bg-gray-50 p-6 font-sans">
+            <div class="flex items-center justify-between mb-5">
+              <h1 class="text-lg font-bold text-gray-800">${title || 'Records'}</h1>
+              <button class="flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Add New</button>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+              <div class="flex items-center gap-3 p-4 border-b border-gray-50">
+                <div class="relative flex-1"><input type="text" placeholder="Search..." class="pl-8 pr-4 py-2 text-sm bg-gray-50 border border-gray-100 rounded-lg w-full focus:outline-none"/><svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+                <button class="flex items-center gap-1.5 text-xs text-gray-500 border border-gray-200 px-3 py-2 rounded-lg hover:bg-gray-50">Filter</button>
+              </div>
+              <table class="w-full">
+                <thead><tr class="bg-gray-50 border-b border-gray-100">${['Name','Status','Created','Actions'].map(h=>`<th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-4 py-3">${h}</th>`).join('')}</tr></thead>
+                <tbody>${[['Requirement Entry Page','Active','Today'],['Dashboard Module','In Review','Yesterday'],['Login Flow','Done','2 days ago'],['User Management','Draft','3 days ago']].map(([n,s,d])=>
+                  `<tr class="border-b border-gray-50 hover:bg-gray-50 transition">
+                    <td class="px-4 py-3 text-sm text-gray-700 font-medium">${n}</td>
+                    <td class="px-4 py-3"><span class="text-xs px-2 py-0.5 rounded-full font-medium ${s==='Active'?'bg-green-50 text-green-700':s==='Done'?'bg-blue-50 text-blue-700':s==='In Review'?'bg-yellow-50 text-yellow-700':'bg-gray-100 text-gray-500'}">${s}</span></td>
+                    <td class="px-4 py-3 text-xs text-gray-400">${d}</td>
+                    <td class="px-4 py-3 text-xs text-gray-400 flex items-center gap-2"><a href="#" class="hover:text-green-600">Edit</a><a href="#" class="hover:text-red-500">Delete</a></td>
+                  </tr>`
+                ).join('')}</tbody>
+              </table>
+            </div>
+          </div>
+        `
+      },
+      {
+        keys: ['profile','account','settings','user'],
+        generate: (title) => `
+          <div class="min-h-screen bg-gray-50 p-8 font-sans">
+            <div class="max-w-lg mx-auto">
+              <h1 class="text-lg font-bold text-gray-800 mb-6">${title || 'Profile Settings'}</h1>
+              <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <div class="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
+                  <div class="w-16 h-16 rounded-full bg-green-600 flex items-center justify-center text-white text-xl font-bold">BA</div>
+                  <div><p class="font-semibold text-gray-800">Business Analyst</p><p class="text-sm text-gray-400">ba@butterstack.io</p></div>
+                  <button class="ml-auto text-xs text-green-600 border border-green-200 px-3 py-1.5 rounded-lg hover:bg-green-50 transition">Change Photo</button>
+                </div>
+                <div class="space-y-4">
+                  ${[['Full Name','text','Business Analyst'],['Email','email','ba@butterstack.io'],['Role','text','BA / PM']].map(([label,type,val])=>
+                    `<div><label class="block text-xs font-medium text-gray-600 mb-1.5">${label}</label><input type="${type}" value="${val}" class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none"/></div>`
+                  ).join('')}
+                  <button class="w-full bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2.5 rounded-lg transition mt-2">Save Changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      }
+    ];
+
+    function detectAndGenerate(text, title) {
+      const lower = text.toLowerCase();
+      for (const g of generators) {
+        if (g.keys.some(k => lower.includes(k))) {
+          return g.generate(title);
+        }
+      }
+      // Default / generic
+      return `
+        <div class="min-h-screen bg-gray-50 p-8 font-sans flex items-center justify-center">
+          <div class="text-center max-w-sm">
+            <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/></svg>
+            </div>
+            <h2 class="text-base font-semibold text-gray-800 mb-2">${title || 'New Page'}</h2>
+            <p class="text-sm text-gray-400 leading-relaxed">Keep typing your requirement — a more specific prototype will generate as the context becomes clearer.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    // ─── Event Handlers ───────────────────────────────────────────────────────
+    function onTitleInput() {
+      triggerGenerate();
+    }
+
+    function onRequirementInput(el) {
+      const words = el.value.trim().split(/\s+/).filter(Boolean).length;
+      document.getElementById('wordCount').textContent = words + (words === 1 ? ' word' : ' words');
+      triggerGenerate();
+    }
+
+    function triggerGenerate() {
+      clearTimeout(debounceTimer);
+      setStatus('waiting');
+      debounceTimer = setTimeout(generate, 1000);
+    }
+
+    async function generate() {
+      const description = document.getElementById('reqInput').value;
+      const title = document.getElementById('featureTitle').value;
+
+      if (!title.trim() || !description.trim()) {
+        setStatus('idle');
+        return;
+      }
+
+      setStatus('generating');
+
+      try {
+        const res = await fetch(`${API_BASE}/prototype/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, description }),
+        });
+
+        if (!res.ok) throw new Error(`API ${res.status}`);
+        const { html } = await res.json();
+
+        currentProtoHTML = html;
+        renderPrototype(html);
+        saveVersion(title || 'Untitled');
+        setStatus('done');
+
+      } catch (err) {
+        console.warn('API unavailable, using local fallback:', err.message);
+        // Fallback to local keyword matching
+        const html = detectAndGenerate(description, title);
+        currentProtoHTML = html;
+        renderPrototype(html);
+        saveVersion((title || 'Untitled') + ' (local)');
+        setStatus('fallback');
+      }
+    }
+
+    function setStatus(state) {
+      const label = document.getElementById('autoStatus');
+      const dot = document.getElementById('genDot');
+      const states = {
+        idle:       ['auto-generating...', 'bg-gray-200',   ''],
+        waiting:    ['thinking...',        'bg-yellow-300',  'pulse-dot'],
+        generating: ['generating...',      'bg-yellow-400',  'pulse-dot'],
+        done:       ['up to date',         'bg-green-500',   ''],
+        fallback:   ['local fallback',     'bg-gray-400',    ''],
+      };
+      const [text, color, anim] = states[state] ?? states.idle;
+      label.textContent = text;
+      dot.className = `w-1.5 h-1.5 rounded-full ${color} ${anim}`;
+    }
+
+    function renderPrototype(html) {
+      const empty = document.getElementById('protoEmpty');
+      const content = document.getElementById('protoContent');
+      empty.classList.add('hidden');
+      content.classList.remove('hidden');
+      content.innerHTML = `<div class="fade-in">${html}</div>`;
+    }
+
+    function saveVersion(label) {
+      versionCounter++;
+      const now = new Date();
+      const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      versions.unshift({ id: versionCounter, label, time, html: currentProtoHTML });
+      if (versions.length > 50) versions.pop();
+      renderVersionList();
+    }
+
+    function renderVersionList() {
+      const list = document.getElementById('versionList');
+      document.getElementById('versionCount').textContent = versions.length + (versions.length === 1 ? ' version' : ' versions');
+      document.getElementById('protoVersion').textContent = `v${versionCounter}`;
+
+      list.innerHTML = versions.map((v, i) => `
+        <div class="version-item flex items-start gap-2 px-3 py-2.5 cursor-pointer rounded-lg mx-1 transition" onclick="restoreVersion(${v.id})">
+          <div class="flex flex-col items-center mt-1">
+            <div class="w-2 h-2 rounded-full ${i === 0 ? 'bg-brand-500' : 'bg-gray-200'} shrink-0"></div>
+            ${i < versions.length - 1 ? '<div class="w-px flex-1 bg-gray-100 mt-1" style="min-height:14px"></div>' : ''}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-medium text-gray-600 truncate">${v.label}</p>
+            <p class="text-xs text-gray-300 mt-0.5">v${v.id} · ${v.time}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function restoreVersion(id) {
+      const v = versions.find(v => v.id === id);
+      if (v) renderPrototype(v.html);
+    }
+
+    // ─── Viewport ─────────────────────────────────────────────────────────────
+    function setViewport(vp) {
+      currentViewport = vp;
+      const wrapper = document.getElementById('protoWrapper');
+      const btns = { desktop: 'vpDesktop', tablet: 'vpTablet', mobile: 'vpMobile' };
+      Object.values(btns).forEach(id => {
+        document.getElementById(id).className = 'px-2 py-1 rounded-md text-xs font-medium text-gray-400 transition';
+      });
+      document.getElementById(btns[vp]).className = 'px-2 py-1 rounded-md text-xs font-medium text-gray-600 bg-white shadow-sm transition';
+
+      if (vp === 'mobile') wrapper.style.maxWidth = '375px';
+      else if (vp === 'tablet') wrapper.style.maxWidth = '768px';
+      else wrapper.style.maxWidth = '100%';
+    }
+
+    // ─── Copy HTML ─────────────────────────────────────────────────────────────
+    function copyProtoCode() {
+      if (!currentProtoHTML) return;
+      navigator.clipboard.writeText(currentProtoHTML).then(() => {
+        const btn = event.target;
+        btn.textContent = 'Copied!';
+        btn.classList.add('text-brand-600');
+        setTimeout(() => { btn.textContent = 'Copy HTML'; btn.classList.remove('text-brand-600'); }, 1500);
+      });
+    }
+
+    // ─── Meeting ──────────────────────────────────────────────────────────────
+    function toggleMeeting() {
+      meetingActive = !meetingActive;
+      const btn = document.getElementById('meetingBtn');
+      const label = document.getElementById('meetingLabel');
+      const info = document.getElementById('meetingInfo');
+
+      if (meetingActive) {
+        meetingStart = Date.now();
+        label.textContent = 'End Meeting';
+        btn.classList.add('border-red-200', 'text-red-500', 'hover:border-red-400');
+        btn.classList.remove('hover:border-brand-500', 'hover:text-brand-600');
+        info.classList.remove('hidden');
+        meetingInterval = setInterval(() => {
+          const elapsed = Math.floor((Date.now() - meetingStart) / 1000);
+          const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+          const s = String(elapsed % 60).padStart(2, '0');
+          document.getElementById('meetingTimer').textContent = `${m}:${s}`;
+        }, 1000);
+      } else {
+        clearInterval(meetingInterval);
+        label.textContent = 'Start Meeting';
+        btn.classList.remove('border-red-200', 'text-red-500', 'hover:border-red-400');
+        btn.classList.add('hover:border-brand-500', 'hover:text-brand-600');
+        info.classList.add('hidden');
+        // Save meeting end as a version marker
+        if (versions.length > 0) {
+          const elapsed = Math.floor((Date.now() - meetingStart) / 1000);
+          const m = Math.floor(elapsed / 60);
+          versions[0].label = `[Meeting ${m}m] ` + versions[0].label;
+          renderVersionList();
+        }
+      }
+    }
+  </script>
+</body>
+</html>

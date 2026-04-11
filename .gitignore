@@ -1,0 +1,15 @@
+# Environment — never commit secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+bun.lockb
+
+# Build output
+dist/
+.angular/
+
+# OS
+.DS_Store

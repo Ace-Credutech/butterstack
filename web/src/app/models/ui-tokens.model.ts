@@ -38,4 +38,6 @@ export interface VersionEntry {
   tokens:      UITokens
   cleanPrompt: string
   source:      string
+  approved?:   boolean
+  approvedAt?: string
 }

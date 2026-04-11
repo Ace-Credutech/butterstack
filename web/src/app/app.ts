@@ -41,7 +41,17 @@ export class App {
     })
   }
 
-  onRestoreVersion(v: VersionEntry): void { this.tokens = v.tokens; this.source = `restored v${v.id}` }
+  onRestoreVersion(v: VersionEntry): void { this.tokens = v.tokens; this.source = `restored v${v.id}`; this.cdr.detectChanges() }
+
+  onApproveVersion(v: VersionEntry): void {
+    const approvedAt = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    this.versions = this.versions.map(ver =>
+      ver.id === v.id
+        ? { ...ver, approved: !ver.approved, approvedAt: !ver.approved ? approvedAt : undefined }
+        : ver
+    )
+    this.cdr.detectChanges()
+  }
 
   onToggleMeeting(): void {
     this.meetingActive = !this.meetingActive

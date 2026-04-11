@@ -11,5 +11,6 @@ export class VersionTimelineComponent {
   @Input()  meetingActive = false
   @Input()  meetingTime   = '00:00'
   @Output() restore        = new EventEmitter<VersionEntry>()
+  @Output() approve        = new EventEmitter<VersionEntry>()
   @Output() toggleMeeting  = new EventEmitter<void>()
 }

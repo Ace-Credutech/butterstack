@@ -17,18 +17,32 @@
   }
   @for (v of versions; track v.id; let i = $index) {
     <div
-      (click)="restore.emit(v)"
-      class="flex items-start gap-2 px-3 py-2.5 cursor-pointer rounded-lg mx-1 hover:bg-green-50 transition">
+      class="group flex items-start gap-2 px-3 py-2.5 rounded-lg mx-1 transition"
+      [class]="v.approved ? 'bg-green-50' : 'hover:bg-gray-50'">
       <div class="flex flex-col items-center mt-1 shrink-0">
-        <div class="w-2 h-2 rounded-full" [class]="i === 0 ? 'bg-green-500' : 'bg-gray-200'"></div>
+        <div class="w-2 h-2 rounded-full"
+          [class]="v.approved ? 'bg-green-500' : i === 0 ? 'bg-gray-400' : 'bg-gray-200'"></div>
         @if (i < versions.length - 1) {
           <div class="w-px bg-gray-100 mt-1" style="min-height:14px"></div>
         }
       </div>
       <div class="flex-1 min-w-0">
-        <p class="text-xs font-medium text-gray-600 truncate">{{ v.label }}</p>
+        <div class="flex items-center gap-1">
+          <p class="text-xs font-medium truncate" [class]="v.approved ? 'text-green-700' : 'text-gray-600'">{{ v.label }}</p>
+          @if (v.approved) {
+            <span class="text-xs bg-green-100 text-green-600 px-1 rounded shrink-0">Final</span>
+          }
+        </div>
         <p class="text-xs text-gray-300 mt-0.5">v{{ v.id }} · {{ v.time }}</p>
-        <p class="text-xs text-gray-300">{{ v.source }}</p>
+        <div class="flex items-center gap-2 mt-1">
+          <button (click)="restore.emit(v)" class="text-xs text-gray-300 hover:text-gray-500 transition">Restore</button>
+          <button
+            (click)="approve.emit(v)"
+            class="text-xs transition"
+            [class]="v.approved ? 'text-green-500 hover:text-red-400' : 'text-gray-300 hover:text-green-600'">
+            {{ v.approved ? '✓ Approved' : 'Approve' }}
+          </button>
+        </div>
       </div>
     </div>
   }

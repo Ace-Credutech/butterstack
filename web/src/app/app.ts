@@ -3,12 +3,13 @@ import { PrototypeService }   from './services/prototype.service'
 import { RequirementInputComponent, RequirementInput } from './components/requirement-input/requirement-input.component'
 import { PrototypePreviewComponent }                   from './components/prototype-preview/prototype-preview.component'
 import { VersionTimelineComponent }                    from './components/version-timeline/version-timeline.component'
+import { ModulesPanelComponent }                       from './components/modules-panel/modules-panel.component'
 import type { UITokens, VersionEntry }                 from './models/ui-tokens.model'
 
 @Component({
   selector:    'app-root',
   standalone:  true,
-  imports:     [RequirementInputComponent, PrototypePreviewComponent, VersionTimelineComponent],
+  imports:     [RequirementInputComponent, PrototypePreviewComponent, VersionTimelineComponent, ModulesPanelComponent],
   templateUrl: './app.html',
 })
 export class App {

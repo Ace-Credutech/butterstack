@@ -6,6 +6,7 @@ import prototypeRegenerate from './routes/prototype/regenerate.ts'
 import requirementsCreate  from './routes/requirements/create.ts'
 import modulesCreate       from './routes/modules/create.ts'
 import modulesAutoAssign   from './routes/modules/auto-assign.ts'
+import suggestions         from './routes/suggestions/index.ts'
 
 const app = new Hono()
 
@@ -23,6 +24,9 @@ app.route('/requirements/create',  requirementsCreate)
 // ── Modules (recursive tree) ──────────────────────────────────────────────────
 app.route('/modules',              modulesCreate)
 app.route('/modules',              modulesAutoAssign)
+
+// ── Suggestions (autocomplete) ────────────────────────────────────────────────
+app.route('/suggestions',          suggestions)
 
 // ── Dictionary health (how smart is local processing?) ────────────────────────
 app.get('/dictionary/stats', async (c) => {

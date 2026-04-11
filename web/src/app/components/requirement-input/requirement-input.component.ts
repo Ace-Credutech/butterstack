@@ -1,8 +1,13 @@
-import { Component, Output, EventEmitter, OnDestroy } from '@angular/core'
-import { FormsModule }                                from '@angular/forms'
+import { Component, Output, EventEmitter, OnDestroy }  from '@angular/core'
+import { FormsModule }                                   from '@angular/forms'
+import { HttpClient }                                    from '@angular/common/http'
 import { Subject, debounceTime, distinctUntilChanged, filter } from 'rxjs'
 
 export interface RequirementInput { title: string; description: string }
+
+interface Suggestion { raw_title: string; raw_description: string; clean_prompt: string; sim: number }
+
+const API = 'http://localhost:3000'
 
 @Component({
   selector:    'app-requirement-input',
@@ -14,14 +19,20 @@ export class RequirementInputComponent implements OnDestroy {
   @Output() inputChanged = new EventEmitter<RequirementInput>()
   @Output() regenerate   = new EventEmitter<{ title: string; description: string; feedback: string }>()
 
-  title       = ''
-  description = ''
-  feedback    = ''
-  wordCount   = 0
+  title        = ''
+  description  = ''
+  feedback     = ''
+  wordCount    = 0
   showFeedback = false
 
+  suggestions: Suggestion[]    = []
+  showSuggestions              = false
+  activeSuggestionField: 'title' | 'desc' | null = null
+
   private input$ = new Subject<RequirementInput>()
-  private sub    = this.input$
+  private suggest$ = new Subject<{ q: string; field: 'title' | 'desc' }>()
+
+  private inputSub = this.input$
     .pipe(
       debounceTime(1000),
       distinctUntilChanged((a, b) => a.title === b.title && a.description === b.description),
@@ -29,17 +40,59 @@ export class RequirementInputComponent implements OnDestroy {
     )
     .subscribe(v => this.inputChanged.emit(v))
 
+  private suggestSub = this.suggest$
+    .pipe(debounceTime(300), distinctUntilChanged((a, b) => a.q === b.q))
+    .subscribe(({ q, field }) => {
+      if (q.length < 2) { this.suggestions = []; return }
+      this.http.get<{ suggestions: Suggestion[] }>(`${API}/suggestions?q=${encodeURIComponent(q)}`).subscribe({
+        next: r => {
+          this.suggestions = r.suggestions.filter(s => s.raw_title !== this.title || s.raw_description !== this.description)
+          this.showSuggestions = this.suggestions.length > 0
+          this.activeSuggestionField = field
+        }
+      })
+    })
+
+  constructor(private http: HttpClient) {}
+
   onInput(): void {
     this.wordCount = this.description.trim().split(/\s+/).filter(Boolean).length
     this.input$.next({ title: this.title, description: this.description })
   }
 
+  onTitleInput(): void {
+    this.onInput()
+    this.suggest$.next({ q: this.title, field: 'title' })
+  }
+
+  onDescInput(): void {
+    this.onInput()
+    if (this.description.length > 3) this.suggest$.next({ q: this.description.slice(0, 80), field: 'desc' })
+  }
+
+  applySuggestion(s: Suggestion): void {
+    const original = { title: this.title, description: this.description }
+    this.title       = s.raw_title || this.title
+    this.description = s.raw_description || this.description
+    this.closeSuggestions()
+    this.onInput()
+
+    // Learn: user picked a different pattern
+    if (original.title !== this.title || original.description !== this.description) {
+      this.http.post(`${API}/suggestions/learn`, {
+        original, chosen: { title: this.title, description: this.description }, context: 'suggestion_picked'
+      }).subscribe()
+    }
+  }
+
+  closeSuggestions(): void { this.showSuggestions = false; this.suggestions = [] }
+
   onRegenerate(): void {
     if (!this.title.trim() || !this.description.trim()) return
     this.regenerate.emit({ title: this.title, description: this.description, feedback: this.feedback })
-    this.feedback    = ''
+    this.feedback     = ''
     this.showFeedback = false
   }
 
-  ngOnDestroy(): void { this.sub.unsubscribe() }
+  ngOnDestroy(): void { this.inputSub.unsubscribe(); this.suggestSub.unsubscribe() }
 }

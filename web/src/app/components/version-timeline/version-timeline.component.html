@@ -1,128 +1,55 @@
-<!-- Tab switcher -->
-<div class="flex items-center border-b border-gray-100 shrink-0">
-  <button
-    (click)="switchTab('history')"
-    class="flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition"
-    [class]="tab === 'history' ? 'text-gray-700 border-b-2 border-gray-700' : 'text-gray-300 hover:text-gray-500'">
-    History
-    @if (versions.length) {
-      <span class="ml-1 text-gray-300 font-normal normal-case tracking-normal">{{ versions.length }}</span>
-    }
-  </button>
-  <button
-    (click)="switchTab('modules')"
-    class="flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition"
-    [class]="tab === 'modules' ? 'text-green-700 border-b-2 border-green-600' : 'text-gray-300 hover:text-gray-500'">
-    Modules
-    @if (approvedCount) {
-      <span class="ml-1 text-green-400 font-normal normal-case tracking-normal">{{ approvedCount }}</span>
-    }
-  </button>
+<!-- Header -->
+<div class="flex items-center justify-between px-3 py-2.5 border-b border-gray-100 shrink-0">
+  <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">History</span>
+  @if (versions.length) {
+    <span class="text-xs text-gray-300 font-normal">{{ versions.length }}</span>
+  }
 </div>
 
-<!-- ── HISTORY TAB ──────────────────────────────────────────────────── -->
-@if (tab === 'history') {
-  <div class="flex-1 overflow-y-auto py-1 min-h-0">
-    @if (!versions.length) {
-      <div class="flex flex-col items-center justify-center h-32 text-center px-4">
-        <p class="text-xs text-gray-300">No versions yet</p>
-      </div>
-    }
-    @for (v of versions; track v.id; let i = $index) {
-      <div
-        class="group flex items-start gap-2 px-3 py-2.5 rounded-lg mx-1 transition"
-        [class]="v.approved ? 'bg-green-50' : 'hover:bg-gray-50'">
-        <div class="flex flex-col items-center mt-1 shrink-0">
-          <div class="w-2 h-2 rounded-full"
-            [class]="v.approved ? 'bg-green-500' : i === 0 ? 'bg-gray-400' : 'bg-gray-200'"></div>
-          @if (i < versions.length - 1) {
-            <div class="w-px bg-gray-100 mt-1" style="min-height:14px"></div>
-          }
-        </div>
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-1">
-            <p class="text-xs font-medium truncate" [class]="v.approved ? 'text-green-700' : 'text-gray-600'">{{ v.label }}</p>
-            @if (v.approved) {
-              <span class="text-xs bg-green-100 text-green-600 px-1 rounded shrink-0">Final</span>
-            }
-          </div>
-          <p class="text-xs text-gray-300 mt-0.5">v{{ v.id }} · {{ v.time }}</p>
-          @if (v.modulePath?.length) {
-            <p class="text-xs text-green-500 mt-0.5 truncate">{{ v.modulePath!.join(' › ') }}</p>
-          }
-          <div class="flex items-center gap-2 mt-1">
-            <button (click)="restore.emit(v)" class="text-xs text-gray-300 hover:text-gray-500 transition">Restore</button>
-            <button
-              (click)="approve.emit(v)"
-              class="text-xs transition"
-              [class]="v.approved ? 'text-green-500 hover:text-red-400' : 'text-gray-300 hover:text-green-600'">
-              {{ v.approved ? '✓ Approved' : 'Approve' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    }
-  </div>
-}
-
-<!-- ── MODULES TAB ─────────────────────────────────────────────────── -->
-@if (tab === 'modules') {
-  <div class="flex-1 overflow-y-auto py-2 min-h-0">
-    @if (!tree.length) {
-      <div class="flex flex-col items-center justify-center h-32 text-center px-4">
-        <p class="text-xs text-gray-300">Approve a version to auto-organize</p>
-      </div>
-    }
-    @for (node of tree; track node.id) {
-      <ng-container *ngTemplateOutlet="moduleNode; context: { node: node }"></ng-container>
-    }
-  </div>
-}
-
-<!-- Recursive module node template -->
-<ng-template #moduleNode let-node="node">
-  <!-- Module header -->
-  <div
-    (click)="toggle(node)"
-    class="flex items-center gap-1.5 px-3 py-1.5 cursor-pointer hover:bg-gray-50 transition"
-    [style.padding-left]="(node.depth * 12 + 12) + 'px'">
-    <svg class="w-3 h-3 text-gray-300 shrink-0 transition-transform"
-      [class.rotate-90]="node.expanded"
-      fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-    </svg>
-    <svg class="w-3 h-3 shrink-0" [class]="node.versions.length ? 'text-green-400' : 'text-gray-300'"
-      fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
-    </svg>
-    <span class="text-xs font-medium text-gray-600 truncate flex-1">{{ node.name }}</span>
-    @if (node.versions.length) {
-      <span class="text-xs text-green-500 shrink-0">{{ node.versions.length }}</span>
-    }
-  </div>
-
-  @if (node.expanded) {
-    <!-- Approved versions in this module -->
-    @for (v of node.versions; track v.id) {
-      <div
-        (click)="restore.emit(v)"
-        class="flex items-center gap-2 py-1.5 cursor-pointer hover:bg-green-50 transition rounded mx-1"
-        [style.padding-left]="(node.depth * 12 + 24) + 'px'">
-        <div class="w-1.5 h-1.5 rounded-full bg-green-400 shrink-0"></div>
-        <div class="flex-1 min-w-0">
-          <p class="text-xs text-gray-600 truncate">{{ v.label }}</p>
-          <p class="text-xs text-gray-300">v{{ v.id }} · {{ v.time }}</p>
-        </div>
-      </div>
-    }
-    <!-- Child modules -->
-    @for (child of node.children; track child.id) {
-      <ng-container *ngTemplateOutlet="moduleNode; context: { node: child }"></ng-container>
-    }
+<!-- Version list -->
+<div class="flex-1 overflow-y-auto py-1 min-h-0">
+  @if (!versions.length) {
+    <div class="flex flex-col items-center justify-center h-20 text-center px-4">
+      <p class="text-xs text-gray-300">No versions yet</p>
+    </div>
   }
-</ng-template>
+  @for (v of versions; track v.id; let i = $index) {
+    <div
+      class="group flex items-start gap-2 px-3 py-2 rounded-lg mx-1 transition"
+      [class]="v.approved ? 'bg-green-50' : 'hover:bg-gray-50'">
+      <div class="flex flex-col items-center mt-1 shrink-0">
+        <div class="w-2 h-2 rounded-full"
+          [class]="v.approved ? 'bg-green-500' : i === 0 ? 'bg-gray-400' : 'bg-gray-200'"></div>
+        @if (i < versions.length - 1) {
+          <div class="w-px bg-gray-100 mt-1" style="min-height:14px"></div>
+        }
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1">
+          <p class="text-xs font-medium truncate" [class]="v.approved ? 'text-green-700' : 'text-gray-600'">{{ v.label }}</p>
+          @if (v.approved) {
+            <span class="text-xs bg-green-100 text-green-600 px-1 rounded shrink-0">Final</span>
+          }
+        </div>
+        <p class="text-xs text-gray-300 mt-0.5">v{{ v.id }} · {{ v.time }}</p>
+        @if (v.modulePath?.length) {
+          <p class="text-xs text-green-500 mt-0.5 truncate">{{ v.modulePath!.join(' › ') }}</p>
+        }
+        <div class="flex items-center gap-2 mt-1">
+          <button (click)="restore.emit(v)" class="text-xs text-gray-300 hover:text-gray-500 transition">Restore</button>
+          <button
+            (click)="approve.emit(v)"
+            class="text-xs transition"
+            [class]="v.approved ? 'text-green-500 hover:text-red-400' : 'text-gray-300 hover:text-green-600'">
+            {{ v.approved ? '✓ Approved' : 'Approve' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
 
-<!-- Meeting -->
+<!-- Meeting button -->
 <div class="px-3 py-2 border-t border-gray-100 shrink-0">
   <button
     (click)="toggleMeeting.emit()"

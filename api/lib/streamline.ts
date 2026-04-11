@@ -1,11 +1,10 @@
-import OpenAI from 'openai'
 import { query } from '../db.ts'
 import { sha256 } from './hash.ts'
 import { localStreamline } from './local-streamline.ts'
 import { learnFromStreamline } from './dictionary.ts'
+import { aiChat, MODELS } from './ai-client.ts'
 
-const openai             = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-const LOCAL_CONFIDENCE   = 0.75   // above this: skip OpenAI, use local result
+const LOCAL_CONFIDENCE   = 0.75   // above this: skip AI, use local result
 
 const SYSTEM_PROMPT = `
 Convert the user's UI requirement (may be Hinglish, Marathi-English, Gujarati-English, or English) into a single clean English sentence describing exactly what UI feature they want.
@@ -50,15 +49,12 @@ export async function streamlineInput(title: string, description: string): Promi
   const userMsg = `Title: "${title}"\nDescription: "${description}"`
   const start   = Date.now()
 
-  const response = await openai.chat.completions.create({
-    model:       'gpt-4o-mini',
-    messages:    [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: userMsg }],
-    temperature: 0.1,
-    max_tokens:  150,
-  })
+  const response = await aiChat(
+    [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: userMsg }],
+    MODELS.streamline
+  )
 
-  const cleanPrompt = response.choices[0]?.message?.content?.trim() ?? local.cleanPrompt
-  const usage       = response.usage
+  const cleanPrompt = response.text.trim() || local.cleanPrompt
 
   await query(
     `INSERT INTO prompt_cache (raw_hash, raw_title, raw_description, clean_prompt)
@@ -74,8 +70,8 @@ export async function streamlineInput(title: string, description: string): Promi
     cleanPrompt,
     fromCache:  false,
     source:     'openai',
-    tokensIn:   usage?.prompt_tokens     ?? 0,
-    tokensOut:  usage?.completion_tokens ?? 0,
+    tokensIn:   response.tokensIn,
+    tokensOut:  response.tokensOut,
     model:      response.model,
     durationMs: Date.now() - start,
   }

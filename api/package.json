@@ -6,6 +6,7 @@
     "dev": "bun --hot index.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.88.0",
     "hono": "^4.6.0",
     "openai": "^4.67.0",
     "pg": "^8.20.0"

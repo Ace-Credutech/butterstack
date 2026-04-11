@@ -1,10 +1,8 @@
-import OpenAI from 'openai'
 import { query } from '../db.ts'
 import { sha256 } from './hash.ts'
 import { fuzzyLookup } from './fuzzy.ts'
 import { learnFromTokens } from './dictionary.ts'
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+import { aiChat, MODELS } from './ai-client.ts'
 
 const SYSTEM_PROMPT = `You are a UI token extractor. Given a product requirement, return a JSON object with these exact keys:
 {
@@ -22,18 +20,13 @@ const SYSTEM_PROMPT = `You are a UI token extractor. Given a product requirement
 }
 Return only valid JSON. No explanation.`
 
-async function callOpenAI(prompt: string): Promise<UITokens> {
-  const res = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    response_format: { type: 'json_object' },
-    messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user',   content: prompt },
-    ],
-  })
-  const raw = res.choices[0].message.content ?? '{}'
-  const parsed = JSON.parse(raw)
-  return parsed as UITokens
+async function callAI(prompt: string): Promise<UITokens> {
+  const res = await aiChat(
+    [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: prompt }],
+    MODELS.tokens,
+    true  // json mode
+  )
+  return JSON.parse(res.text) as UITokens
 }
 
 // Pure semantic tokens — what the UI means. Our system decides how to render.
@@ -85,7 +78,7 @@ export async function extractTokens(cleanPrompt: string): Promise<TokenResult> {
 
   // 3. Direct OpenAI call (no batch delay)
   const start  = Date.now()
-  const tokens = await callOpenAI(cleanPrompt)
+  const tokens = await callAI(cleanPrompt)
 
   // Persist to cache
   await query(

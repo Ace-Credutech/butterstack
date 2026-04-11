@@ -17,6 +17,7 @@ export interface ModuleNode {
 })
 export class ModulesPanelComponent implements OnInit, OnChanges {
   @Input() approvedVersions: VersionEntry[] = []
+  @Input() projectId: string = 'default'
   @Output() restore        = new EventEmitter<VersionEntry>()
   @Output() moduleSelected = new EventEmitter<ModuleNode>()
   tree: ModuleNode[] = []
@@ -26,11 +27,11 @@ export class ModulesPanelComponent implements OnInit, OnChanges {
   ngOnInit(): void { this.fetchTree() }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['approvedVersions']) { this.fetchTree() }
+    if (changes['approvedVersions'] || changes['projectId']) { this.fetchTree() }
   }
 
   fetchTree(): void {
-    this.http.get<any[]>('http://localhost:3000/modules/tree').subscribe({
+    this.http.get<any[]>(`http://localhost:3000/modules/tree?projectId=${this.projectId}`).subscribe({
       next: rows => { this.tree = this.mapNodes(rows) }
     })
   }

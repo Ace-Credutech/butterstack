@@ -17,9 +17,9 @@ export class PrototypeService {
     return this.http.post<RegenerateResponse>(`${API}/prototype/regenerate`, { title, description, feedback })
   }
 
-  autoAssign(tokens: any, label: string, cleanPrompt: string): Observable<{ moduleId: number; modulePath: string[]; path: string }> {
+  autoAssign(tokens: any, label: string, cleanPrompt: string, projectId: string): Observable<{ moduleId: number; modulePath: string[]; path: string }> {
     return this.http.post<{ moduleId: number; modulePath: string[]; path: string }>(
-      `${API}/modules/auto-assign`, { tokens, label, cleanPrompt }
+      `${API}/modules/auto-assign`, { tokens, label, cleanPrompt, projectId }
     )
   }
 }

@@ -4,6 +4,7 @@ import { cors }  from 'hono/cors'
 import prototypeGenerate   from './routes/prototype/generate.ts'
 import prototypeRegenerate from './routes/prototype/regenerate.ts'
 import requirementsCreate  from './routes/requirements/create.ts'
+import projects            from './routes/projects/index.ts'
 import modulesCreate       from './routes/modules/create.ts'
 import modulesAutoAssign   from './routes/modules/auto-assign.ts'
 import modulesContent      from './routes/modules/content.ts'
@@ -24,6 +25,7 @@ app.route('/prototype/regenerate', prototypeRegenerate)
 app.route('/requirements/create',  requirementsCreate)
 
 // ── Modules (recursive tree) ──────────────────────────────────────────────────
+app.route('/projects',             projects)
 app.route('/modules',              modulesCreate)
 app.route('/modules',              modulesAutoAssign)
 app.route('/modules',              modulesContent)

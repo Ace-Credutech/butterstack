@@ -107,6 +107,21 @@ await query(`
 `)
 console.log('✓ regeneration_log ready')
 
+// Projects — top-level scoping entity
+await query(`
+  CREATE TABLE IF NOT EXISTS projects (
+    id          SERIAL PRIMARY KEY,
+    name        VARCHAR(255) NOT NULL,
+    slug        VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT,
+    status      VARCHAR(50)  NOT NULL DEFAULT 'active',
+    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+  )
+`)
+await query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_projects_slug ON projects (slug)`)
+console.log('✓ projects ready')
+
 // Modules — recursive self-referential tree (module → sub-module → sub-sub-module → ...)
 await query(`
   CREATE TABLE IF NOT EXISTS modules (

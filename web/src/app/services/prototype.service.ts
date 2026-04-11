@@ -16,4 +16,10 @@ export class PrototypeService {
   regenerate(title: string, description: string, feedback: string): Observable<RegenerateResponse> {
     return this.http.post<RegenerateResponse>(`${API}/prototype/regenerate`, { title, description, feedback })
   }
+
+  autoAssign(tokens: any, label: string, cleanPrompt: string): Observable<{ moduleId: number; modulePath: string[]; path: string }> {
+    return this.http.post<{ moduleId: number; modulePath: string[]; path: string }>(
+      `${API}/modules/auto-assign`, { tokens, label, cleanPrompt }
+    )
+  }
 }

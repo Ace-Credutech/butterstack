@@ -45,12 +45,25 @@ export class App {
 
   onApproveVersion(v: VersionEntry): void {
     const approvedAt = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    const isApproving = !v.approved
+
     this.versions = this.versions.map(ver =>
       ver.id === v.id
-        ? { ...ver, approved: !ver.approved, approvedAt: !ver.approved ? approvedAt : undefined }
+        ? { ...ver, approved: isApproving, approvedAt: isApproving ? approvedAt : undefined, modulePath: isApproving ? ver.modulePath : undefined }
         : ver
     )
     this.cdr.detectChanges()
+
+    if (isApproving) {
+      this.prototype.autoAssign(v.tokens, v.label, v.cleanPrompt).subscribe({
+        next: res => {
+          this.versions = this.versions.map(ver =>
+            ver.id === v.id ? { ...ver, modulePath: res.modulePath } : ver
+          )
+          this.cdr.detectChanges()
+        }
+      })
+    }
   }
 
   onToggleMeeting(): void {

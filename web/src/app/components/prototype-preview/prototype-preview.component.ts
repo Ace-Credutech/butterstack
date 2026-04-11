@@ -1,5 +1,4 @@
 import { Component, Input, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core'
-import { TitleCasePipe }                              from '@angular/common'
 import { DomSanitizer, SafeHtml }                     from '@angular/platform-browser'
 import type { UITokens }                              from '../../models/ui-tokens.model'
 import { renderTokens }                               from '../../renderers/index'
@@ -9,7 +8,7 @@ type Viewport = 'desktop' | 'tablet' | 'mobile'
 @Component({
   selector:    'app-prototype-preview',
   standalone:  true,
-  imports:     [TitleCasePipe],
+  imports:     [],
   templateUrl: './prototype-preview.component.html',
 })
 export class PrototypePreviewComponent implements OnChanges {

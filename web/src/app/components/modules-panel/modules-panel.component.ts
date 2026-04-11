@@ -3,9 +3,10 @@ import { NgTemplateOutlet } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 import type { VersionEntry } from '../../models/ui-tokens.model'
 
-interface ModuleNode {
+export interface ModuleNode {
   id: number; name: string; path: string; depth: number
   children: ModuleNode[]; versions: VersionEntry[]; expanded: boolean
+  rawTitle?: string; rawDescription?: string; cleanPrompt?: string; tokens?: any
 }
 
 @Component({
@@ -16,7 +17,8 @@ interface ModuleNode {
 })
 export class ModulesPanelComponent implements OnInit, OnChanges {
   @Input() approvedVersions: VersionEntry[] = []
-  @Output() restore = new EventEmitter<VersionEntry>()
+  @Output() restore        = new EventEmitter<VersionEntry>()
+  @Output() moduleSelected = new EventEmitter<ModuleNode>()
   tree: ModuleNode[] = []
 
   constructor(private http: HttpClient) {}
@@ -33,7 +35,14 @@ export class ModulesPanelComponent implements OnInit, OnChanges {
     })
   }
 
+  selectedId: number | null = null
+
   toggle(node: ModuleNode): void { node.expanded = !node.expanded }
+
+  selectModule(node: ModuleNode): void {
+    this.selectedId = node.id
+    this.moduleSelected.emit(node)
+  }
 
   get approvedCount(): number { return this.approvedVersions.filter(v => v.approved).length }
 
@@ -41,6 +50,10 @@ export class ModulesPanelComponent implements OnInit, OnChanges {
     return nodes.map(n => ({
       id: n.id, name: n.name, path: n.path, depth: n.depth,
       expanded: true,
+      rawTitle:        n.raw_title,
+      rawDescription:  n.raw_description,
+      cleanPrompt:     n.clean_prompt,
+      tokens:          n.tokens,
       children: this.mapNodes(n.children ?? []),
       versions: this.approvedVersions.filter(v =>
         v.approved && v.modulePath?.join('/').toLowerCase().replace(/\s+/g, '-') === n.path

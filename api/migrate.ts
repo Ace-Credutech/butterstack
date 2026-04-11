@@ -121,12 +121,40 @@ await query(`
     created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
   )
 `)
-await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS depth       INTEGER NOT NULL DEFAULT 0`)
-await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS path        TEXT    NOT NULL DEFAULT ''`)
+await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS depth              INTEGER NOT NULL DEFAULT 0`)
+await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS path               TEXT    NOT NULL DEFAULT ''`)
+await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS raw_title          TEXT`)
+await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS raw_description    TEXT`)
+await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS clean_prompt       TEXT`)
+await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS tokens             JSONB`)
+await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS tokens_version     INTEGER NOT NULL DEFAULT 0`)
+await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS content_updated_at TIMESTAMPTZ`)
 await query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_modules_slug   ON modules (project_id, slug)`)
 await query(`CREATE        INDEX IF NOT EXISTS idx_modules_parent ON modules (parent_id)`)
 await query(`CREATE        INDEX IF NOT EXISTS idx_modules_path   ON modules (path)`)
 console.log('✓ modules ready')
+
+// Version history — persisted on every generate/regenerate
+await query(`
+  CREATE TABLE IF NOT EXISTS version_history (
+    id              SERIAL PRIMARY KEY,
+    project_id      VARCHAR(64)  NOT NULL DEFAULT 'default',
+    module_id       INTEGER      REFERENCES modules(id) ON DELETE SET NULL,
+    label           TEXT         NOT NULL,
+    raw_title       TEXT,
+    raw_description TEXT,
+    clean_prompt    TEXT,
+    tokens          JSONB        NOT NULL,
+    source          VARCHAR(50),
+    approved        BOOLEAN      NOT NULL DEFAULT FALSE,
+    approved_at     TIMESTAMPTZ,
+    module_path     JSONB,
+    created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+  )
+`)
+await query(`CREATE INDEX IF NOT EXISTS idx_version_history_project ON version_history (project_id, created_at DESC)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_version_history_module  ON version_history (module_id)`)
+console.log('✓ version_history ready')
 
 // Requirements — stored as they are typed, assigned to module
 await query(`

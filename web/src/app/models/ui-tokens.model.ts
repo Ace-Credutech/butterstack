@@ -41,4 +41,5 @@ export interface VersionEntry {
   approved?:    boolean
   approvedAt?:  string
   modulePath?:  string[]
+  dbId?:        number
 }

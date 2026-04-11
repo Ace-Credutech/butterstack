@@ -1,7 +1,8 @@
-import { Component, Output, EventEmitter, OnDestroy }  from '@angular/core'
-import { FormsModule }                                   from '@angular/forms'
-import { HttpClient }                                    from '@angular/common/http'
+import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core'
+import { FormsModule }                                        from '@angular/forms'
+import { HttpClient }                                         from '@angular/common/http'
 import { Subject, debounceTime, distinctUntilChanged, filter } from 'rxjs'
+import type { UITokens }                                      from '../../models/ui-tokens.model'
 
 export interface RequirementInput { title: string; description: string }
 
@@ -16,6 +17,10 @@ const API = 'http://localhost:3000'
   templateUrl: './requirement-input.component.html',
 })
 export class RequirementInputComponent implements OnDestroy {
+  @Input() tokens:           UITokens | null = null
+  @Input() cleanPrompt:      string          = ''
+  @Input() activeModuleName: string | null   = null
+
   @Output() inputChanged = new EventEmitter<RequirementInput>()
   @Output() regenerate   = new EventEmitter<{ title: string; description: string; feedback: string }>()
 

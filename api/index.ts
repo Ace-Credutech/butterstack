@@ -6,6 +6,8 @@ import prototypeRegenerate from './routes/prototype/regenerate.ts'
 import requirementsCreate  from './routes/requirements/create.ts'
 import modulesCreate       from './routes/modules/create.ts'
 import modulesAutoAssign   from './routes/modules/auto-assign.ts'
+import modulesContent      from './routes/modules/content.ts'
+import history             from './routes/history/index.ts'
 import suggestions         from './routes/suggestions/index.ts'
 
 const app = new Hono()
@@ -24,6 +26,8 @@ app.route('/requirements/create',  requirementsCreate)
 // ── Modules (recursive tree) ──────────────────────────────────────────────────
 app.route('/modules',              modulesCreate)
 app.route('/modules',              modulesAutoAssign)
+app.route('/modules',              modulesContent)
+app.route('/history',              history)
 
 // ── Suggestions (autocomplete) ────────────────────────────────────────────────
 app.route('/suggestions',          suggestions)

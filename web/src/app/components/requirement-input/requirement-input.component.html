@@ -1,100 +1,228 @@
-<!-- Header -->
-<div class="flex items-center justify-between px-4 py-2.5 border-b border-gray-100 shrink-0">
-  <div class="flex items-center gap-2">
-    <span class="text-xs font-semibold text-gray-600 uppercase tracking-wider">Requirement</span>
-    <span class="text-xs text-gray-300">{{ wordCount }} words</span>
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 1 — User Input                                   -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="flex flex-col border-b border-gray-200 shrink-0" style="flex: 0 0 55%;">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between px-4 py-2.5 border-b border-gray-100 shrink-0">
+    <div class="flex items-center gap-2 min-w-0">
+      <span class="text-xs font-semibold text-gray-600 uppercase tracking-wider shrink-0">User Input</span>
+      @if (activeModuleName) {
+        <span class="text-xs text-green-600 bg-green-50 border border-green-100 rounded px-1.5 py-0.5 truncate">{{ activeModuleName }}</span>
+      }
+      <span class="text-xs text-gray-300 shrink-0">{{ wordCount }}w</span>
+    </div>
+    <span class="text-xs bg-green-50 text-green-700 border border-green-100 rounded-md px-2 py-0.5 font-medium shrink-0">BA View</span>
   </div>
-  <span class="text-xs bg-green-50 text-green-700 border border-green-100 rounded-md px-2 py-0.5 font-medium">BA View</span>
-</div>
 
-<!-- Title -->
-<div class="px-4 pt-3 pb-1 shrink-0 relative">
-  <input
-    type="text"
-    placeholder="Feature or page name..."
-    [(ngModel)]="title"
-    (ngModelChange)="onTitleInput()"
-    (blur)="closeSuggestions()"
-    class="w-full text-lg font-semibold text-gray-800 placeholder-gray-200 border-none outline-none bg-transparent"/>
+  <!-- Title -->
+  <div class="px-4 pt-3 pb-1 shrink-0 relative">
+    <input
+      type="text"
+      placeholder="Feature or page name..."
+      [(ngModel)]="title"
+      (ngModelChange)="onTitleInput()"
+      (blur)="closeSuggestions()"
+      class="w-full text-base font-semibold text-gray-800 placeholder-gray-200 border-none outline-none bg-transparent"/>
 
-  <!-- Title suggestions -->
-  @if (showSuggestions && activeSuggestionField === 'title' && suggestions.length) {
-    <div class="absolute left-4 right-4 top-full z-20 bg-white border border-gray-100 rounded-lg shadow-md mt-1 overflow-hidden">
-      <p class="text-xs text-gray-300 px-3 pt-2 pb-1">Similar past requirements</p>
-      @for (s of suggestions; track s.clean_prompt) {
-        <button
-          (mousedown)="applySuggestion(s)"
-          class="w-full text-left px-3 py-2 hover:bg-green-50 transition border-t border-gray-50 first:border-0">
-          <p class="text-xs font-medium text-gray-600 truncate">{{ s.raw_title }}</p>
-          <p class="text-xs text-gray-300 truncate">{{ s.raw_description }}</p>
-        </button>
-      }
-    </div>
-  }
-</div>
+    @if (showSuggestions && activeSuggestionField === 'title' && suggestions.length) {
+      <div class="absolute left-4 right-4 top-full z-20 bg-white border border-gray-100 rounded-lg shadow-md mt-1 overflow-hidden">
+        <p class="text-xs text-gray-300 px-3 pt-2 pb-1">Similar past requirements</p>
+        @for (s of suggestions; track s.clean_prompt) {
+          <button
+            (mousedown)="applySuggestion(s)"
+            class="w-full text-left px-3 py-2 hover:bg-green-50 transition border-t border-gray-50">
+            <p class="text-xs font-medium text-gray-600 truncate">{{ s.raw_title }}</p>
+            <p class="text-xs text-gray-300 truncate">{{ s.raw_description }}</p>
+          </button>
+        }
+      </div>
+    }
+  </div>
 
-<!-- Description -->
-<div class="flex-1 px-4 pb-2 min-h-0 relative">
-  <textarea
-    [(ngModel)]="description"
-    (ngModelChange)="onDescInput()"
-    (blur)="closeSuggestions()"
-    placeholder="Type your requirement... Hinglish, Minglish, English — anything goes."
-    class="w-full h-full text-sm text-gray-700 placeholder-gray-300 leading-relaxed bg-transparent border-none outline-none resize-none">
-  </textarea>
-
-  <!-- Description suggestions -->
-  @if (showSuggestions && activeSuggestionField === 'desc' && suggestions.length) {
-    <div class="absolute left-4 right-4 bottom-full z-20 bg-white border border-gray-100 rounded-lg shadow-md mb-1 overflow-hidden">
-      <p class="text-xs text-gray-300 px-3 pt-2 pb-1">Similar past requirements</p>
-      @for (s of suggestions; track s.clean_prompt) {
-        <button
-          (mousedown)="applySuggestion(s)"
-          class="w-full text-left px-3 py-2 hover:bg-green-50 transition border-t border-gray-50 first:border-0">
-          <p class="text-xs font-medium text-gray-600 truncate">{{ s.raw_title }}</p>
-          <p class="text-xs text-gray-300 truncate">{{ s.raw_description }}</p>
-        </button>
-      }
-    </div>
-  }
-</div>
-
-<!-- Feedback panel -->
-@if (showFeedback) {
-  <div class="px-4 pb-2 border-t border-gray-100 pt-2 shrink-0">
-    <p class="text-xs text-gray-400 mb-1">What was wrong?</p>
+  <!-- Description -->
+  <div class="flex-1 px-4 pb-2 min-h-0 relative">
     <textarea
-      [(ngModel)]="feedback"
-      placeholder="e.g. sidebar missing, needs more fields..."
-      rows="2"
-      class="w-full text-xs text-gray-600 border border-gray-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:border-green-400">
+      [(ngModel)]="description"
+      (ngModelChange)="onDescInput()"
+      (blur)="closeSuggestions()"
+      placeholder="Type your requirement... Hinglish, Minglish, English — anything goes."
+      class="w-full h-full text-sm text-gray-700 placeholder-gray-300 leading-relaxed bg-transparent border-none outline-none resize-none">
     </textarea>
-    <div class="flex gap-2 mt-2">
-      <button (click)="onRegenerate()" class="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium py-1.5 rounded-lg transition">
-        Regenerate
-      </button>
-      <button (click)="showFeedback = false" class="px-3 py-1.5 text-xs text-gray-400 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
-        Cancel
-      </button>
-    </div>
-  </div>
-}
 
-<!-- Toolbar -->
-<div class="flex items-center justify-between px-4 py-2 border-t border-gray-100 shrink-0">
-  <div class="flex items-center gap-1">
+    @if (showSuggestions && activeSuggestionField === 'desc' && suggestions.length) {
+      <div class="absolute left-4 right-4 bottom-full z-20 bg-white border border-gray-100 rounded-lg shadow-md mb-1 overflow-hidden">
+        <p class="text-xs text-gray-300 px-3 pt-2 pb-1">Similar past requirements</p>
+        @for (s of suggestions; track s.clean_prompt) {
+          <button
+            (mousedown)="applySuggestion(s)"
+            class="w-full text-left px-3 py-2 hover:bg-green-50 transition border-t border-gray-50">
+            <p class="text-xs font-medium text-gray-600 truncate">{{ s.raw_title }}</p>
+            <p class="text-xs text-gray-300 truncate">{{ s.raw_description }}</p>
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Feedback panel -->
+  @if (showFeedback) {
+    <div class="px-4 pb-2 border-t border-gray-100 pt-2 shrink-0">
+      <p class="text-xs text-gray-400 mb-1">What was wrong?</p>
+      <textarea
+        [(ngModel)]="feedback"
+        placeholder="e.g. sidebar missing, needs more fields..."
+        rows="2"
+        class="w-full text-xs text-gray-600 border border-gray-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:border-green-400">
+      </textarea>
+      <div class="flex gap-2 mt-2">
+        <button (click)="onRegenerate()" class="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium py-1.5 rounded-lg transition">
+          Regenerate
+        </button>
+        <button (click)="showFeedback = false" class="px-3 py-1.5 text-xs text-gray-400 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+          Cancel
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Toolbar -->
+  <div class="flex items-center justify-between px-4 py-2 border-t border-gray-100 shrink-0">
     <button class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition" title="Voice input (coming soon)">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
       </svg>
     </button>
+    <button
+      (click)="showFeedback = !showFeedback"
+      class="text-xs text-gray-400 hover:text-orange-500 transition flex items-center gap-1">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      </svg>
+      Not right? Improve
+    </button>
   </div>
-  <button
-    (click)="showFeedback = !showFeedback"
-    class="text-xs text-gray-400 hover:text-orange-500 transition flex items-center gap-1">
-    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-    </svg>
-    Not right? Improve
-  </button>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 2 — AI Generated Documentation                    -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="flex flex-col flex-1 min-h-0">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between px-4 py-2.5 border-b border-gray-100 shrink-0">
+    <span class="text-xs font-semibold text-gray-600 uppercase tracking-wider">AI Documentation</span>
+    @if (tokens) {
+      <span class="text-xs bg-green-50 text-green-600 border border-green-100 rounded-md px-2 py-0.5">Final</span>
+    }
+  </div>
+
+  @if (!tokens) {
+    <div class="flex-1 flex flex-col items-center justify-center text-center px-4">
+      <div class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center mb-2">
+        <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <p class="text-xs text-gray-300">Documentation generates after first input</p>
+    </div>
+  }
+
+  @if (tokens) {
+    <div class="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0">
+
+      <!-- Requirement statement -->
+      <div>
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Requirement</p>
+        <p class="text-xs text-gray-700 leading-relaxed">{{ cleanPrompt }}</p>
+      </div>
+
+      <!-- Meta row -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-xs px-2 py-0.5 rounded-md bg-gray-100 text-gray-500 font-medium">{{ tokens.page_type }}</span>
+        <span class="text-xs px-2 py-0.5 rounded-md bg-gray-100 text-gray-500">{{ tokens.layout }}</span>
+        <span class="text-xs px-2 py-0.5 rounded-md bg-gray-100 text-gray-500 capitalize">{{ tokens.entity }}</span>
+        @if (tokens.search) { <span class="text-xs px-2 py-0.5 rounded-md bg-blue-50 text-blue-500">Search</span> }
+        @if (tokens.filters) { <span class="text-xs px-2 py-0.5 rounded-md bg-blue-50 text-blue-500">Filters</span> }
+      </div>
+
+      <!-- Intent -->
+      <div>
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Intent</p>
+        <p class="text-xs text-gray-600">{{ tokens.intent }}</p>
+      </div>
+
+      <!-- Fields -->
+      @if (tokens.fields.length) {
+        <div>
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Fields</p>
+          <div class="flex flex-col gap-1">
+            @for (f of tokens.fields; track f.name) {
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-gray-600 capitalize">{{ f.name.replace('_', ' ') }}</span>
+                <span class="text-xs text-gray-300 font-mono">{{ f.type }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Actions -->
+      @if (tokens.actions.length) {
+        <div>
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Actions</p>
+          <div class="flex flex-wrap gap-1.5">
+            @for (a of tokens.actions; track a) {
+              <span class="text-xs px-2 py-0.5 rounded border border-gray-200 text-gray-600">{{ a }}</span>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Sections -->
+      @if (tokens.sections.length) {
+        <div>
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Sections</p>
+          <div class="flex flex-col gap-1">
+            @for (s of tokens.sections; track s) {
+              <div class="flex items-center gap-1.5">
+                <div class="w-1 h-1 rounded-full bg-gray-300 shrink-0"></div>
+                <span class="text-xs text-gray-600">{{ s }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Navigation -->
+      @if (tokens.navigation.length) {
+        <div>
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Navigation</p>
+          <div class="flex flex-wrap gap-1.5">
+            @for (n of tokens.navigation; track n) {
+              <span class="text-xs px-2 py-0.5 rounded bg-gray-50 text-gray-500 border border-gray-100">{{ n }}</span>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Stats -->
+      @if (tokens.stats.length) {
+        <div>
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">KPIs / Stats</p>
+          <div class="flex flex-col gap-1">
+            @for (s of tokens.stats; track s.label) {
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-gray-600">{{ s.label }}</span>
+                <span class="text-xs text-gray-400">{{ s.value }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+    </div>
+  }
+
 </div>

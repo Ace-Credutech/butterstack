@@ -1,0 +1,57 @@
+<div class="flex items-center justify-between mb-2">
+  <span class="text-xs font-medium text-gray-500">Structure</span>
+  @if (parsing) {
+    <span class="text-xs text-green-500 flex items-center gap-1">
+      <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+      </svg>
+      Saving...
+    </span>
+  }
+</div>
+
+<!-- List items -->
+<div class="flex flex-col gap-0.5 mb-2">
+  @for (item of items; track item.id; let i = $index) {
+    <div
+      class="flex items-center gap-1.5 group rounded px-1 py-0.5 hover:bg-gray-50"
+      [style.padding-left]="(item.depth * 14 + 4) + 'px'">
+
+      <!-- Number badge -->
+      <span class="text-xs font-mono text-gray-300 shrink-0 w-7 text-right select-none">
+        {{ numbers[i] }}
+      </span>
+
+      <!-- Name input -->
+      <input
+        #itemInput
+        [value]="item.name"
+        (input)="onNameChange(i, $any($event.target).value)"
+        (keydown.enter)="onEnter(i, $event)"
+        (keydown.tab)="onTab(i, $event)"
+        (keydown.backspace)="onBackspace(i, $event)"
+        placeholder="Module name..."
+        class="flex-1 text-xs text-gray-700 bg-transparent border-none outline-none placeholder-gray-200 min-w-0"/>
+
+      <!-- Delete -->
+      <button
+        (click)="remove(i)"
+        class="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-400 transition shrink-0 text-sm leading-none">
+        ×
+      </button>
+    </div>
+  }
+</div>
+
+<!-- Add button -->
+<button
+  (click)="addRoot()"
+  class="flex items-center gap-1 text-xs text-gray-300 hover:text-green-600 transition px-1">
+  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+  </svg>
+  Add item
+</button>
+
+<p class="text-xs text-gray-200 mt-1.5">Enter = next item &nbsp;·&nbsp; Tab / Shift+Tab = indent</p>

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, OnInit } from '@angular/core'
+import { Component, ChangeDetectorRef, OnInit, ViewChild } from '@angular/core'
 import { Router, ActivatedRoute }                from '@angular/router'
 import { HttpClient }                            from '@angular/common/http'
 import { PrototypeService }                      from '../../services/prototype.service'
@@ -17,6 +17,7 @@ const API = 'http://localhost:3000'
   templateUrl: './workspace.component.html',
 })
 export class WorkspaceComponent implements OnInit {
+  @ViewChild(ModulesPanelComponent) modulesPanel!: ModulesPanelComponent
   projectId   = ''
   projectName = ''
 
@@ -127,6 +128,12 @@ export class WorkspaceComponent implements OnInit {
         this.cdr.detectChanges()
       },
       error: () => { this.loading = false; this.cdr.detectChanges() },
+    })
+  }
+
+  onTextForParse(text: string): void {
+    this.http.post(`${API}/modules/parse`, { text, projectId: this.projectId }).subscribe({
+      next: () => this.modulesPanel?.fetchTree()
     })
   }
 

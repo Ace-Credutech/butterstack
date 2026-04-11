@@ -8,6 +8,7 @@ import projects            from './routes/projects/index.ts'
 import modulesCreate       from './routes/modules/create.ts'
 import modulesAutoAssign   from './routes/modules/auto-assign.ts'
 import modulesContent      from './routes/modules/content.ts'
+import modulesParse        from './routes/modules/parse.ts'
 import history             from './routes/history/index.ts'
 import suggestions         from './routes/suggestions/index.ts'
 
@@ -29,6 +30,7 @@ app.route('/projects',             projects)
 app.route('/modules',              modulesCreate)
 app.route('/modules',              modulesAutoAssign)
 app.route('/modules',              modulesContent)
+app.route('/modules',              modulesParse)
 app.route('/history',              history)
 
 // ── Suggestions (autocomplete) ────────────────────────────────────────────────

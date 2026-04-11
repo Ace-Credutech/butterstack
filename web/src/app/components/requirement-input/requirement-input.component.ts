@@ -23,8 +23,9 @@ export class RequirementInputComponent implements OnDestroy, OnChanges {
   @Input() restoredTitle:       string          = ''
   @Input() restoredDescription: string          = ''
 
-  @Output() inputChanged = new EventEmitter<RequirementInput>()
-  @Output() regenerate   = new EventEmitter<{ title: string; description: string; feedback: string }>()
+  @Output() inputChanged  = new EventEmitter<RequirementInput>()
+  @Output() regenerate    = new EventEmitter<{ title: string; description: string; feedback: string }>()
+  @Output() textForParse  = new EventEmitter<string>()
 
   title        = ''
   description  = ''
@@ -36,8 +37,9 @@ export class RequirementInputComponent implements OnDestroy, OnChanges {
   showSuggestions              = false
   activeSuggestionField: 'title' | 'desc' | null = null
 
-  private input$ = new Subject<RequirementInput>()
+  private input$   = new Subject<RequirementInput>()
   private suggest$ = new Subject<{ q: string; field: 'title' | 'desc' }>()
+  private parse$   = new Subject<string>()
 
   private inputSub = this.input$
     .pipe(
@@ -46,6 +48,14 @@ export class RequirementInputComponent implements OnDestroy, OnChanges {
       filter(v => !!v.title.trim() && !!v.description.trim())
     )
     .subscribe(v => this.inputChanged.emit(v))
+
+  private parseSub = this.parse$
+    .pipe(
+      debounceTime(1200),
+      distinctUntilChanged(),
+      filter(t => t.trim().length > 3)
+    )
+    .subscribe(text => this.textForParse.emit(text))
 
   private suggestSub = this.suggest$
     .pipe(debounceTime(300), distinctUntilChanged((a, b) => a.q === b.q))
@@ -76,6 +86,8 @@ export class RequirementInputComponent implements OnDestroy, OnChanges {
   onInput(): void {
     this.wordCount = this.description.trim().split(/\s+/).filter(Boolean).length
     this.input$.next({ title: this.title, description: this.description })
+    const text = [this.title, this.description].filter(Boolean).join('\n')
+    if (text.trim()) this.parse$.next(text)
   }
 
   onTitleInput(): void {
@@ -112,5 +124,5 @@ export class RequirementInputComponent implements OnDestroy, OnChanges {
     this.showFeedback = false
   }
 
-  ngOnDestroy(): void { this.inputSub.unsubscribe(); this.suggestSub.unsubscribe() }
+  ngOnDestroy(): void { this.inputSub.unsubscribe(); this.suggestSub.unsubscribe(); this.parseSub.unsubscribe() }
 }

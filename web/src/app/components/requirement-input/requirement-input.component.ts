@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core'
+import { Component, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges } from '@angular/core'
 import { FormsModule }                                        from '@angular/forms'
 import { HttpClient }                                         from '@angular/common/http'
 import { Subject, debounceTime, distinctUntilChanged, filter } from 'rxjs'
@@ -16,10 +16,12 @@ const API = 'http://localhost:3000'
   imports:     [FormsModule],
   templateUrl: './requirement-input.component.html',
 })
-export class RequirementInputComponent implements OnDestroy {
-  @Input() tokens:           UITokens | null = null
-  @Input() cleanPrompt:      string          = ''
-  @Input() activeModuleName: string | null   = null
+export class RequirementInputComponent implements OnDestroy, OnChanges {
+  @Input() tokens:              UITokens | null = null
+  @Input() cleanPrompt:         string          = ''
+  @Input() activeModuleName:    string | null   = null
+  @Input() restoredTitle:       string          = ''
+  @Input() restoredDescription: string          = ''
 
   @Output() inputChanged = new EventEmitter<RequirementInput>()
   @Output() regenerate   = new EventEmitter<{ title: string; description: string; feedback: string }>()
@@ -59,6 +61,17 @@ export class RequirementInputComponent implements OnDestroy {
     })
 
   constructor(private http: HttpClient) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // When parent restores a version or page loads history → fill in the fields
+    if (changes['restoredTitle'] && this.restoredTitle) {
+      this.title = this.restoredTitle
+    }
+    if (changes['restoredDescription'] && this.restoredDescription) {
+      this.description = this.restoredDescription
+      this.wordCount   = this.description.trim().split(/\s+/).filter(Boolean).length
+    }
+  }
 
   onInput(): void {
     this.wordCount = this.description.trim().split(/\s+/).filter(Boolean).length

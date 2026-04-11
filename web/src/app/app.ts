@@ -20,6 +20,8 @@ export class App implements OnInit {
   cleanPrompt    = ''
   loading        = false
   source         = ''
+  restoredTitle       = ''
+  restoredDescription = ''
   versions:      VersionEntry[]  = []
   versionCounter = 0
   meetingActive  = false
@@ -27,6 +29,7 @@ export class App implements OnInit {
 
   // Active module — when set, requirement panel is bound to this module
   activeModule:  ModuleNode | null = null
+  appFullscreen  = false
 
   private meetingStart    = 0
   private meetingInterval: ReturnType<typeof setInterval> | null = null
@@ -47,12 +50,14 @@ export class App implements OnInit {
           dbId:        h.id,
           label:       h.label,
           time:        new Date(h.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          tokens:      h.tokens,
-          cleanPrompt: h.clean_prompt ?? '',
-          source:      h.source ?? '',
-          approved:    h.approved,
-          approvedAt:  h.approved_at ?? undefined,
-          modulePath:  h.module_path ?? undefined,
+          tokens:          h.tokens,
+          cleanPrompt:     h.clean_prompt ?? '',
+          rawTitle:        h.raw_title ?? '',
+          rawDescription:  h.raw_description ?? '',
+          source:          h.source ?? '',
+          approved:        h.approved,
+          approvedAt:      h.approved_at ?? undefined,
+          modulePath:      h.module_path ?? undefined,
         }))
 
         this.versionCounter = this.versions[0]?.id ?? 0
@@ -60,9 +65,11 @@ export class App implements OnInit {
         // Restore last prototype state
         const latest = this.versions[0]
         if (latest) {
-          this.tokens      = latest.tokens
-          this.cleanPrompt = latest.cleanPrompt
-          this.source      = latest.source
+          this.tokens             = latest.tokens
+          this.cleanPrompt        = latest.cleanPrompt
+          this.source             = latest.source
+          this.restoredTitle      = latest.rawTitle
+          this.restoredDescription = latest.rawDescription
         }
 
         this.cdr.detectChanges()
@@ -70,33 +77,30 @@ export class App implements OnInit {
     })
   }
 
-  // Free-form input OR module-bound input (when activeModule is set)
   onInputChanged({ title, description }: RequirementInput): void {
     this.loading = true
 
     if (this.activeModule) {
-      // Module-bound: save to module, generate docs for it
       this.http.post<any>(`${API}/modules/${this.activeModule.id}/content`, { title, description }).subscribe({
         next: res => {
-          this.tokens      = res.tokens
-          this.cleanPrompt = res.cleanPrompt
-          this.source      = res.source
-          this.loading     = false
+          this.tokens       = res.tokens
+          this.cleanPrompt  = res.cleanPrompt
+          this.source       = res.source
+          this.loading      = false
           this.activeModule = { ...this.activeModule!, rawTitle: title, rawDescription: description, cleanPrompt: res.cleanPrompt, tokens: res.tokens }
-          this.saveVersion(title, res.tokens, res.source)
+          this.saveVersion(title, res.tokens, res.source, title, description)
           this.cdr.detectChanges()
         },
         error: () => { this.loading = false; this.cdr.detectChanges() }
       })
     } else {
-      // Free-form: existing generate flow
       this.prototype.generate(title, description).subscribe({
         next:  res => {
           this.tokens      = res.tokens
           this.cleanPrompt = res.cleanPrompt
           this.source      = res.cached ? 'cache' : 'openai'
           this.loading     = false
-          this.saveVersion(title, res.tokens, res.source)
+          this.saveVersion(title, res.tokens, res.source, title, description)
           this.cdr.detectChanges()
         },
         error: () => { this.loading = false; this.cdr.detectChanges() },
@@ -112,7 +116,7 @@ export class App implements OnInit {
         this.cleanPrompt = res.cleanPrompt
         this.source      = 'regenerated'
         this.loading     = false
-        this.saveVersion(`[Regen] ${title}`, res.tokens, 'openai')
+        this.saveVersion(`[Regen] ${title}`, res.tokens, 'openai', title, description)
         this.cdr.detectChanges()
       },
       error: () => { this.loading = false; this.cdr.detectChanges() },
@@ -131,9 +135,11 @@ export class App implements OnInit {
   }
 
   onRestoreVersion(v: VersionEntry): void {
-    this.tokens      = v.tokens
-    this.cleanPrompt = v.cleanPrompt
-    this.source      = `restored v${v.id}`
+    this.tokens              = v.tokens
+    this.cleanPrompt         = v.cleanPrompt
+    this.source              = `restored v${v.id}`
+    this.restoredTitle       = v.rawTitle
+    this.restoredDescription = v.rawDescription
     this.cdr.detectChanges()
   }
 
@@ -165,6 +171,16 @@ export class App implements OnInit {
     }
   }
 
+  toggleAppFullscreen(): void {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen()
+      this.appFullscreen = true
+    } else {
+      document.exitFullscreen()
+      this.appFullscreen = false
+    }
+  }
+
   onToggleMeeting(): void {
     this.meetingActive = !this.meetingActive
     if (this.meetingActive) {
@@ -179,26 +195,23 @@ export class App implements OnInit {
     }
   }
 
-  private saveVersion(label: string, tokens: UITokens, source: string): void {
+  private saveVersion(label: string, tokens: UITokens, source: string, rawTitle = '', rawDescription = ''): void {
     this.versionCounter++
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     const entry: VersionEntry = {
       id: this.versionCounter, label, time, tokens,
-      cleanPrompt: this.cleanPrompt, source,
+      cleanPrompt: this.cleanPrompt, source, rawTitle, rawDescription,
     }
     this.versions = [entry, ...this.versions].slice(0, 50)
 
     // Persist to DB
     this.http.post<{ id: number }>(`${API}/history`, {
-      label,
-      rawTitle:       label,
+      label, rawTitle, rawDescription,
       cleanPrompt:    this.cleanPrompt,
-      tokens,
-      source,
+      tokens, source,
       moduleId:       this.activeModule?.id ?? null,
     }).subscribe({
       next: res => {
-        // Attach dbId so approve/unapprove can reference it
         this.versions = this.versions.map(v => v.id === entry.id ? { ...v, dbId: res.id } : v)
       }
     })

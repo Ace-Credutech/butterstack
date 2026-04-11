@@ -17,6 +17,18 @@
       <div class="w-1.5 h-1.5 rounded-full bg-green-500" [class.animate-pulse]="loading"></div>
       <span class="text-xs text-gray-400">{{ loading ? 'Generating...' : 'Live' }}</span>
     </div>
+    <!-- App fullscreen -->
+    <button (click)="toggleAppFullscreen()" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition" title="Toggle fullscreen">
+      @if (!appFullscreen) {
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+        </svg>
+      } @else {
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5l5.25 5.25"/>
+        </svg>
+      }
+    </button>
     <div class="w-7 h-7 rounded-full bg-green-600 flex items-center justify-center text-white text-xs font-semibold">BA</div>
   </header>
 
@@ -26,7 +38,6 @@
     <!-- Left: Modules + History stacked — fixed 240px -->
     <div class="w-60 flex flex-col border-r border-gray-200 shrink-0">
 
-      <!-- Modules Panel — grows -->
       <app-modules-panel
         class="flex-1 flex flex-col bg-white border-b border-gray-200 min-h-0"
         style="display:flex;flex-direction:column;"
@@ -34,7 +45,6 @@
         (restore)="onRestoreVersion($event)"
         (moduleSelected)="onModuleSelected($event)"/>
 
-      <!-- Version History — fixed bottom -->
       <app-version-timeline
         class="h-64 flex flex-col bg-white shrink-0"
         style="display:flex;flex-direction:column;"
@@ -47,23 +57,25 @@
 
     </div>
 
-    <!-- Second: Requirement Input -->
-    <app-requirement-input
-      class="w-96 flex flex-col border-r border-gray-200 bg-white shrink-0"
-      style="display:flex;flex-direction:column;"
-      [tokens]="tokens"
-      [cleanPrompt]="cleanPrompt"
-      [activeModuleName]="activeModule?.name ?? null"
-      (inputChanged)="onInputChanged($event)"
-      (regenerate)="onRegenerate($event)"/>
-
-    <!-- Right: Prototype Preview — fills remaining space -->
+    <!-- Center: Prototype Preview — fills remaining space -->
     <app-prototype-preview
       class="flex flex-col flex-1 min-w-0 bg-gray-50"
       style="display: flex; flex-direction: column;"
       [tokens]="tokens"
       [loading]="loading"
       [source]="source"/>
+
+    <!-- Right: Requirement Input -->
+    <app-requirement-input
+      class="w-96 flex flex-col border-l border-gray-200 bg-white shrink-0"
+      style="display:flex;flex-direction:column;"
+      [tokens]="tokens"
+      [cleanPrompt]="cleanPrompt"
+      [activeModuleName]="activeModule?.name ?? null"
+      [restoredTitle]="restoredTitle"
+      [restoredDescription]="restoredDescription"
+      (inputChanged)="onInputChanged($event)"
+      (regenerate)="onRegenerate($event)"/>
 
   </div>
 </div>

@@ -32,12 +32,14 @@ export interface RegenerateResponse extends GenerateResponse {
 }
 
 export interface VersionEntry {
-  id:          number
-  label:       string
-  time:        string
-  tokens:      UITokens
-  cleanPrompt: string
-  source:      string
+  id:           number
+  label:        string
+  time:         string
+  tokens:       UITokens
+  cleanPrompt:  string
+  rawTitle:     string
+  rawDescription: string
+  source:       string
   approved?:    boolean
   approvedAt?:  string
   modulePath?:  string[]

@@ -1,5 +1,6 @@
-import { Hono } from 'hono'
-import { cors }  from 'hono/cors'
+import { Hono }        from 'hono'
+import { cors }        from 'hono/cors'
+import { serveStatic } from 'hono/bun'
 
 import prototypeGenerate   from './routes/prototype/generate.ts'
 import prototypeRegenerate from './routes/prototype/regenerate.ts'
@@ -16,41 +17,42 @@ const app = new Hono()
 
 app.use('*', cors())
 
-app.get('/', (c) => c.json({ status: 'ok', service: 'butterstack-api' }))
+// ── API (/api/*) ───────────────────────────────────────────────────────────
+const api = new Hono()
 
-// ── Prototype ─────────────────────────────────────────────────────────────────
-app.route('/prototype/generate',   prototypeGenerate)
-app.route('/prototype/regenerate', prototypeRegenerate)
+api.get('/', (c) => c.json({ status: 'ok', service: 'butterstack-api' }))
 
-// ── Requirements ──────────────────────────────────────────────────────────────
-app.route('/requirements/create',  requirementsCreate)
+api.route('/prototype/generate',   prototypeGenerate)
+api.route('/prototype/regenerate', prototypeRegenerate)
+api.route('/requirements/create',  requirementsCreate)
+api.route('/projects',             projects)
+api.route('/modules',              modulesCreate)
+api.route('/modules',              modulesAutoAssign)
+api.route('/modules',              modulesContent)
+api.route('/modules',              modulesParse)
+api.route('/history',              history)
+api.route('/suggestions',          suggestions)
 
-// ── Modules (recursive tree) ──────────────────────────────────────────────────
-app.route('/projects',             projects)
-app.route('/modules',              modulesCreate)
-app.route('/modules',              modulesAutoAssign)
-app.route('/modules',              modulesContent)
-app.route('/modules',              modulesParse)
-app.route('/history',              history)
-
-// ── Suggestions (autocomplete) ────────────────────────────────────────────────
-app.route('/suggestions',          suggestions)
-
-// ── Dictionary health (how smart is local processing?) ────────────────────────
-app.get('/dictionary/stats', async (c) => {
+api.get('/dictionary/stats', async (c) => {
   const { dictionaryStats } = await import('./lib/dictionary.ts')
   return c.json(dictionaryStats())
 })
 
-// ── Coming soon ───────────────────────────────────────────────────────────────
-// app.route('/requirements/list',   requirementsList)
-// app.route('/requirements/update', requirementsUpdate)
-// app.route('/meetings/start',      meetingsStart)
-// app.route('/meetings/end',        meetingsEnd)
-// app.route('/auth/sign-in',        authSignIn)
-// app.route('/project/tokens',      projectTokens)
+app.route('/api', api)
+
+// ── Frontend (Angular static build) ───────────────────────────────────────
+// Serve built Angular app — run `cd web && ng build` first
+app.use('/*', serveStatic({ root: '../web/dist/web/browser' }))
+
+// SPA fallback — all unknown routes return index.html (Angular router handles them)
+app.get('/*', async (c) => {
+  const file = Bun.file('../web/dist/web/browser/index.html')
+  const exists = await file.exists()
+  if (!exists) return c.text('Run `cd web && ng build` to build the frontend first.', 404)
+  return c.html(await file.text())
+})
 
 export default {
-  port: 3000,
+  port: Number(process.env.PORT ?? 3000),
   fetch: app.fetch,
 }

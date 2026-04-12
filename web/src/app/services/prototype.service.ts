@@ -1,25 +1,20 @@
-import { Injectable }                from '@angular/core'
-import { HttpClient }               from '@angular/common/http'
-import { Observable }               from 'rxjs'
+import { Injectable }  from '@angular/core'
+import { ApiService }  from './api.service'
 import { GenerateResponse, RegenerateResponse } from '../models/ui-tokens.model'
-
-const API = 'http://localhost:3000'
 
 @Injectable({ providedIn: 'root' })
 export class PrototypeService {
-  constructor(private http: HttpClient) {}
+  constructor(private api: ApiService) {}
 
-  generate(title: string, description: string): Observable<GenerateResponse> {
-    return this.http.post<GenerateResponse>(`${API}/prototype/generate`, { title, description })
+  generate(title: string, description: string): Promise<GenerateResponse> {
+    return this.api.post<GenerateResponse>('/prototype/generate', { title, description })
   }
 
-  regenerate(title: string, description: string, feedback: string): Observable<RegenerateResponse> {
-    return this.http.post<RegenerateResponse>(`${API}/prototype/regenerate`, { title, description, feedback })
+  regenerate(title: string, description: string, feedback: string): Promise<RegenerateResponse> {
+    return this.api.post<RegenerateResponse>('/prototype/regenerate', { title, description, feedback })
   }
 
-  autoAssign(tokens: any, label: string, cleanPrompt: string, projectId: string): Observable<{ moduleId: number; modulePath: string[]; path: string }> {
-    return this.http.post<{ moduleId: number; modulePath: string[]; path: string }>(
-      `${API}/modules/auto-assign`, { tokens, label, cleanPrompt, projectId }
-    )
+  autoAssign(tokens: any, label: string, cleanPrompt: string, projectId: string): Promise<{ moduleId: number; modulePath: string[]; path: string }> {
+    return this.api.post('/modules/auto-assign', { tokens, label, cleanPrompt, projectId })
   }
 }

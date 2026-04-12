@@ -9,11 +9,13 @@ Intelligent software delivery OS — collapses the full lifecycle (requirements 
 ## Dev Commands
 
 ```bash
-# API (Hono + Bun, port 3000)
-cd api && bun dev
+# Development (two terminals)
+cd api && bun dev          # API on :3000  (also serves built FE at localhost:3000)
+cd web && ng serve         # FE on :4200 with /api proxied to :3000 (HMR)
 
-# Frontend (Angular 19, port 4200)
-cd web && ng serve
+# Production — single server on :3000
+cd web && ng build         # builds to web/dist/web/browser/
+cd api && bun dev          # serves API at /api/* + Angular static at /*
 
 # DB migration (run once or after schema changes)
 cd api && bun migrate.ts

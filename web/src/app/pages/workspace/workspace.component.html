@@ -18,15 +18,15 @@
       Projects
     </button>
     <div class="w-px h-5 bg-gray-200"></div>
-    <span class="text-xs font-medium text-gray-700">{{ projectName || '...' }}</span>
+    <span class="text-xs font-medium text-gray-700">{{ projectName() || '...' }}</span>
     <div class="flex-1"></div>
     <div class="flex items-center gap-1.5">
-      <div class="w-1.5 h-1.5 rounded-full bg-green-500" [class.animate-pulse]="loading"></div>
-      <span class="text-xs text-gray-400">{{ loading ? 'Generating...' : 'Live' }}</span>
+      <div class="w-1.5 h-1.5 rounded-full bg-green-500" [class.animate-pulse]="loading()"></div>
+      <span class="text-xs text-gray-400">{{ loading() ? 'Generating...' : 'Live' }}</span>
     </div>
     <!-- App fullscreen -->
     <button (click)="toggleAppFullscreen()" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition" title="Toggle fullscreen">
-      @if (!appFullscreen) {
+      @if (!appFullscreen()) {
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
         </svg>
@@ -48,7 +48,7 @@
       <app-modules-panel
         class="flex-1 flex flex-col bg-white border-b border-gray-200 min-h-0"
         style="display:flex;flex-direction:column;"
-        [approvedVersions]="versions"
+        [approvedVersions]="versions()"
         [projectId]="projectId"
         (restore)="onRestoreVersion($event)"
         (moduleSelected)="onModuleSelected($event)"/>
@@ -56,9 +56,9 @@
       <app-version-timeline
         class="h-64 flex flex-col bg-white shrink-0"
         style="display:flex;flex-direction:column;"
-        [versions]="versions"
-        [meetingActive]="meetingActive"
-        [meetingTime]="meetingTime"
+        [versions]="versions()"
+        [meetingActive]="meetingActive()"
+        [meetingTime]="meetingTime()"
         (restore)="onRestoreVersion($event)"
         (approve)="onApproveVersion($event)"
         (toggleMeeting)="onToggleMeeting()"/>
@@ -69,19 +69,19 @@
     <app-prototype-preview
       class="flex flex-col flex-1 min-w-0 bg-gray-50"
       style="display: flex; flex-direction: column;"
-      [tokens]="tokens"
-      [loading]="loading"
-      [source]="source"/>
+      [tokens]="tokens()"
+      [loading]="loading()"
+      [source]="source()"/>
 
     <!-- Right: Requirement Input -->
     <app-requirement-input
       class="w-96 flex flex-col border-l border-gray-200 bg-white shrink-0"
       style="display:flex;flex-direction:column;"
-      [tokens]="tokens"
-      [cleanPrompt]="cleanPrompt"
+      [tokens]="tokens()"
+      [cleanPrompt]="cleanPrompt()"
       [activeModuleName]="activeModule?.name ?? null"
-      [restoredTitle]="restoredTitle"
-      [restoredDescription]="restoredDescription"
+      [restoredTitle]="restoredTitle()"
+      [restoredDescription]="restoredDescription()"
       (inputChanged)="onInputChanged($event)"
       (regenerate)="onRegenerate($event)"
       (textForParse)="onTextForParse($event)"/>

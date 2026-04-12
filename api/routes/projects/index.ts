@@ -27,11 +27,11 @@ app.post('/', async (c) => {
 })
 
 app.get('/:id', async (c) => {
-  const id = c.req.param('id')
-  const result = await query(
-    `SELECT id, name, slug, description, status, created_at, updated_at FROM projects WHERE id = $1 OR slug = $1`,
-    [id]
-  )
+  const id  = c.req.param('id')
+  const num = parseInt(id)
+  const result = isNaN(num)
+    ? await query(`SELECT id, name, slug, description, status, created_at, updated_at FROM projects WHERE slug = $1`, [id])
+    : await query(`SELECT id, name, slug, description, status, created_at, updated_at FROM projects WHERE id = $1 OR slug = $2`, [num, id])
   if (!result.rows.length) return c.json({ error: 'not found' }, 404)
   return c.json(result.rows[0])
 })

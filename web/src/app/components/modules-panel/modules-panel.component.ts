@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core'
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, signal } from '@angular/core'
 import { NgTemplateOutlet } from '@angular/common'
-import { HttpClient } from '@angular/common/http'
+import { ApiService }       from '../../services/api.service'
 import { ModuleStructureInputComponent } from '../module-structure-input/module-structure-input.component'
 import type { VersionEntry } from '../../models/ui-tokens.model'
 
@@ -22,50 +22,49 @@ export class ModulesPanelComponent implements OnInit, OnChanges {
   @Output() restore        = new EventEmitter<VersionEntry>()
   @Output() moduleSelected = new EventEmitter<ModuleNode>()
 
-  tree:       ModuleNode[] = []
-  showImport  = false
-  importText  = ''
-  parsing     = false
-  selectedId: number | null = null
+  tree       = signal<ModuleNode[]>([])
+  showImport = signal(false)
+  importText = signal('')
+  parsing    = signal(false)
+  selectedId = signal<number | null>(null)
 
-  constructor(private http: HttpClient) {}
+  constructor(private api: ApiService) {}
 
-  ngOnInit(): void { this.fetchTree() }
+  ngOnInit() { this.fetchTree() }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['approvedVersions'] || changes['projectId']) { this.fetchTree() }
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['approvedVersions'] || changes['projectId']) this.fetchTree()
   }
 
-  toggleImport(): void {
-    this.showImport = !this.showImport
-    if (this.showImport) this.importText = this.treeToText(this.tree)
+  toggleImport() {
+    this.showImport.update(v => !v)
+    if (this.showImport()) this.importText.set(this.treeToText(this.tree()))
   }
 
-  onCommitted(text: string): void {
+  async onCommitted(text: string) {
     if (!text.trim()) return
-    this.parsing = true
-    this.http.post<{ ok: boolean }>(`http://localhost:3000/modules/parse`, {
-      text, projectId: this.projectId
-    }).subscribe({
-      next:  () => { this.parsing = false; this.fetchTree() },
-      error: () => { this.parsing = false },
-    })
+    this.parsing.set(true)
+    try {
+      await this.api.post('/modules/parse', { text, projectId: this.projectId })
+      await this.fetchTree()
+    } finally {
+      this.parsing.set(false)
+    }
   }
 
-  fetchTree(): void {
-    this.http.get<any[]>(`http://localhost:3000/modules/tree?projectId=${this.projectId}`).subscribe({
-      next: rows => { this.tree = this.mapNodes(rows) }
-    })
+  async fetchTree() {
+    const rows = await this.api.get<any[]>('/modules/tree', { projectId: this.projectId })
+    this.tree.set(this.mapNodes(rows))
   }
 
-  toggle(node: ModuleNode): void { node.expanded = !node.expanded }
+  toggle(node: ModuleNode) { node.expanded = !node.expanded }
 
-  selectModule(node: ModuleNode): void {
-    this.selectedId = node.id
+  selectModule(node: ModuleNode) {
+    this.selectedId.set(node.id)
     this.moduleSelected.emit(node)
   }
 
-  get approvedCount(): number { return this.approvedVersions.filter(v => v.approved).length }
+  get approvedCount() { return this.approvedVersions.filter(v => v.approved).length }
 
   private treeToText(nodes: ModuleNode[], prefix = ''): string {
     return nodes.map((n, i) => {

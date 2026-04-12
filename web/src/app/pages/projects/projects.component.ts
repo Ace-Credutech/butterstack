@@ -1,11 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core'
-import { Router }             from '@angular/router'
-import { HttpClient }         from '@angular/common/http'
-import { FormsModule }        from '@angular/forms'
+import { Component, OnInit, signal } from '@angular/core'
+import { Router }      from '@angular/router'
+import { FormsModule } from '@angular/forms'
+import { ApiService }  from '../../services/api.service'
 
 interface Project { id: number; name: string; slug: string; description: string; status: string; created_at: string; updated_at: string }
-
-const API = 'http://localhost:3000'
 
 @Component({
   selector:    'app-projects',
@@ -14,29 +12,28 @@ const API = 'http://localhost:3000'
   templateUrl: './projects.component.html',
 })
 export class ProjectsComponent implements OnInit {
-  projects: Project[] = []
-  showCreate  = false
-  newName     = ''
-  newDesc     = ''
-  creating    = false
+  projects  = signal<Project[]>([])
+  showCreate = signal(false)
+  creating   = signal(false)
+  newName    = ''
+  newDesc    = ''
 
-  constructor(private http: HttpClient, private router: Router, private cdr: ChangeDetectorRef) {}
+  constructor(private api: ApiService, private router: Router) {}
 
-  ngOnInit(): void { this.load() }
+  async ngOnInit() { await this.load() }
 
-  load(): void {
-    this.http.get<Project[]>(`${API}/projects`).subscribe({ next: p => { this.projects = p; this.cdr.detectChanges() } })
+  async load() {
+    const data = await this.api.get<Project[]>('/projects')
+    this.projects.set(data)
   }
 
-  open(p: Project): void { this.router.navigate(['/projects', p.id]) }
+  open(p: Project) { this.router.navigate(['/projects', p.id]) }
 
-  create(): void {
+  async create() {
     if (!this.newName.trim()) return
-    this.creating = true
-    this.http.post<Project>(`${API}/projects`, { name: this.newName, description: this.newDesc }).subscribe({
-      next: p => { this.router.navigate(['/projects', p.id]) },
-      error: () => { this.creating = false }
-    })
+    this.creating.set(true)
+    const p = await this.api.post<Project>('/projects', { name: this.newName, description: this.newDesc })
+    this.router.navigate(['/projects', p.id])
   }
 
   timeAgo(iso: string): string {

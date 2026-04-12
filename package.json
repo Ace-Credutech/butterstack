@@ -1,0 +1,8 @@
+{
+  "name": "butterstack",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "setup": "bun install --cwd api && bun install --cwd web && (pip3 install graphifyy -q 2>/dev/null || pip install graphifyy -q 2>/dev/null || python3 -m pip install graphifyy -q || echo 'ERROR: Could not install graphifyy. Run manually: pip3 install graphifyy') && python3 -m graphify hook install && echo 'Setup complete'"
+  }
+}

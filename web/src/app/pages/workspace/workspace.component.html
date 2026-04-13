@@ -79,12 +79,11 @@
       style="display:flex;flex-direction:column;"
       [tokens]="tokens()"
       [cleanPrompt]="cleanPrompt()"
-      [activeModuleName]="activeModule?.name ?? null"
+      [projectId]="projectId"
       [restoredTitle]="restoredTitle()"
       [restoredDescription]="restoredDescription()"
-      (inputChanged)="onInputChanged($event)"
-      (regenerate)="onRegenerate($event)"
-      (textForParse)="onTextForParse($event)"/>
+      (requirementSaved)="onRequirementSaved($event)"
+      (regenerate)="onRegenerate($event)"/>
 
   </div>
 </div>

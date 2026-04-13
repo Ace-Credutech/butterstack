@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, signal } from '@angular/core'
 import { Router, ActivatedRoute }  from '@angular/router'
 import { PrototypeService }        from '../../services/prototype.service'
 import { ApiService }              from '../../services/api.service'
-import { RequirementInputComponent, RequirementInput } from '../../components/requirement-input/requirement-input.component'
+import { RequirementInputComponent, RequirementSaved } from '../../components/requirement-input/requirement-input.component'
 import { PrototypePreviewComponent }  from '../../components/prototype-preview/prototype-preview.component'
 import { VersionTimelineComponent }   from '../../components/version-timeline/version-timeline.component'
 import { ModulesPanelComponent, ModuleNode } from '../../components/modules-panel/modules-panel.component'
@@ -76,29 +76,14 @@ export class WorkspaceComponent implements OnInit {
     }
   }
 
-  async onInputChanged({ title, description }: RequirementInput) {
-    this.loading.set(true)
-    try {
-      if (this.activeModule) {
-        const res = await this.api.post<any>(`/modules/${this.activeModule.id}/content`, { title, description })
-        this.tokens.set(res.tokens)
-        this.cleanPrompt.set(res.cleanPrompt)
-        this.source.set(res.source)
-        this.activeModule = { ...this.activeModule, rawTitle: title, rawDescription: description, cleanPrompt: res.cleanPrompt, tokens: res.tokens }
-        await this.saveVersion(title, res.tokens, res.source, title, description)
-      } else {
-        const res = await this.prototype.generate(title, description)
-        this.tokens.set(res.tokens)
-        this.cleanPrompt.set(res.cleanPrompt)
-        this.source.set(res.cached ? 'cache' : 'openai')
-        await this.saveVersion(title, res.tokens, res.source ?? '', title, description)
-      }
-    } finally {
-      this.loading.set(false)
-    }
+  onRequirementSaved({ tokens, cleanPrompt, moduleId, moduleName }: RequirementSaved): void {
+    this.tokens.set(tokens)
+    this.cleanPrompt.set(cleanPrompt)
+    this.source.set('requirement')
+    this.saveVersion(moduleName ?? cleanPrompt.slice(0, 60), tokens, 'requirement', cleanPrompt, '')
   }
 
-  async onRegenerate({ title, description, feedback }: { title: string; description: string; feedback: string }) {
+  async onRegenerate({ title, description, feedback }: { title: string; description: string; feedback: string }): Promise<void> {
     this.loading.set(true)
     try {
       const res = await this.prototype.regenerate(title, description, feedback)
@@ -109,11 +94,6 @@ export class WorkspaceComponent implements OnInit {
     } finally {
       this.loading.set(false)
     }
-  }
-
-  async onTextForParse(text: string) {
-    await this.api.post('/modules/parse', { text, projectId: this.projectId })
-    this.modulesPanel?.fetchTree()
   }
 
   onModuleSelected(node: ModuleNode) {

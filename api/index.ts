@@ -2,10 +2,13 @@ import { Hono }        from 'hono'
 import { cors }        from 'hono/cors'
 import { serveStatic } from 'hono/bun'
 
+import { requireAuth }     from './middleware/auth.ts'
+import auth                from './routes/auth/index.ts'
 import prototypeGenerate   from './routes/prototype/generate.ts'
 import prototypeRegenerate from './routes/prototype/regenerate.ts'
 import requirementsCreate  from './routes/requirements/create.ts'
 import projects            from './routes/projects/index.ts'
+import projectMembers      from './routes/projects/members.ts'
 import modulesCreate       from './routes/modules/create.ts'
 import modulesAutoAssign   from './routes/modules/auto-assign.ts'
 import modulesContent      from './routes/modules/content.ts'
@@ -17,11 +20,14 @@ const app = new Hono()
 
 app.use('*', cors())
 
-// ── API (/api/*) ───────────────────────────────────────────────────────────
+// ── API (/api/*) ──────────────────���───────────────────���────────────────────
 const api = new Hono()
+
+api.use('*', requireAuth)
 
 api.get('/', (c) => c.json({ status: 'ok', service: 'butterstack-api' }))
 
+api.route('/auth', auth)
 api.route('/prototype/generate',   prototypeGenerate)
 api.route('/prototype/regenerate', prototypeRegenerate)
 api.route('/requirements/create',  requirementsCreate)
@@ -34,12 +40,19 @@ api.post('/requirements/preview', async (c) => {
   return c.json({ cleanPrompt: r.cleanPrompt })
 })
 api.route('/projects',             projects)
+api.route('/projects',             projectMembers)
 api.route('/modules',              modulesCreate)
 api.route('/modules',              modulesAutoAssign)
 api.route('/modules',              modulesContent)
 api.route('/modules',              modulesParse)
 api.route('/history',              history)
 api.route('/suggestions',          suggestions)
+
+api.get('/users', async (c) => {
+  const { query: dbQuery } = await import('./db.ts')
+  const result = await dbQuery(`SELECT id, name, email, mobile, country_code, created_at FROM users ORDER BY name`)
+  return c.json(result.rows)
+})
 
 api.get('/dictionary/stats', async (c) => {
   const { dictionaryStats } = await import('./lib/dictionary.ts')
@@ -48,7 +61,7 @@ api.get('/dictionary/stats', async (c) => {
 
 app.route('/api', api)
 
-// ── Frontend (Angular static build) ───────────────────────────────────────
+// ── Frontend (Angular static build) ──────────────────────��────────────────
 // Serve built Angular app — run `cd web && ng build` first
 app.use('/*', serveStatic({ root: '../web/dist/web/browser' }))
 

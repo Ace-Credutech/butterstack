@@ -85,13 +85,17 @@ Your response in this case should acknowledge and summarize what you'll build. T
 
 export async function generateNextQuestion(
   context: ElicitationContext,
-  messageHistory: { role: string; content: string }[]
+  messageHistory: { role: string; content: string }[],
+  previousSessionSummaries?: string[]
 ): Promise<ElicitationQuestion> {
   const contextSummary = buildContextSummary(context)
+  const prevContext = previousSessionSummaries?.length
+    ? `\n\nPrevious conversations in this project decided:\n${previousSessionSummaries.map((s, i) => `Session ${i + 1}: ${s}`).join('\n')}`
+    : ''
 
   const messages: ChatMessage[] = [
     { role: 'system', content: SYSTEM_PROMPT },
-    { role: 'user', content: `Current accumulated context:\n${contextSummary}\n\nConversation so far:\n${formatHistory(messageHistory)}\n\nGenerate the next question to ask. Consider what's missing and what would be most valuable to learn next.` },
+    { role: 'user', content: `Current accumulated context:\n${contextSummary}${prevContext}\n\nConversation so far:\n${formatHistory(messageHistory)}\n\nGenerate the next question to ask. Consider what's missing and what would be most valuable to learn next.` },
   ]
 
   const res = await aiChat(messages, MODELS.tokens, true, 512)

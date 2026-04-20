@@ -15,12 +15,15 @@ export const requireAuth = createMiddleware(async (c, next) => {
   }
 
   const header = c.req.header('Authorization')
-  if (!header?.startsWith('Bearer ')) {
+  const queryToken = new URL(c.req.url).searchParams.get('token')
+  const tokenStr = header?.startsWith('Bearer ') ? header.slice(7) : queryToken
+
+  if (!tokenStr) {
     return c.json({ error: 'unauthorized' }, 401)
   }
 
   try {
-    const payload = await verifyToken(header.slice(7))
+    const payload = await verifyToken(tokenStr)
     c.set('user', payload)
     c.set('userId', Number(payload.sub))
   } catch {

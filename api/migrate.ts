@@ -378,4 +378,37 @@ await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS user_input TEXT`)
 await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS ai_documentation TEXT`)
 console.log('✓ modules extended (user_input, ai_documentation)')
 
+// ── Comments ──────────────────────────────────────────────────────────────
+await query(`
+  CREATE TABLE IF NOT EXISTS comments (
+    id          SERIAL PRIMARY KEY,
+    project_id  VARCHAR(64)  NOT NULL,
+    entity_type VARCHAR(30)  NOT NULL,
+    entity_id   INTEGER      NOT NULL,
+    user_id     INTEGER      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    content     TEXT         NOT NULL,
+    resolved    BOOLEAN      NOT NULL DEFAULT FALSE,
+    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+  )
+`)
+await query(`CREATE INDEX IF NOT EXISTS idx_comments_entity ON comments (entity_type, entity_id)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_comments_project ON comments (project_id)`)
+console.log('✓ comments ready')
+
+// ── Extend features (summary, confidence, test/use cases) ─────────────────
+await query(`ALTER TABLE features ADD COLUMN IF NOT EXISTS summary TEXT`)
+await query(`ALTER TABLE features ADD COLUMN IF NOT EXISTS confidence_score JSONB`)
+await query(`ALTER TABLE features ADD COLUMN IF NOT EXISTS test_cases TEXT`)
+await query(`ALTER TABLE features ADD COLUMN IF NOT EXISTS use_cases TEXT`)
+console.log('✓ features extended (summary, confidence, test_cases, use_cases)')
+
+// ── Extend pages (summary) ───────────────────────────────────────────────
+await query(`ALTER TABLE pages ADD COLUMN IF NOT EXISTS summary TEXT`)
+console.log('✓ pages extended (summary)')
+
+// ── Extend project_tokens (design system, prototype context) ─────────────
+await query(`ALTER TABLE project_tokens ADD COLUMN IF NOT EXISTS design_system JSONB DEFAULT '{}'`)
+await query(`ALTER TABLE project_tokens ADD COLUMN IF NOT EXISTS prototype_context JSONB DEFAULT '{}'`)
+console.log('✓ project_tokens extended (design_system, prototype_context)')
+
 process.exit(0)

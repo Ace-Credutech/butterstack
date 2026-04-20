@@ -10,6 +10,18 @@ export interface DocEntity {
   rawDescription?: string
   aiDescription?: string
   status?: string
+  summary?: string
+  confidenceScore?: { completeness: number; stability: number; intentFidelity: number }
+  testCases?: string
+  useCases?: string
+}
+
+export interface Comment {
+  id: number
+  user_name: string
+  content: string
+  resolved: boolean
+  created_at: string
 }
 
 @Component({
@@ -41,10 +53,16 @@ export class ElicitationChatComponent implements OnInit, AfterViewChecked {
 
   // Documentation
   docEntity = signal<DocEntity | null>(null)
+  docTab    = signal<'docs' | 'tests' | 'comments'>('docs')
   editingDoc = signal(false)
   editRaw = ''
   editAi  = ''
   savingDoc = signal(false)
+
+  // Comments
+  comments     = signal<Comment[]>([])
+  newComment   = ''
+  addingComment = signal(false)
 
   constructor(private elicitation: ElicitationService, private api: ApiService) {}
 
@@ -171,7 +189,62 @@ export class ElicitationChatComponent implements OnInit, AfterViewChecked {
   showDoc(entity: DocEntity) {
     this.docEntity.set(entity)
     this.editingDoc.set(false)
+    this.docTab.set('docs')
     this.mode.set('doc')
+    this.loadComments()
+  }
+
+  async loadComments() {
+    const e = this.docEntity()
+    if (!e) return
+    try {
+      this.comments.set(await this.api.get<Comment[]>('/comments', { entityType: e.kind, entityId: String(e.id) }))
+    } catch { this.comments.set([]) }
+  }
+
+  async addComment() {
+    const e = this.docEntity()
+    if (!e || !this.newComment.trim()) return
+    this.addingComment.set(true)
+    await this.api.post('/comments', { projectId: this.projectId, entityType: e.kind, entityId: e.id, content: this.newComment })
+    this.newComment = ''
+    await this.loadComments()
+    this.addingComment.set(false)
+  }
+
+  async resolveComment(id: number) {
+    await this.api.patch(`/comments/${id}/resolve`, {})
+    await this.loadComments()
+  }
+
+  async deleteComment(id: number) {
+    await this.api.delete(`/comments/${id}`)
+    await this.loadComments()
+  }
+
+  commentTimeAgo(iso: string): string {
+    const diff = Date.now() - new Date(iso).getTime()
+    const m = Math.floor(diff / 60000)
+    if (m < 1) return 'just now'
+    if (m < 60) return `${m}m ago`
+    const h = Math.floor(m / 60)
+    if (h < 24) return `${h}h ago`
+    return `${Math.floor(h / 24)}d ago`
+  }
+
+  getConfidenceValue(key: string): number {
+    const score = this.docEntity()?.confidenceScore as any
+    return score?.[key] ?? 0
+  }
+
+  confidenceColor(score: number): string {
+    if (score >= 0.7) return 'bg-green-500'
+    if (score >= 0.4) return 'bg-amber-400'
+    return 'bg-red-400'
+  }
+
+  confidencePercent(score: number): string {
+    return Math.round(score * 100) + '%'
   }
 
   startEditDoc() {

@@ -1,0 +1,1 @@
+{"nodes": [{"id": "api_migrate_ts", "label": "migrate.ts", "file_type": "code", "source_file": "api/migrate.ts", "source_location": "L1"}], "edges": [{"source": "api_migrate_ts", "target": "api_db_ts", "relation": "imports_from", "confidence": "EXTRACTED", "source_file": "api/migrate.ts", "source_location": "L1", "weight": 1.0}]}

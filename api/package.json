@@ -8,6 +8,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.88.0",
     "hono": "^4.6.0",
+    "jose": "^6.2.2",
     "openai": "^4.67.0",
     "pg": "^8.20.0",
     "pg-types": "^4.1.0"

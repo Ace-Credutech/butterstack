@@ -4,8 +4,12 @@ import { query } from '../../db.ts'
 const app = new Hono()
 
 app.get('/', async (c) => {
+  const userId = c.get('userId')
   const result = await query(
-    `SELECT id, name, slug, description, status, created_at, updated_at FROM projects ORDER BY updated_at DESC`
+    `SELECT p.id, p.name, p.slug, p.description, p.status, p.created_at, p.updated_at, pm.role
+     FROM projects p JOIN project_members pm ON pm.project_id = p.id
+     WHERE pm.user_id = $1 ORDER BY p.updated_at DESC`,
+    [userId]
   )
   return c.json(result.rows)
 })
@@ -14,16 +18,24 @@ app.post('/', async (c) => {
   const { name, description = '' } = await c.req.json<{ name: string; description?: string }>()
   if (!name?.trim()) return c.json({ error: 'name required' }, 400)
 
+  const userId = c.get('userId')
   const slug = name.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 
   const result = await query(
-    `INSERT INTO projects (name, slug, description)
-     VALUES ($1, $2, $3)
+    `INSERT INTO projects (name, slug, description, created_by)
+     VALUES ($1, $2, $3, $4)
      ON CONFLICT (slug) DO UPDATE SET name = $1, description = $3, updated_at = NOW()
      RETURNING id, name, slug, description, status, created_at`,
-    [name.trim(), slug, description.trim()]
+    [name.trim(), slug, description.trim(), userId]
   )
-  return c.json(result.rows[0], 201)
+  const project = result.rows[0]
+
+  await query(
+    `INSERT INTO project_members (project_id, user_id, role) VALUES ($1, $2, 'admin') ON CONFLICT DO NOTHING`,
+    [project.id, userId]
+  )
+
+  return c.json(project, 201)
 })
 
 app.get('/:id', async (c) => {

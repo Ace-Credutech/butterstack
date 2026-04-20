@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core'
+import { Component, signal, OnInit } from '@angular/core'
 import { FormsModule }       from '@angular/forms'
-import { Router, RouterLink } from '@angular/router'
+import { Router, RouterLink, ActivatedRoute } from '@angular/router'
 import { AuthService }       from '../../services/auth.service'
+import { ApiService }        from '../../services/api.service'
 
 interface CountryOption { name: string; code: string; dial: string }
 
@@ -11,7 +12,7 @@ interface CountryOption { name: string; code: string; dial: string }
   imports:    [FormsModule, RouterLink],
   templateUrl: './register.component.html',
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   name         = ''
   email        = ''
   password     = ''
@@ -20,6 +21,10 @@ export class RegisterComponent {
   showPassword = signal(false)
   error        = signal('')
   loading      = signal(false)
+
+  inviteToken  = ''
+  inviteProject = signal('')
+  emailLocked   = signal(false)
 
   countries: CountryOption[] = [
     { name: 'India',          code: 'IN', dial: '+91'  },
@@ -36,8 +41,22 @@ export class RegisterComponent {
     { name: 'South Africa',   code: 'ZA', dial: '+27'  },
   ]
 
-  constructor(private auth: AuthService, private router: Router) {
+  constructor(private auth: AuthService, private router: Router, private route: ActivatedRoute, private api: ApiService) {
     if (auth.token) this.router.navigate(['/projects'])
+  }
+
+  async ngOnInit() {
+    this.inviteToken = this.route.snapshot.queryParamMap.get('invite') || ''
+    if (this.inviteToken) {
+      try {
+        const inv = await this.api.get<{ email: string; projectName: string }>(`/auth/invite/${this.inviteToken}`)
+        this.email = inv.email
+        this.emailLocked.set(true)
+        this.inviteProject.set(inv.projectName)
+      } catch {
+        this.error.set('Invitation link is invalid or expired')
+      }
+    }
   }
 
   async submit() {
@@ -45,8 +64,15 @@ export class RegisterComponent {
     this.loading.set(true)
     this.error.set('')
     try {
-      await this.auth.register({ name: this.name, email: this.email, password: this.password, mobile: this.mobile, countryCode: this.countryCode })
-      this.router.navigate(['/projects'])
+      const res = await this.auth.registerWithInvite(
+        { name: this.name, email: this.email, password: this.password, mobile: this.mobile, countryCode: this.countryCode },
+        this.inviteToken
+      )
+      if (res.redirectProjectId) {
+        this.router.navigate(['/projects', res.redirectProjectId])
+      } else {
+        this.router.navigate(['/projects'])
+      }
     } catch (e: any) {
       this.error.set(e?.error?.error || e?.message || 'Registration failed')
     } finally {

@@ -13,6 +13,7 @@ export interface User {
 interface AuthResponse {
   user: User
   token: string
+  redirectProjectId?: number
 }
 
 @Injectable({ providedIn: 'root' })
@@ -36,6 +37,12 @@ export class AuthService {
   async register(data: { name: string; email: string; password: string; mobile: string; countryCode: string }): Promise<void> {
     const res = await this.api.post<AuthResponse>('/auth/register', data)
     this.setSession(res)
+  }
+
+  async registerWithInvite(data: { name: string; email: string; password: string; mobile: string; countryCode: string }, inviteToken: string): Promise<AuthResponse> {
+    const res = await this.api.post<AuthResponse>('/auth/register', { ...data, inviteToken })
+    this.setSession(res)
+    return res
   }
 
   async login(email: string, password: string): Promise<void> {

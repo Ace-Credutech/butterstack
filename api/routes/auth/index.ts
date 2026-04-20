@@ -8,8 +8,8 @@ import { requireAuth } from '../../middleware/auth.ts'
 const app = new Hono()
 
 app.post('/register', async (c) => {
-  const { name, email, password, mobile, countryCode } = await c.req.json<{
-    name: string; email: string; password: string; mobile: string; countryCode: string
+  const { name, email, password, mobile, countryCode, inviteToken } = await c.req.json<{
+    name: string; email: string; password: string; mobile: string; countryCode: string; inviteToken?: string
   }>()
 
   if (!name?.trim() || !email?.trim() || !password || !mobile?.trim() || !countryCode?.trim()) {
@@ -41,7 +41,25 @@ app.post('/register', async (c) => {
   sendEmail({ to: user.email, toName: user.name, subject: 'Welcome to Butterstack!', html: welcomeEmailHtml(user.name), userId: user.id }).catch(() => {})
   sendSms({ to: fullMobile, content: welcomeSmsContent(user.name), userId: user.id }).catch(() => {})
 
-  return c.json({ user: { id: user.id, name: user.name, email: user.email, mobile: user.mobile, countryCode: user.country_code }, token }, 201)
+  let redirectProjectId: number | null = null
+
+  if (inviteToken) {
+    const inv = await query(
+      `SELECT id, project_id, role FROM project_invitations WHERE token = $1 AND status = 'pending' AND expires_at > NOW()`,
+      [inviteToken]
+    )
+    if (inv.rows.length) {
+      const invite = inv.rows[0]
+      await query(
+        `INSERT INTO project_members (project_id, user_id, role, invited_by) VALUES ($1, $2, $3, (SELECT invited_by FROM project_invitations WHERE id = $4)) ON CONFLICT DO NOTHING`,
+        [invite.project_id, user.id, invite.role, invite.id]
+      )
+      await query(`UPDATE project_invitations SET status = 'accepted' WHERE id = $1`, [invite.id])
+      redirectProjectId = invite.project_id
+    }
+  }
+
+  return c.json({ user: { id: user.id, name: user.name, email: user.email, mobile: user.mobile, countryCode: user.country_code }, token, redirectProjectId }, 201)
 })
 
 app.post('/login', async (c) => {
@@ -68,6 +86,19 @@ app.post('/login', async (c) => {
   const token = await signToken({ sub: String(user.id), email: user.email, name: user.name })
 
   return c.json({ user: { id: user.id, name: user.name, email: user.email, mobile: user.mobile, countryCode: user.country_code }, token })
+})
+
+app.get('/invite/:token', async (c) => {
+  const token = c.req.param('token')
+  const result = await query(
+    `SELECT pi.email, pi.role, p.name as project_name
+     FROM project_invitations pi JOIN projects p ON p.id = pi.project_id
+     WHERE pi.token = $1 AND pi.status = 'pending' AND pi.expires_at > NOW()`,
+    [token]
+  )
+  if (!result.rows.length) return c.json({ error: 'invalid or expired invitation' }, 404)
+  const inv = result.rows[0]
+  return c.json({ email: inv.email, projectName: inv.project_name, role: inv.role })
 })
 
 app.get('/me', requireAuth, async (c) => {

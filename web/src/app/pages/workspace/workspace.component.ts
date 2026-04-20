@@ -6,12 +6,13 @@ import { RequirementInputComponent, RequirementSaved } from '../../components/re
 import { PrototypePreviewComponent }  from '../../components/prototype-preview/prototype-preview.component'
 import { VersionTimelineComponent }   from '../../components/version-timeline/version-timeline.component'
 import { ModulesPanelComponent, ModuleNode } from '../../components/modules-panel/modules-panel.component'
+import { UserAvatarComponent } from '../../components/user-avatar/user-avatar.component'
 import type { UITokens, VersionEntry } from '../../models/ui-tokens.model'
 
 @Component({
   selector:    'app-workspace',
   standalone:  true,
-  imports:     [RequirementInputComponent, PrototypePreviewComponent, VersionTimelineComponent, ModulesPanelComponent],
+  imports:     [RequirementInputComponent, PrototypePreviewComponent, VersionTimelineComponent, ModulesPanelComponent, UserAvatarComponent],
   templateUrl: './workspace.component.html',
 })
 export class WorkspaceComponent implements OnInit {

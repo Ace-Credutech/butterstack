@@ -12,13 +12,14 @@ interface CountryOption { name: string; code: string; dial: string }
   templateUrl: './register.component.html',
 })
 export class RegisterComponent {
-  name        = ''
-  email       = ''
-  password    = ''
-  mobile      = ''
-  countryCode = '+91'
-  error       = signal('')
-  loading     = signal(false)
+  name         = ''
+  email        = ''
+  password     = ''
+  mobile       = ''
+  countryCode  = '+91'
+  showPassword = signal(false)
+  error        = signal('')
+  loading      = signal(false)
 
   countries: CountryOption[] = [
     { name: 'India',          code: 'IN', dial: '+91'  },

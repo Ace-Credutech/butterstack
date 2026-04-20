@@ -2,13 +2,14 @@ import { Component, OnInit, signal } from '@angular/core'
 import { Router }      from '@angular/router'
 import { FormsModule } from '@angular/forms'
 import { ApiService }  from '../../services/api.service'
+import { UserAvatarComponent } from '../../components/user-avatar/user-avatar.component'
 
 interface Project { id: number; name: string; slug: string; description: string; status: string; created_at: string; updated_at: string }
 
 @Component({
   selector:    'app-projects',
   standalone:  true,
-  imports:     [FormsModule],
+  imports:     [FormsModule, UserAvatarComponent],
   templateUrl: './projects.component.html',
 })
 export class ProjectsComponent implements OnInit {

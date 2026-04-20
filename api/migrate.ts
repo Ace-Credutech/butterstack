@@ -175,6 +175,24 @@ await query(`CREATE INDEX IF NOT EXISTS idx_pm_project ON project_members (proje
 await query(`CREATE INDEX IF NOT EXISTS idx_pm_user    ON project_members (user_id)`)
 console.log('✓ project_members ready')
 
+// ── Project Invitations ───────────────────────────────────────────────────
+await query(`
+  CREATE TABLE IF NOT EXISTS project_invitations (
+    id          SERIAL PRIMARY KEY,
+    project_id  INTEGER      NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    email       VARCHAR(255) NOT NULL,
+    role        VARCHAR(30)  NOT NULL DEFAULT 'collaborator',
+    token       VARCHAR(64)  NOT NULL UNIQUE,
+    invited_by  INTEGER      REFERENCES users(id) ON DELETE SET NULL,
+    status      VARCHAR(30)  NOT NULL DEFAULT 'pending',
+    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    expires_at  TIMESTAMPTZ  NOT NULL DEFAULT (NOW() + INTERVAL '7 days')
+  )
+`)
+await query(`CREATE INDEX IF NOT EXISTS idx_invitations_token ON project_invitations (token)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_invitations_email ON project_invitations (email)`)
+console.log('✓ project_invitations ready')
+
 // Modules — recursive self-referential tree (module → sub-module → sub-sub-module → ...)
 await query(`
   CREATE TABLE IF NOT EXISTS modules (

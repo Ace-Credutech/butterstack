@@ -15,6 +15,9 @@ import modulesContent      from './routes/modules/content.ts'
 import modulesParse        from './routes/modules/parse.ts'
 import history             from './routes/history/index.ts'
 import suggestions         from './routes/suggestions/index.ts'
+import features            from './routes/features/index.ts'
+import pages               from './routes/pages/index.ts'
+import elicitation         from './routes/elicitation/index.ts'
 
 const app = new Hono()
 
@@ -47,6 +50,9 @@ api.route('/modules',              modulesContent)
 api.route('/modules',              modulesParse)
 api.route('/history',              history)
 api.route('/suggestions',          suggestions)
+api.route('/features',             features)
+api.route('/pages',                pages)
+api.route('/elicitation',          elicitation)
 
 api.get('/users', async (c) => {
   const { query: dbQuery } = await import('./db.ts')

@@ -58,4 +58,30 @@ app.patch('/:id', async (c) => {
   return c.json({ ok: true })
 })
 
+app.delete('/:id', async (c) => {
+  const id = c.req.param('id')
+  const userId = c.get('userId')
+
+  const memberCheck = await query(
+    `SELECT role FROM project_members WHERE project_id = $1 AND user_id = $2`, [id, userId]
+  )
+  if (!memberCheck.rows.length || memberCheck.rows[0].role !== 'admin') {
+    return c.json({ error: 'only admins can delete projects' }, 403)
+  }
+
+  await query(`DELETE FROM page_features WHERE page_id IN (SELECT id FROM pages WHERE project_id = $1)`, [id])
+  await query(`DELETE FROM pages WHERE project_id = $1`, [id])
+  await query(`DELETE FROM features WHERE project_id = $1`, [id])
+  await query(`DELETE FROM elicitation_messages WHERE session_id IN (SELECT id FROM elicitation_sessions WHERE project_id = $1)`, [id])
+  await query(`DELETE FROM elicitation_sessions WHERE project_id = $1`, [id])
+  await query(`DELETE FROM version_history WHERE project_id = $1`, [id])
+  await query(`DELETE FROM requirements WHERE project_id = $1`, [id])
+  await query(`DELETE FROM modules WHERE project_id = $1`, [id])
+  await query(`DELETE FROM project_invitations WHERE project_id = $1`, [id])
+  await query(`DELETE FROM project_members WHERE project_id = $1`, [id])
+  await query(`DELETE FROM projects WHERE id = $1`, [id])
+
+  return c.json({ ok: true })
+})
+
 export default app

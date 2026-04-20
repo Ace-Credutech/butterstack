@@ -5,19 +5,21 @@ import { ApiService }              from '../../services/api.service'
 import { RequirementInputComponent, RequirementSaved } from '../../components/requirement-input/requirement-input.component'
 import { PrototypePreviewComponent }  from '../../components/prototype-preview/prototype-preview.component'
 import { VersionTimelineComponent }   from '../../components/version-timeline/version-timeline.component'
-import { ModulesPanelComponent, ModuleNode } from '../../components/modules-panel/modules-panel.component'
+import { ModulesPanelComponent, ModuleNode, FeatureNode, PageNode } from '../../components/modules-panel/modules-panel.component'
 import { UserAvatarComponent } from '../../components/user-avatar/user-avatar.component'
 import { MembersPanelComponent } from '../../components/members-panel/members-panel.component'
+import { ElicitationChatComponent } from '../../components/elicitation-chat/elicitation-chat.component'
 import type { UITokens, VersionEntry } from '../../models/ui-tokens.model'
 
 @Component({
   selector:    'app-workspace',
   standalone:  true,
-  imports:     [RequirementInputComponent, PrototypePreviewComponent, VersionTimelineComponent, ModulesPanelComponent, UserAvatarComponent, MembersPanelComponent],
+  imports:     [RequirementInputComponent, PrototypePreviewComponent, VersionTimelineComponent, ModulesPanelComponent, UserAvatarComponent, MembersPanelComponent, ElicitationChatComponent],
   templateUrl: './workspace.component.html',
 })
 export class WorkspaceComponent implements OnInit {
   @ViewChild(ModulesPanelComponent) modulesPanel!: ModulesPanelComponent
+  @ViewChild(ElicitationChatComponent) chatPanel!: ElicitationChatComponent
 
   projectId   = ''
   projectName = signal('')
@@ -31,6 +33,7 @@ export class WorkspaceComponent implements OnInit {
   meetingActive = signal(false)
   meetingTime   = signal('00:00')
   appFullscreen = signal(false)
+  inputMode     = signal<'chat' | 'classic'>('chat')
 
   activeModule: ModuleNode | null = null
   private versionCounter = 0
@@ -78,7 +81,7 @@ export class WorkspaceComponent implements OnInit {
     }
   }
 
-  onRequirementSaved({ tokens, cleanPrompt, moduleId, moduleName }: RequirementSaved): void {
+  onRequirementSaved({ tokens, cleanPrompt, moduleName }: RequirementSaved): void {
     this.tokens.set(tokens)
     this.cleanPrompt.set(cleanPrompt)
     this.source.set('requirement')
@@ -136,6 +139,33 @@ export class WorkspaceComponent implements OnInit {
   }
 
   goToProjects() { this.router.navigate(['/projects']) }
+
+  onSessionCompleted(_created: { modules: number; features: number; pages: number }) {
+    this.modulesPanel?.refresh()
+  }
+
+  async onFeatureSelected(feat: FeatureNode) {
+    this.source.set(`feature: ${feat.name}`)
+    const full = await this.api.get<any>(`/features/${feat.id}`)
+    if (this.chatPanel) {
+      this.chatPanel.showDoc({
+        id: feat.id, kind: 'feature', name: feat.name,
+        rawDescription: full.raw_description, aiDescription: full.ai_description, status: full.status,
+      })
+    }
+  }
+
+  async onPageSelected(page: PageNode) {
+    this.source.set(`page: ${page.name}`)
+    const full = await this.api.get<any>(`/pages/${page.id}`)
+    if (full.tokens) this.tokens.set(full.tokens)
+    if (this.chatPanel) {
+      this.chatPanel.showDoc({
+        id: page.id, kind: 'page', name: page.name,
+        rawDescription: full.raw_description, aiDescription: full.ai_description, status: full.status,
+      })
+    }
+  }
 
   onToggleMeeting() {
     this.meetingActive.update(v => !v)

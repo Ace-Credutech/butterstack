@@ -3,6 +3,42 @@ import { query } from './db.ts'
 await query(`CREATE EXTENSION IF NOT EXISTS pg_trgm`)
 console.log('✓ pg_trgm extension ready')
 
+// ── Users & Auth ──────────────────────────────────────────────────────────
+await query(`
+  CREATE TABLE IF NOT EXISTS users (
+    id             SERIAL PRIMARY KEY,
+    name           VARCHAR(255) NOT NULL,
+    email          VARCHAR(255) NOT NULL UNIQUE,
+    password_hash  TEXT         NOT NULL,
+    mobile         VARCHAR(30)  NOT NULL,
+    country_code   VARCHAR(10)  NOT NULL DEFAULT '+91',
+    created_at     TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    updated_at     TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+  )
+`)
+await query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users (email)`)
+console.log('✓ users ready')
+
+// ── Communication Logs (email + sms) ──────────────────────────────────────
+await query(`
+  CREATE TABLE IF NOT EXISTS communication_logs (
+    id                SERIAL PRIMARY KEY,
+    type              VARCHAR(20)  NOT NULL,
+    user_id           INTEGER      REFERENCES users(id) ON DELETE SET NULL,
+    to_address        VARCHAR(255) NOT NULL,
+    subject           VARCHAR(500),
+    body_preview      TEXT,
+    status            VARCHAR(30)  NOT NULL DEFAULT 'pending',
+    provider_response TEXT,
+    created_at        TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    updated_at        TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+  )
+`)
+await query(`CREATE INDEX IF NOT EXISTS idx_comm_logs_user ON communication_logs (user_id)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_comm_logs_type ON communication_logs (type, created_at DESC)`)
+console.log('✓ communication_logs ready')
+
+
 await query(`
   CREATE TABLE IF NOT EXISTS internal_api_logs (
     id            SERIAL PRIMARY KEY,
@@ -120,7 +156,24 @@ await query(`
   )
 `)
 await query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_projects_slug ON projects (slug)`)
+await query(`ALTER TABLE projects ADD COLUMN IF NOT EXISTS created_by INTEGER REFERENCES users(id) ON DELETE SET NULL`)
 console.log('✓ projects ready')
+
+// ── Project Members ───────────────────────────────────────────────────────
+await query(`
+  CREATE TABLE IF NOT EXISTS project_members (
+    id          SERIAL PRIMARY KEY,
+    project_id  INTEGER      NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    user_id     INTEGER      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role        VARCHAR(30)  NOT NULL DEFAULT 'collaborator',
+    invited_by  INTEGER      REFERENCES users(id) ON DELETE SET NULL,
+    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    UNIQUE (project_id, user_id)
+  )
+`)
+await query(`CREATE INDEX IF NOT EXISTS idx_pm_project ON project_members (project_id)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_pm_user    ON project_members (user_id)`)
+console.log('✓ project_members ready')
 
 // Modules — recursive self-referential tree (module → sub-module → sub-sub-module → ...)
 await query(`

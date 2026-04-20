@@ -22,7 +22,12 @@ app.post('/register', async (c) => {
   }
 
   const hash = await hashPassword(password)
-  const fullMobile = `${countryCode}${mobile.replace(/\D/g, '')}`
+  const dialDigits = countryCode.replace(/\D/g, '')
+  let cleanMobile = mobile.replace(/\D/g, '')
+  if (dialDigits && cleanMobile.startsWith(dialDigits)) {
+    cleanMobile = cleanMobile.slice(dialDigits.length)
+  }
+  const fullMobile = `${countryCode}${cleanMobile}`
 
   const result = await query(
     `INSERT INTO users (name, email, password_hash, mobile, country_code)

@@ -10,10 +10,11 @@ import { AuthService }       from '../../services/auth.service'
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
-  email    = ''
-  password = ''
-  error    = signal('')
-  loading  = signal(false)
+  email        = ''
+  password     = ''
+  showPassword = signal(false)
+  error        = signal('')
+  loading      = signal(false)
 
   constructor(private auth: AuthService, private router: Router) {
     if (auth.token) this.router.navigate(['/projects'])

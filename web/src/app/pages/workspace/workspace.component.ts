@@ -8,18 +8,21 @@ import { VersionTimelineComponent }   from '../../components/version-timeline/ve
 import { ModulesPanelComponent, ModuleNode, FeatureNode, PageNode } from '../../components/modules-panel/modules-panel.component'
 import { UserAvatarComponent } from '../../components/user-avatar/user-avatar.component'
 import { MembersPanelComponent } from '../../components/members-panel/members-panel.component'
+import { ExportService } from '../../services/export.service'
 import { ElicitationChatComponent } from '../../components/elicitation-chat/elicitation-chat.component'
+import { DesignSettingsComponent } from '../../components/design-settings/design-settings.component'
 import type { UITokens, VersionEntry } from '../../models/ui-tokens.model'
 
 @Component({
   selector:    'app-workspace',
   standalone:  true,
-  imports:     [RequirementInputComponent, PrototypePreviewComponent, VersionTimelineComponent, ModulesPanelComponent, UserAvatarComponent, MembersPanelComponent, ElicitationChatComponent],
+  imports:     [RequirementInputComponent, PrototypePreviewComponent, VersionTimelineComponent, ModulesPanelComponent, UserAvatarComponent, MembersPanelComponent, ElicitationChatComponent, DesignSettingsComponent],
   templateUrl: './workspace.component.html',
 })
 export class WorkspaceComponent implements OnInit {
   @ViewChild(ModulesPanelComponent) modulesPanel!: ModulesPanelComponent
   @ViewChild(ElicitationChatComponent) chatPanel!: ElicitationChatComponent
+  @ViewChild(PrototypePreviewComponent) protoPanel!: PrototypePreviewComponent
 
   projectId   = ''
   projectName = signal('')
@@ -34,17 +37,22 @@ export class WorkspaceComponent implements OnInit {
   meetingTime   = signal('00:00')
   appFullscreen = signal(false)
   inputMode     = signal<'chat' | 'classic'>('chat')
+  relatedPages  = signal<{ id: number; name: string; pageType: string; tokens?: any }[]>([])
+  selectedContext = signal('')
 
   activeModule: ModuleNode | null = null
   private versionCounter = 0
   private meetingStart   = 0
   private meetingInterval: ReturnType<typeof setInterval> | null = null
 
+  showExportMenu = signal(false)
+
   constructor(
     private route:     ActivatedRoute,
     private router:    Router,
     private prototype: PrototypeService,
     private api:       ApiService,
+    public  exportSvc: ExportService,
   ) {}
 
   async ngOnInit() {
@@ -101,14 +109,54 @@ export class WorkspaceComponent implements OnInit {
     }
   }
 
-  onModuleSelected(node: ModuleNode) {
+  async onModuleSelected(node: ModuleNode) {
     this.activeModule = node
-    if (node.tokens) {
+    this.source.set(`module: ${node.name}`)
+    this.selectedContext.set(node.name)
+
+    const allFeatureIds = this.collectFeatureIds(node)
+    if (allFeatureIds.length) {
+      await this.showRelatedPages(allFeatureIds)
+    } else if (node.tokens) {
+      this.relatedPages.set([])
       this.tokens.set(node.tokens)
       this.cleanPrompt.set(node.cleanPrompt ?? '')
-      this.source.set(`module: ${node.name}`)
-      this.restoredTitle.set(node.rawTitle ?? '')
-      this.restoredDescription.set(node.rawDescription ?? '')
+    }
+  }
+
+  private collectFeatureIds(node: ModuleNode): number[] {
+    const ids = node.features.map(f => f.id)
+    for (const child of node.children) {
+      ids.push(...this.collectFeatureIds(child))
+    }
+    return ids
+  }
+
+  private async showRelatedPages(featureIds: number[]) {
+    const allPages = await this.api.get<any[]>('/pages', { projectId: this.projectId })
+    const related = allPages.filter(p =>
+      p.features?.some((f: any) => featureIds.includes(f.id))
+    ).map(p => ({ id: p.id, name: p.name, pageType: p.page_type || 'page', tokens: p.tokens }))
+
+    if (related.length === 1 && related[0].tokens) {
+      this.relatedPages.set([])
+      this.tokens.set(related[0].tokens)
+    } else if (related.length > 0) {
+      this.relatedPages.set(related)
+    } else {
+      this.relatedPages.set([])
+    }
+  }
+
+  async selectRelatedPage(page: { id: number; name: string; tokens?: any }) {
+    this.relatedPages.set([])
+    if (page.tokens) {
+      this.tokens.set(page.tokens)
+      this.source.set(`page: ${page.name}`)
+    } else {
+      const full = await this.api.get<any>(`/pages/${page.id}`)
+      if (full.tokens) this.tokens.set(full.tokens)
+      this.source.set(`page: ${page.name}`)
     }
   }
 
@@ -140,29 +188,39 @@ export class WorkspaceComponent implements OnInit {
 
   goToProjects() { this.router.navigate(['/projects']) }
 
+  onDesignSaved() {
+    this.protoPanel?.reloadDesignSystem()
+  }
+
   onSessionCompleted(_created: { modules: number; features: number; pages: number }) {
     this.modulesPanel?.refresh()
   }
 
   async onFeatureSelected(feat: FeatureNode) {
     this.source.set(`feature: ${feat.name}`)
+    this.selectedContext.set(feat.name)
     const full = await this.api.get<any>(`/features/${feat.id}`)
     if (this.chatPanel) {
       this.chatPanel.showDoc({
         id: feat.id, kind: 'feature', name: feat.name,
         rawDescription: full.raw_description, aiDescription: full.ai_description, status: full.status,
+        summary: full.summary, confidenceScore: full.confidence_score,
+        testCases: full.test_cases, useCases: full.use_cases,
       })
     }
+    await this.showRelatedPages([feat.id])
   }
 
   async onPageSelected(page: PageNode) {
     this.source.set(`page: ${page.name}`)
+    this.relatedPages.set([])
     const full = await this.api.get<any>(`/pages/${page.id}`)
     if (full.tokens) this.tokens.set(full.tokens)
     if (this.chatPanel) {
       this.chatPanel.showDoc({
         id: page.id, kind: 'page', name: page.name,
         rawDescription: full.raw_description, aiDescription: full.ai_description, status: full.status,
+        summary: full.summary,
       })
     }
   }

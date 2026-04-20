@@ -5,6 +5,13 @@ import {
   type ElicitationContext, type BreakdownProposal
 } from '../../lib/elicitation.ts'
 import { extractTokens } from '../../lib/openai.ts'
+import { aiChat, MODELS } from '../../lib/ai-client.ts'
+
+function extractSection(text: string, sectionName: string): string {
+  const re = new RegExp(`## ${sectionName}\\n([\\s\\S]*?)(?=\\n## |$)`)
+  const match = text.match(re)
+  return match ? match[1].trim() : ''
+}
 
 const app = new Hono()
 
@@ -115,7 +122,13 @@ app.post('/sessions/:id/messages', async (c) => {
     return c.json({ role: 'assistant', content: assistantMsg.text, type: 'breakdown_proposal', breakdown })
   }
 
-  const question = await generateNextQuestion(context, history)
+  const prevSessions = await query(
+    `SELECT summary FROM elicitation_sessions WHERE project_id = $1 AND id != $2 AND summary IS NOT NULL ORDER BY updated_at DESC LIMIT 5`,
+    [session.rows[0].project_id, sessionId]
+  )
+  const previousSummaries = prevSessions.rows.map((r: any) => r.summary)
+
+  const question = await generateNextQuestion(context, history, previousSummaries)
 
   await query(
     `INSERT INTO elicitation_messages (session_id, role, content, message_type, options, metadata)
@@ -244,6 +257,55 @@ app.post('/sessions/:id/complete', async (c) => {
     })
 
     await Promise.all([...docPromises, ...pagePromises])
+
+    // After docs generated, generate summaries + confidence + test/use cases
+    for (const f of newFeatureIds) {
+      try {
+        const feat = await query(`SELECT ai_description FROM features WHERE id = $1`, [f.id])
+        const aiDesc = feat.rows[0]?.ai_description || ''
+
+        const sections = aiDesc.split('## ').filter(Boolean)
+        const filledSections = sections.filter(s => s.trim().split('\n').length > 2)
+        const completeness = sections.length ? filledSections.length / Math.max(sections.length, 10) : 0
+
+        const msgCount = allMessages.rows.filter((m: any) => m.role === 'user').length
+        const intentFidelity = Math.min(1, msgCount / 5)
+
+        await query(
+          `UPDATE features SET
+            summary = $1,
+            confidence_score = $2,
+            test_cases = $3,
+            use_cases = $4
+          WHERE id = $5`,
+          [
+            aiDesc.split('\n').find((l: string) => l.trim() && !l.startsWith('#'))?.trim().slice(0, 200) || f.name,
+            JSON.stringify({ completeness: Math.round(completeness * 100) / 100, stability: 1.0, intentFidelity: Math.round(intentFidelity * 100) / 100 }),
+            extractSection(aiDesc, 'Acceptance Criteria') || null,
+            extractSection(aiDesc, 'Business Context') || null,
+            f.id
+          ]
+        )
+      } catch {}
+    }
+
+    for (const p of newPageIds) {
+      try {
+        const page = await query(`SELECT ai_description FROM pages WHERE id = $1`, [p.id])
+        const summary = (page.rows[0]?.ai_description || '').split('\n').find((l: string) => l.trim() && !l.startsWith('#'))?.trim().slice(0, 200) || p.name
+        await query(`UPDATE pages SET summary = $1 WHERE id = $2`, [summary, p.id])
+      } catch {}
+    }
+
+    // Generate conversation summary for shared context
+    try {
+      const summaryRes = await aiChat(
+        [{ role: 'system', content: 'Summarize the key decisions and context from this requirements conversation in 3-5 bullet points. Be specific about what was decided.' },
+         { role: 'user', content: conversationHistory.slice(-3000) }],
+        MODELS.tokens, false, 512
+      )
+      await query(`UPDATE elicitation_sessions SET summary = $1 WHERE id = $2`, [summaryRes.text, sessionId])
+    } catch {}
   }
   bgWork().catch(() => {})
 

@@ -18,6 +18,8 @@ import suggestions         from './routes/suggestions/index.ts'
 import features            from './routes/features/index.ts'
 import pages               from './routes/pages/index.ts'
 import elicitation         from './routes/elicitation/index.ts'
+import comments            from './routes/comments/index.ts'
+import exports             from './routes/exports/index.ts'
 
 const app = new Hono()
 
@@ -53,6 +55,8 @@ api.route('/suggestions',          suggestions)
 api.route('/features',             features)
 api.route('/pages',                pages)
 api.route('/elicitation',          elicitation)
+api.route('/comments',             comments)
+api.route('/exports',              exports)
 
 api.get('/users', async (c) => {
   const { query: dbQuery } = await import('./db.ts')

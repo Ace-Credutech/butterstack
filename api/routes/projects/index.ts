@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { query } from '../../db.ts'
+import { getDesignSystem, updateDesignSystem } from '../../lib/project-tokens.ts'
 
 const app = new Hono()
 
@@ -55,6 +56,17 @@ app.patch('/:id', async (c) => {
     `UPDATE projects SET name = COALESCE($1, name), description = COALESCE($2, description), updated_at = NOW() WHERE id = $3`,
     [name ?? null, description ?? null, id]
   )
+  return c.json({ ok: true })
+})
+
+app.get('/:id/design-system', async (c) => {
+  const ds = await getDesignSystem(c.req.param('id'))
+  return c.json(ds)
+})
+
+app.patch('/:id/design-system', async (c) => {
+  const body = await c.req.json()
+  await updateDesignSystem(c.req.param('id'), body)
   return c.json({ ok: true })
 })
 

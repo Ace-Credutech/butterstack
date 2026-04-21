@@ -1,11 +1,11 @@
-# Graph Report - .  (2026-04-20)
+# Graph Report - .  (2026-04-21)
 
 ## Corpus Check
-- 62 files · ~39,084 words
+- 68 files · ~44,408 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 275 nodes · 292 edges · 61 communities detected
+- 331 nodes · 361 edges · 63 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -71,18 +71,20 @@
 - [[_COMMUNITY_Community 58|Community 58]]
 - [[_COMMUNITY_Community 59|Community 59]]
 - [[_COMMUNITY_Community 60|Community 60]]
+- [[_COMMUNITY_Community 61|Community 61]]
+- [[_COMMUNITY_Community 62|Community 62]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `ModuleStructureInputComponent` - 14 edges
-2. `ModulesPanelComponent` - 12 edges
-3. `WorkspaceComponent` - 12 edges
-4. `renderComponent()` - 12 edges
-5. `MembersPanelComponent` - 11 edges
-6. `RequirementInputComponent` - 11 edges
-7. `AuthService` - 9 edges
-8. `PrototypePreviewComponent` - 7 edges
-9. `ProjectsComponent` - 7 edges
-10. `ApiService` - 7 edges
+1. `ElicitationChatComponent` - 24 edges
+2. `ModulesPanelComponent` - 17 edges
+3. `WorkspaceComponent` - 15 edges
+4. `ModuleStructureInputComponent` - 14 edges
+5. `renderComponent()` - 12 edges
+6. `MembersPanelComponent` - 11 edges
+7. `RequirementInputComponent` - 11 edges
+8. `ProjectsComponent` - 10 edges
+9. `AuthService` - 9 edges
+10. `PrototypePreviewComponent` - 7 edges
 
 ## Surprising Connections (you probably didn't know these)
 - None detected - all connections are within the same source files.
@@ -101,116 +103,116 @@
 ## Communities
 
 ### Community 0 - "Community 0"
-Cohesion: 0.11
-Nodes (6): cleanPunctuation(), localStreamline(), replaceHinglish(), replaceUIKeywords(), callAI(), extractTokens()
+Cohesion: 0.09
+Nodes (13): ensureLoaded(), learnFromStreamline(), learnFromTokens(), lookup(), schedulFlush(), translatePhrase(), upsertEntry(), cleanPunctuation() (+5 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.09
+Cohesion: 0.08
 Nodes (3): parseIndented(), parseLocal(), parseNumbered()
 
 ### Community 2 - "Community 2"
+Cohesion: 0.1
+Nodes (1): ElicitationChatComponent
+
+### Community 3 - "Community 3"
+Cohesion: 0.17
+Nodes (1): ModulesPanelComponent
+
+### Community 4 - "Community 4"
 Cohesion: 0.27
 Nodes (2): ModuleStructureInputComponent, uid()
 
-### Community 3 - "Community 3"
-Cohesion: 0.24
-Nodes (15): renderCardsGrid(), renderComponent(), renderDataTable(), renderElements(), renderEmptyState(), renderForm(), renderHeader(), renderHero() (+7 more)
-
-### Community 4 - "Community 4"
-Cohesion: 0.22
-Nodes (1): ModulesPanelComponent
-
 ### Community 5 - "Community 5"
-Cohesion: 0.18
+Cohesion: 0.14
 Nodes (1): WorkspaceComponent
 
 ### Community 6 - "Community 6"
 Cohesion: 0.24
-Nodes (1): MembersPanelComponent
+Nodes (15): renderCardsGrid(), renderComponent(), renderDataTable(), renderElements(), renderEmptyState(), renderForm(), renderHeader(), renderHero() (+7 more)
 
 ### Community 7 - "Community 7"
+Cohesion: 0.24
+Nodes (1): MembersPanelComponent
+
+### Community 8 - "Community 8"
 Cohesion: 0.18
 Nodes (1): RequirementInputComponent
 
-### Community 8 - "Community 8"
+### Community 9 - "Community 9"
+Cohesion: 0.22
+Nodes (1): ProjectsComponent
+
+### Community 10 - "Community 10"
 Cohesion: 0.29
 Nodes (1): AuthService
 
-### Community 9 - "Community 9"
-Cohesion: 0.38
-Nodes (7): ensureLoaded(), learnFromStreamline(), learnFromTokens(), lookup(), schedulFlush(), translatePhrase(), upsertEntry()
+### Community 11 - "Community 11"
+Cohesion: 0.29
+Nodes (5): buildContextSummary(), formatHistory(), generateBreakdown(), generateDocumentation(), generateNextQuestion()
 
-### Community 10 - "Community 10"
+### Community 12 - "Community 12"
 Cohesion: 0.25
 Nodes (1): PrototypePreviewComponent
 
-### Community 11 - "Community 11"
-Cohesion: 0.29
-Nodes (1): ProjectsComponent
-
-### Community 12 - "Community 12"
+### Community 13 - "Community 13"
 Cohesion: 0.39
 Nodes (1): ApiService
 
-### Community 13 - "Community 13"
+### Community 14 - "Community 14"
+Cohesion: 0.25
+Nodes (1): ElicitationService
+
+### Community 15 - "Community 15"
 Cohesion: 0.33
 Nodes (1): UserAvatarComponent
 
-### Community 14 - "Community 14"
+### Community 16 - "Community 16"
 Cohesion: 0.33
 Nodes (1): PrototypeService
 
-### Community 15 - "Community 15"
-Cohesion: 0.4
-Nodes (0): 
-
-### Community 16 - "Community 16"
-Cohesion: 0.4
-Nodes (1): LandingComponent
-
 ### Community 17 - "Community 17"
 Cohesion: 0.4
-Nodes (1): RegisterComponent
+Nodes (0): 
 
 ### Community 18 - "Community 18"
 Cohesion: 0.4
-Nodes (0): 
+Nodes (1): LandingComponent
 
 ### Community 19 - "Community 19"
+Cohesion: 0.4
+Nodes (1): RegisterComponent
+
+### Community 20 - "Community 20"
+Cohesion: 0.4
+Nodes (0): 
+
+### Community 21 - "Community 21"
 Cohesion: 0.6
 Nodes (3): logComm(), sendEmail(), updateLog()
 
-### Community 20 - "Community 20"
+### Community 22 - "Community 22"
 Cohesion: 0.6
 Nodes (3): logComm(), sendSms(), updateLog()
 
-### Community 21 - "Community 21"
+### Community 23 - "Community 23"
 Cohesion: 0.5
 Nodes (1): LoginComponent
 
-### Community 22 - "Community 22"
+### Community 24 - "Community 24"
 Cohesion: 0.83
 Nodes (3): delay(), generatePrototype(), run()
 
-### Community 23 - "Community 23"
-Cohesion: 0.67
-Nodes (0): 
-
-### Community 24 - "Community 24"
-Cohesion: 0.67
-Nodes (0): 
-
 ### Community 25 - "Community 25"
-Cohesion: 1.0
-Nodes (1): App
+Cohesion: 0.67
+Nodes (0): 
 
 ### Community 26 - "Community 26"
-Cohesion: 1.0
+Cohesion: 0.67
 Nodes (0): 
 
 ### Community 27 - "Community 27"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): App
 
 ### Community 28 - "Community 28"
 Cohesion: 1.0
@@ -230,7 +232,7 @@ Nodes (0):
 
 ### Community 32 - "Community 32"
 Cohesion: 1.0
-Nodes (1): VersionTimelineComponent
+Nodes (0): 
 
 ### Community 33 - "Community 33"
 Cohesion: 1.0
@@ -238,7 +240,7 @@ Nodes (0):
 
 ### Community 34 - "Community 34"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): VersionTimelineComponent
 
 ### Community 35 - "Community 35"
 Cohesion: 1.0
@@ -266,158 +268,166 @@ Nodes (0):
 
 ### Community 41 - "Community 41"
 Cohesion: 1.0
-Nodes (1): Butterstack Project (CLAUDE.md)
+Nodes (0): 
 
 ### Community 42 - "Community 42"
 Cohesion: 1.0
-Nodes (1): Backend Returns Pure UITokens (Key Principle)
+Nodes (0): 
 
 ### Community 43 - "Community 43"
 Cohesion: 1.0
-Nodes (1): Phase 1 Ideation
+Nodes (1): Butterstack Project (CLAUDE.md)
 
 ### Community 44 - "Community 44"
 Cohesion: 1.0
-Nodes (1): Phase 2 Fixture (future)
+Nodes (1): Backend Returns Pure UITokens (Key Principle)
 
 ### Community 45 - "Community 45"
 Cohesion: 1.0
-Nodes (1): Phase 3 Changes (partially built)
+Nodes (1): Phase 1 Ideation
 
 ### Community 46 - "Community 46"
 Cohesion: 1.0
-Nodes (1): Phase 4 Versions (partially built)
+Nodes (1): Phase 2 Fixture (future)
 
 ### Community 47 - "Community 47"
 Cohesion: 1.0
-Nodes (1): Platform Vision - Intelligent Delivery OS
+Nodes (1): Phase 3 Changes (partially built)
 
 ### Community 48 - "Community 48"
 Cohesion: 1.0
-Nodes (1): Instant Prototyping Capability
+Nodes (1): Phase 4 Versions (partially built)
 
 ### Community 49 - "Community 49"
 Cohesion: 1.0
-Nodes (1): HTML + Tailwind Rationale (zero build step, instant render)
+Nodes (1): Platform Vision - Intelligent Delivery OS
 
 ### Community 50 - "Community 50"
 Cohesion: 1.0
-Nodes (1): Multilingual Text Input (Hinglish/Minglish/Gujarati)
+Nodes (1): Instant Prototyping Capability
 
 ### Community 51 - "Community 51"
 Cohesion: 1.0
-Nodes (1): Voice Input Capability (Multi-speaker, Auto-detect)
+Nodes (1): HTML + Tailwind Rationale (zero build step, instant render)
 
 ### Community 52 - "Community 52"
 Cohesion: 1.0
-Nodes (1): AI is a Tool Not a Crutch (Key Principle)
+Nodes (1): Multilingual Text Input (Hinglish/Minglish/Gujarati)
 
 ### Community 53 - "Community 53"
 Cohesion: 1.0
-Nodes (1): RAM is Sacred Principle
+Nodes (1): Voice Input Capability (Multi-speaker, Auto-detect)
 
 ### Community 54 - "Community 54"
 Cohesion: 1.0
-Nodes (1): Role Hierarchy (Client/PM/BA/Dev/QA/Designer)
+Nodes (1): AI is a Tool Not a Crutch (Key Principle)
 
 ### Community 55 - "Community 55"
 Cohesion: 1.0
-Nodes (1): MVP Scope (text input, prototype, versioning, multi-project)
+Nodes (1): RAM is Sacred Principle
 
 ### Community 56 - "Community 56"
 Cohesion: 1.0
-Nodes (1): Keycloak Authentication Integration
+Nodes (1): Role Hierarchy (Client/PM/BA/Dev/QA/Designer)
 
 ### Community 57 - "Community 57"
 Cohesion: 1.0
-Nodes (1): Impact Analysis Capability
+Nodes (1): MVP Scope (text input, prototype, versioning, multi-project)
 
 ### Community 58 - "Community 58"
 Cohesion: 1.0
-Nodes (1): Full Version History (requirements + flows + prototypes)
+Nodes (1): Keycloak Authentication Integration
 
 ### Community 59 - "Community 59"
 Cohesion: 1.0
-Nodes (1): Rationale: Prototype Auto-triggers as you type
+Nodes (1): Impact Analysis Capability
 
 ### Community 60 - "Community 60"
+Cohesion: 1.0
+Nodes (1): Full Version History (requirements + flows + prototypes)
+
+### Community 61 - "Community 61"
+Cohesion: 1.0
+Nodes (1): Rationale: Prototype Auto-triggers as you type
+
+### Community 62 - "Community 62"
 Cohesion: 1.0
 Nodes (1): Speed Non-Negotiable Principle (millisecond-class)
 
 ## Knowledge Gaps
 - **22 isolated node(s):** `App`, `VersionTimelineComponent`, `Butterstack Project (CLAUDE.md)`, `Backend Returns Pure UITokens (Key Principle)`, `Phase 1 Ideation` (+17 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 25`** (2 nodes): `App`, `app.ts`
+- **Thin community `Community 27`** (2 nodes): `App`, `app.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 26`** (2 nodes): `authInterceptor()`, `auth.interceptor.ts`
+- **Thin community `Community 28`** (2 nodes): `authInterceptor()`, `auth.interceptor.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 27`** (2 nodes): `renderForm()`, `form.renderer.ts`
+- **Thin community `Community 29`** (2 nodes): `renderForm()`, `form.renderer.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 28`** (2 nodes): `renderDashboard()`, `dashboard.renderer.ts`
+- **Thin community `Community 30`** (2 nodes): `renderDashboard()`, `dashboard.renderer.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 29`** (2 nodes): `renderTokens()`, `index.ts`
+- **Thin community `Community 31`** (2 nodes): `renderTokens()`, `index.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 30`** (2 nodes): `renderLogin()`, `login.renderer.ts`
+- **Thin community `Community 32`** (2 nodes): `renderLogin()`, `login.renderer.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 31`** (2 nodes): `renderList()`, `list.renderer.ts`
+- **Thin community `Community 33`** (2 nodes): `renderList()`, `list.renderer.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 32`** (2 nodes): `VersionTimelineComponent`, `version-timeline.component.ts`
+- **Thin community `Community 34`** (2 nodes): `VersionTimelineComponent`, `version-timeline.component.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 33`** (2 nodes): `authGuard()`, `auth.guard.ts`
+- **Thin community `Community 35`** (2 nodes): `authGuard()`, `auth.guard.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 34`** (1 nodes): `main.ts`
+- **Thin community `Community 36`** (1 nodes): `main.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 35`** (1 nodes): `app.spec.ts`
+- **Thin community `Community 37`** (1 nodes): `app.spec.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 36`** (1 nodes): `app.routes.ts`
+- **Thin community `Community 38`** (1 nodes): `app.routes.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 37`** (1 nodes): `app.config.ts`
+- **Thin community `Community 39`** (1 nodes): `app.config.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 38`** (1 nodes): `environment.ts`
+- **Thin community `Community 40`** (1 nodes): `environment.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 39`** (1 nodes): `environment.development.ts`
+- **Thin community `Community 41`** (1 nodes): `environment.development.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 40`** (1 nodes): `cache.ts`
+- **Thin community `Community 42`** (1 nodes): `cache.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 41`** (1 nodes): `Butterstack Project (CLAUDE.md)`
+- **Thin community `Community 43`** (1 nodes): `Butterstack Project (CLAUDE.md)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 42`** (1 nodes): `Backend Returns Pure UITokens (Key Principle)`
+- **Thin community `Community 44`** (1 nodes): `Backend Returns Pure UITokens (Key Principle)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 43`** (1 nodes): `Phase 1 Ideation`
+- **Thin community `Community 45`** (1 nodes): `Phase 1 Ideation`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 44`** (1 nodes): `Phase 2 Fixture (future)`
+- **Thin community `Community 46`** (1 nodes): `Phase 2 Fixture (future)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 45`** (1 nodes): `Phase 3 Changes (partially built)`
+- **Thin community `Community 47`** (1 nodes): `Phase 3 Changes (partially built)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 46`** (1 nodes): `Phase 4 Versions (partially built)`
+- **Thin community `Community 48`** (1 nodes): `Phase 4 Versions (partially built)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 47`** (1 nodes): `Platform Vision - Intelligent Delivery OS`
+- **Thin community `Community 49`** (1 nodes): `Platform Vision - Intelligent Delivery OS`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 48`** (1 nodes): `Instant Prototyping Capability`
+- **Thin community `Community 50`** (1 nodes): `Instant Prototyping Capability`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 49`** (1 nodes): `HTML + Tailwind Rationale (zero build step, instant render)`
+- **Thin community `Community 51`** (1 nodes): `HTML + Tailwind Rationale (zero build step, instant render)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 50`** (1 nodes): `Multilingual Text Input (Hinglish/Minglish/Gujarati)`
+- **Thin community `Community 52`** (1 nodes): `Multilingual Text Input (Hinglish/Minglish/Gujarati)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 51`** (1 nodes): `Voice Input Capability (Multi-speaker, Auto-detect)`
+- **Thin community `Community 53`** (1 nodes): `Voice Input Capability (Multi-speaker, Auto-detect)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 52`** (1 nodes): `AI is a Tool Not a Crutch (Key Principle)`
+- **Thin community `Community 54`** (1 nodes): `AI is a Tool Not a Crutch (Key Principle)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 53`** (1 nodes): `RAM is Sacred Principle`
+- **Thin community `Community 55`** (1 nodes): `RAM is Sacred Principle`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 54`** (1 nodes): `Role Hierarchy (Client/PM/BA/Dev/QA/Designer)`
+- **Thin community `Community 56`** (1 nodes): `Role Hierarchy (Client/PM/BA/Dev/QA/Designer)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 55`** (1 nodes): `MVP Scope (text input, prototype, versioning, multi-project)`
+- **Thin community `Community 57`** (1 nodes): `MVP Scope (text input, prototype, versioning, multi-project)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 56`** (1 nodes): `Keycloak Authentication Integration`
+- **Thin community `Community 58`** (1 nodes): `Keycloak Authentication Integration`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 57`** (1 nodes): `Impact Analysis Capability`
+- **Thin community `Community 59`** (1 nodes): `Impact Analysis Capability`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 58`** (1 nodes): `Full Version History (requirements + flows + prototypes)`
+- **Thin community `Community 60`** (1 nodes): `Full Version History (requirements + flows + prototypes)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 59`** (1 nodes): `Rationale: Prototype Auto-triggers as you type`
+- **Thin community `Community 61`** (1 nodes): `Rationale: Prototype Auto-triggers as you type`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 60`** (1 nodes): `Speed Non-Negotiable Principle (millisecond-class)`
+- **Thin community `Community 62`** (1 nodes): `Speed Non-Negotiable Principle (millisecond-class)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
@@ -426,6 +436,10 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `App`, `VersionTimelineComponent`, `Butterstack Project (CLAUDE.md)` to the rest of the system?**
   _22 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.11 - nodes in this community are weakly interconnected._
-- **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.09 - nodes in this community are weakly interconnected._
+- **Should `Community 1` be split into smaller, more focused modules?**
+  _Cohesion score 0.08 - nodes in this community are weakly interconnected._
+- **Should `Community 2` be split into smaller, more focused modules?**
+  _Cohesion score 0.1 - nodes in this community are weakly interconnected._
+- **Should `Community 5` be split into smaller, more focused modules?**
+  _Cohesion score 0.14 - nodes in this community are weakly interconnected._

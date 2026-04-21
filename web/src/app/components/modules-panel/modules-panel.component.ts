@@ -4,9 +4,21 @@ import { ApiService }       from '../../services/api.service'
 import { ModuleStructureInputComponent } from '../module-structure-input/module-structure-input.component'
 import type { VersionEntry } from '../../models/ui-tokens.model'
 
+export interface FeatureNode {
+  id: number; name: string; status: string; moduleName?: string; moduleId?: number
+  rawDescription?: string; aiDescription?: string
+}
+
+export interface PageNode {
+  id: number; name: string; pageType: string; status: string; expanded?: boolean
+  tokens?: any
+  features: { id: number; name: string; moduleName: string }[]
+}
+
 export interface ModuleNode {
   id: number; name: string; path: string; depth: number
   children: ModuleNode[]; versions: VersionEntry[]; expanded: boolean
+  features: FeatureNode[]
   rawTitle?: string; rawDescription?: string; cleanPrompt?: string; tokens?: any
 }
 
@@ -19,21 +31,27 @@ export interface ModuleNode {
 export class ModulesPanelComponent implements OnInit, OnChanges {
   @Input() approvedVersions: VersionEntry[] = []
   @Input() projectId: string = 'default'
-  @Output() restore        = new EventEmitter<VersionEntry>()
-  @Output() moduleSelected = new EventEmitter<ModuleNode>()
+  @Output() restore         = new EventEmitter<VersionEntry>()
+  @Output() moduleSelected  = new EventEmitter<ModuleNode>()
+  @Output() featureSelected = new EventEmitter<FeatureNode>()
+  @Output() pageSelected    = new EventEmitter<PageNode>()
 
+  activeTab  = signal<'modules' | 'pages'>('modules')
   tree       = signal<ModuleNode[]>([])
+  pages      = signal<PageNode[]>([])
   showImport = signal(false)
   importText = signal('')
   parsing    = signal(false)
   selectedId = signal<number | null>(null)
+  selectedFeatureId = signal<number | null>(null)
+  selectedPageId    = signal<number | null>(null)
 
   constructor(private api: ApiService) {}
 
-  ngOnInit() { this.fetchTree() }
+  ngOnInit() { this.fetchTree(); this.fetchPages() }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['approvedVersions'] || changes['projectId']) this.fetchTree()
+    if (changes['approvedVersions'] || changes['projectId']) { this.fetchTree(); this.fetchPages() }
   }
 
   toggleImport() {
@@ -54,15 +72,43 @@ export class ModulesPanelComponent implements OnInit, OnChanges {
 
   async fetchTree() {
     const rows = await this.api.get<any[]>('/modules/tree', { projectId: this.projectId })
-    this.tree.set(this.mapNodes(rows))
+    const features = await this.api.get<any[]>('/features', { projectId: this.projectId })
+    this.tree.set(this.mapNodes(rows, features))
+  }
+
+  async fetchPages() {
+    const rows = await this.api.get<any[]>('/pages', { projectId: this.projectId })
+    this.pages.set(rows.map(r => ({
+      id: r.id, name: r.name, pageType: r.page_type || 'page', status: r.status,
+      tokens: r.tokens, features: r.features || [],
+    })))
   }
 
   toggle(node: ModuleNode) { node.expanded = !node.expanded }
+  togglePage(page: PageNode) { page.expanded = !page.expanded }
 
   selectModule(node: ModuleNode) {
     this.selectedId.set(node.id)
+    this.selectedFeatureId.set(null)
+    this.selectedPageId.set(null)
     this.moduleSelected.emit(node)
   }
+
+  selectFeature(feat: FeatureNode) {
+    this.selectedFeatureId.set(feat.id)
+    this.selectedId.set(null)
+    this.selectedPageId.set(null)
+    this.featureSelected.emit(feat)
+  }
+
+  selectPage(page: PageNode) {
+    this.selectedPageId.set(page.id)
+    this.selectedId.set(null)
+    this.selectedFeatureId.set(null)
+    this.pageSelected.emit(page)
+  }
+
+  refresh() { this.fetchTree(); this.fetchPages() }
 
   get approvedCount() { return this.approvedVersions.filter(v => v.approved).length }
 
@@ -74,7 +120,7 @@ export class ModulesPanelComponent implements OnInit, OnChanges {
     }).join('\n')
   }
 
-  private mapNodes(nodes: any[]): ModuleNode[] {
+  private mapNodes(nodes: any[], allFeatures: any[] = []): ModuleNode[] {
     return nodes.map(n => ({
       id: n.id, name: n.name, path: n.path, depth: n.depth,
       expanded: true,
@@ -82,7 +128,11 @@ export class ModulesPanelComponent implements OnInit, OnChanges {
       rawDescription: n.raw_description,
       cleanPrompt:    n.clean_prompt,
       tokens:         n.tokens,
-      children: this.mapNodes(n.children ?? []),
+      features: allFeatures.filter(f => f.module_id === n.id).map(f => ({
+        id: f.id, name: f.name, status: f.status,
+        rawDescription: f.raw_description, aiDescription: f.ai_description,
+      })),
+      children: this.mapNodes(n.children ?? [], allFeatures),
       versions: this.approvedVersions.filter(v =>
         v.approved && v.modulePath?.join('/').toLowerCase().replace(/\s+/g, '-') === n.path
       )

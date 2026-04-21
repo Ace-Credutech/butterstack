@@ -36,7 +36,7 @@ export type AIResponse = {
 }
 
 // Single unified call — handles both providers transparently
-export async function aiChat(messages: ChatMessage[], model: string, jsonMode = false): Promise<AIResponse> {
+export async function aiChat(messages: ChatMessage[], model: string, jsonMode = false, maxTokens = 1024): Promise<AIResponse> {
   if (PROVIDER === 'anthropic' && anthropic) {
     const system  = messages.find(m => m.role === 'system')?.content ?? ''
     const rest    = messages.filter(m => m.role !== 'system').map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }))
@@ -44,7 +44,7 @@ export async function aiChat(messages: ChatMessage[], model: string, jsonMode = 
 
     const res = await anthropic.messages.create({
       model,
-      max_tokens: 1024,
+      max_tokens: maxTokens,
       system:     system + jsonHint,
       messages:   rest,
     })

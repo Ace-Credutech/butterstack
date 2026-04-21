@@ -281,4 +281,101 @@ await query(`
 await query(`CREATE INDEX IF NOT EXISTS idx_dict_raw_word ON local_dictionary (raw_word)`)
 console.log('✓ local_dictionary ready')
 
+// ── Features — capabilities under modules ─────────────────────────────────
+await query(`
+  CREATE TABLE IF NOT EXISTS features (
+    id              SERIAL PRIMARY KEY,
+    project_id      VARCHAR(64)  NOT NULL DEFAULT 'default',
+    module_id       INTEGER      NOT NULL REFERENCES modules(id) ON DELETE CASCADE,
+    name            VARCHAR(255) NOT NULL,
+    slug            VARCHAR(255) NOT NULL,
+    raw_description TEXT,
+    ai_description  TEXT,
+    status          VARCHAR(50)  NOT NULL DEFAULT 'draft',
+    order_index     INTEGER      NOT NULL DEFAULT 0,
+    created_by      INTEGER      REFERENCES users(id) ON DELETE SET NULL,
+    created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+  )
+`)
+await query(`CREATE INDEX IF NOT EXISTS idx_features_module  ON features (module_id)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_features_project ON features (project_id)`)
+console.log('✓ features ready')
+
+// ── Pages — UI screens/views ──────────────────────────────────────────────
+await query(`
+  CREATE TABLE IF NOT EXISTS pages (
+    id              SERIAL PRIMARY KEY,
+    project_id      VARCHAR(64)  NOT NULL DEFAULT 'default',
+    name            VARCHAR(255) NOT NULL,
+    slug            VARCHAR(255) NOT NULL,
+    page_type       VARCHAR(50),
+    raw_description TEXT,
+    ai_description  TEXT,
+    tokens          JSONB,
+    status          VARCHAR(50)  NOT NULL DEFAULT 'draft',
+    order_index     INTEGER      NOT NULL DEFAULT 0,
+    created_by      INTEGER      REFERENCES users(id) ON DELETE SET NULL,
+    created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+  )
+`)
+await query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_pages_slug    ON pages (project_id, slug)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_pages_project        ON pages (project_id)`)
+console.log('✓ pages ready')
+
+// ── Page ↔ Feature link ──────────────────────────────────────────────────
+await query(`
+  CREATE TABLE IF NOT EXISTS page_features (
+    id          SERIAL PRIMARY KEY,
+    page_id     INTEGER NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
+    feature_id  INTEGER NOT NULL REFERENCES features(id) ON DELETE CASCADE,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (page_id, feature_id)
+  )
+`)
+await query(`CREATE INDEX IF NOT EXISTS idx_pf_page    ON page_features (page_id)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_pf_feature ON page_features (feature_id)`)
+console.log('✓ page_features ready')
+
+// ── Elicitation Sessions ──────────────────────────────────────────────────
+await query(`
+  CREATE TABLE IF NOT EXISTS elicitation_sessions (
+    id          SERIAL PRIMARY KEY,
+    project_id  VARCHAR(64)  NOT NULL DEFAULT 'default',
+    user_id     INTEGER      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    status      VARCHAR(30)  NOT NULL DEFAULT 'active',
+    summary     TEXT,
+    context     JSONB        NOT NULL DEFAULT '{}',
+    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+  )
+`)
+await query(`CREATE INDEX IF NOT EXISTS idx_elicit_session_project ON elicitation_sessions (project_id, status)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_elicit_session_user    ON elicitation_sessions (user_id)`)
+await query(`ALTER TABLE elicitation_sessions ADD COLUMN IF NOT EXISTS title VARCHAR(255)`)
+console.log('✓ elicitation_sessions ready')
+
+// ── Elicitation Messages ──────────────────────────────────────────────────
+await query(`
+  CREATE TABLE IF NOT EXISTS elicitation_messages (
+    id           SERIAL PRIMARY KEY,
+    session_id   INTEGER      NOT NULL REFERENCES elicitation_sessions(id) ON DELETE CASCADE,
+    role         VARCHAR(20)  NOT NULL,
+    content      TEXT         NOT NULL,
+    message_type VARCHAR(30)  NOT NULL DEFAULT 'text',
+    options      JSONB,
+    selected     JSONB,
+    metadata     JSONB,
+    created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+  )
+`)
+await query(`CREATE INDEX IF NOT EXISTS idx_elicit_msg_session ON elicitation_messages (session_id, created_at)`)
+console.log('✓ elicitation_messages ready')
+
+// ── Extend modules with documentation fields ─────────────────────────────
+await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS user_input TEXT`)
+await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS ai_documentation TEXT`)
+console.log('✓ modules extended (user_input, ai_documentation)')
+
 process.exit(0)

@@ -4,6 +4,7 @@ import type { UITokens }           from '../../models/ui-tokens.model'
 import { renderTokens }            from '../../renderers/index'
 import { ApiService }              from '../../services/api.service'
 import { type DesignSystem, type PrototypeContext, DEFAULT_DESIGN } from '../../renderers/components.renderer'
+import { environment }             from '../../../environments/environment'
 
 type Viewport = 'desktop' | 'tablet' | 'mobile'
 type CenterTab = 'prototype' | 'brd' | 'excel' | 'mindmap'
@@ -96,6 +97,8 @@ export class PrototypePreviewComponent implements OnChanges {
     if (tab === 'mindmap') { this.mindmapHtml.set(null); await this.loadMindmap() }
   }
 
+  private get apiBase(): string { return `${environment.url}/api` }
+
   private get scopeParams(): string {
     let params = `projectId=${this.projectId}`
     if (this.scopeModuleId) params += `&moduleId=${this.scopeModuleId}`
@@ -115,7 +118,7 @@ export class PrototypePreviewComponent implements OnChanges {
     this.brdLoading.set(true)
     try {
       const token = localStorage.getItem('bs_token')
-      const res = await fetch(`/api/exports/brd?${this.scopeParams}&token=${token}`)
+      const res = await fetch(`${this.apiBase}/exports/brd?${this.scopeParams}&token=${token}`)
       const html = await res.text()
       this.brdRaw = html
       this.brdHtml.set(this.sanitizer.bypassSecurityTrustResourceUrl(
@@ -139,7 +142,7 @@ export class PrototypePreviewComponent implements OnChanges {
     this.mindmapLoading.set(true)
     try {
       const token = localStorage.getItem('bs_token')
-      const res = await fetch(`/api/exports/mindmap?${this.scopeParams}&token=${token}`)
+      const res = await fetch(`${this.apiBase}/exports/mindmap?${this.scopeParams}&token=${token}`)
       const html = await res.text()
       this.mindmapHtml.set(this.sanitizer.bypassSecurityTrustResourceUrl(
         'data:text/html;charset=utf-8,' + encodeURIComponent(html)
@@ -149,12 +152,12 @@ export class PrototypePreviewComponent implements OnChanges {
 
   downloadBrd() {
     const token = localStorage.getItem('bs_token')
-    window.open(`/api/exports/brd?${this.scopeParams}&token=${token}`, '_blank')
+    window.open(`${this.apiBase}/exports/brd?${this.scopeParams}&token=${token}`, '_blank')
   }
 
   async downloadExcel() {
     const token = localStorage.getItem('bs_token')
-    const res = await fetch(`/api/exports/excel?${this.scopeParams}&token=${token}`)
+    const res = await fetch(`${this.apiBase}/exports/excel?${this.scopeParams}&token=${token}`)
     const blob = await res.blob()
     const a = document.createElement('a')
     a.href = URL.createObjectURL(blob)
@@ -165,7 +168,7 @@ export class PrototypePreviewComponent implements OnChanges {
 
   downloadMindmap() {
     const token = localStorage.getItem('bs_token')
-    window.open(`/api/exports/mindmap?${this.scopeParams}&token=${token}`, '_blank')
+    window.open(`${this.apiBase}/exports/mindmap?${this.scopeParams}&token=${token}`, '_blank')
   }
 
   refreshTab() {

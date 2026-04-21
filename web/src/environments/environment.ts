@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: '/api',
+  url: 'https://butterstack-prod-be.undercontrol.in',
 }

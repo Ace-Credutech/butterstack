@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment'
 
 @Injectable({ providedIn: 'root' })
 export class ExportService {
-  private base = environment.apiUrl
+  private base = `${environment.url}/api`
 
   private get headers(): Record<string, string> {
     const token = localStorage.getItem('bs_token')

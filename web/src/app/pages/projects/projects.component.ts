@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core'
 import { Router }      from '@angular/router'
 import { FormsModule } from '@angular/forms'
 import { ApiService }  from '../../services/api.service'
+import { AuthService } from '../../services/auth.service'
 import { UserAvatarComponent } from '../../components/user-avatar/user-avatar.component'
 
 interface Project { id: number; name: string; slug: string; description: string; status: string; created_at: string; updated_at: string }
@@ -19,7 +20,7 @@ export class ProjectsComponent implements OnInit {
   newName    = ''
   newDesc    = ''
 
-  constructor(private api: ApiService, private router: Router) {}
+  constructor(private api: ApiService, private router: Router, public auth: AuthService) {}
 
   async ngOnInit() { await this.load() }
 

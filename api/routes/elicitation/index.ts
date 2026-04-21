@@ -171,7 +171,9 @@ app.post('/sessions/:id/complete', async (c) => {
 
   const featureIdMap: Record<string, number> = {}
   const newFeatureIds: { id: number; name: string; parentPath: string }[] = []
+  const existingFeatureIds: { id: number; name: string; parentPath: string }[] = []
   const newPageIds: { id: number; name: string; linkedFeatures: string[] }[] = []
+  const existingPageIds: { id: number; name: string; linkedFeatures: string[] }[] = []
 
   // ── Step 1: Create all modules + features + pages (fast, no AI calls) ──
 
@@ -201,6 +203,7 @@ app.post('/sessions/:id/complete', async (c) => {
         const existing = await query(`SELECT id FROM features WHERE module_id = $1 AND slug = $2`, [subId, featSlug])
         if (existing.rows.length) {
           featureIdMap[feat] = existing.rows[0].id
+          existingFeatureIds.push({ id: existing.rows[0].id, name: feat, parentPath: `${mod.name} > ${sub.name}` })
         } else {
           const featResult = await query(
             `INSERT INTO features (project_id, module_id, name, slug, created_by) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
@@ -225,6 +228,8 @@ app.post('/sessions/:id/complete', async (c) => {
     if (pageResult.rows[0].inserted) {
       created.pages++
       newPageIds.push({ id: pageId, name: page.name, linkedFeatures: page.linkedFeatures })
+    } else {
+      existingPageIds.push({ id: pageId, name: page.name, linkedFeatures: page.linkedFeatures })
     }
 
     for (const linkedFeat of page.linkedFeatures) {
@@ -237,14 +242,18 @@ app.post('/sessions/:id/complete', async (c) => {
 
   // ── Step 2: Background — generate docs + page tokens (fire-and-forget) ──
   const bgWork = async () => {
-    const docPromises = newFeatureIds.map(async (f) => {
+    // Generate docs for ALL features (new + existing that were in the breakdown)
+    const allFeatures = [...newFeatureIds, ...existingFeatureIds]
+    const docPromises = allFeatures.map(async (f) => {
       try {
         const doc = await generateDocumentation(context, conversationHistory, f.name, 'feature', f.parentPath, undefined, userId)
         await query(`UPDATE features SET raw_description = $1, ai_description = $2 WHERE id = $3`, [doc.userInput, doc.aiDoc, f.id])
       } catch {}
     })
 
-    const pagePromises = newPageIds.map(async (p) => {
+    // Generate docs + tokens for ALL pages (new + existing)
+    const allPages = [...newPageIds, ...existingPageIds]
+    const pagePromises = allPages.map(async (p) => {
       try {
         const [doc, tokenResult] = await Promise.all([
           generateDocumentation(context, conversationHistory, p.name, 'page', undefined, p.linkedFeatures, userId),
@@ -260,7 +269,7 @@ app.post('/sessions/:id/complete', async (c) => {
     await Promise.all([...docPromises, ...pagePromises])
 
     // After docs generated, generate summaries + confidence + test/use cases
-    for (const f of newFeatureIds) {
+    for (const f of allFeatures) {
       try {
         const feat = await query(`SELECT ai_description FROM features WHERE id = $1`, [f.id])
         const aiDesc = feat.rows[0]?.ai_description || ''
@@ -290,7 +299,7 @@ app.post('/sessions/:id/complete', async (c) => {
       } catch {}
     }
 
-    for (const p of newPageIds) {
+    for (const p of allPages) {
       try {
         const page = await query(`SELECT ai_description FROM pages WHERE id = $1`, [p.id])
         const summary = (page.rows[0]?.ai_description || '').split('\n').find((l: string) => l.trim() && !l.startsWith('#'))?.trim().slice(0, 200) || p.name

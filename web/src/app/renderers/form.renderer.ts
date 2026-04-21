@@ -1,5 +1,5 @@
 import type { UITokens } from '../models/ui-tokens.model'
-import { renderFormField, renderButton, DEFAULT_DESIGN, type DesignSystem } from './components.renderer'
+import { renderFormField, renderButton, DEFAULT_DESIGN, type DesignSystem, dsBgGradient, dsBorderAccent } from './components.renderer'
 
 export function renderForm(t: UITokens, ds: DesignSystem = DEFAULT_DESIGN): string {
   const fields = t.fields.length ? t.fields : [
@@ -9,12 +9,14 @@ export function renderForm(t: UITokens, ds: DesignSystem = DEFAULT_DESIGN): stri
   ]
 
   const fieldHtml = fields.map(f => renderFormField(f.name, f.type, undefined, ds)).join('')
+  const bg = dsBgGradient(ds)
+  const borderAccent = dsBorderAccent(ds)
 
   return `
-    <div class="min-h-screen bg-gray-50 p-8 ${ds.fontFamily}">
-      <div class="max-w-xl mx-auto">
+    <div class="min-h-screen ${bg} flex items-center justify-center p-8 ${ds.fontFamily}">
+      <div class="w-full max-w-xl">
         <div class="flex items-center gap-3 mb-6">
-          <button class="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition">
+          <button class="p-1.5 ${ds.borderRadius} hover:bg-white/50 text-gray-400 hover:text-gray-600 transition">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
             </svg>
@@ -24,7 +26,7 @@ export function renderForm(t: UITokens, ds: DesignSystem = DEFAULT_DESIGN): stri
             <p class="text-xs text-gray-400">${t.entity ? `Manage ${t.entity.toLowerCase()} details` : 'Fill in the required information'}</p>
           </div>
         </div>
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div class="bg-white rounded-2xl border ${borderAccent} shadow-sm p-6">
           <div class="space-y-5">
             ${fieldHtml}
           </div>

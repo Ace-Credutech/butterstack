@@ -16,6 +16,26 @@ export interface PrototypeContext {
   entities?: Record<string, number>
 }
 
+export function dsColorName(ds: DesignSystem): string {
+  const m = ds.primaryColor.match(/bg-(\w+)-/)
+  return m ? m[1] : 'green'
+}
+
+export function dsBgGradient(ds: DesignSystem): string {
+  const color = dsColorName(ds)
+  return `bg-gradient-to-br from-${color}-50 to-white`
+}
+
+export function dsBorderAccent(ds: DesignSystem): string {
+  const color = dsColorName(ds)
+  return `border-${color}-100`
+}
+
+export function dsCheckboxColor(ds: DesignSystem): string {
+  const color = dsColorName(ds)
+  return `text-${color}-600`
+}
+
 export const DEFAULT_DESIGN: DesignSystem = {
   primaryColor: 'bg-green-600',
   primaryHover: 'hover:bg-green-700',
@@ -118,9 +138,11 @@ export function renderDataTable(columns: string[], rowCount: number, ds: DesignS
 }
 
 export function renderStatCard(label: string, value: string, trend?: string, ds?: DesignSystem): string {
-  const trendHtml = trend ? `<span class="text-xs ${trend.startsWith('+') ? 'text-green-600' : 'text-red-500'} font-medium">${trend}</span>` : ''
+  const border = ds ? dsBorderAccent(ds) : 'border-gray-100'
+  const trendColor = ds ? dsColorName(ds) : 'green'
+  const trendHtml = trend ? `<span class="text-xs ${trend.startsWith('+') ? `text-${trendColor}-600` : 'text-red-500'} font-medium">${trend}</span>` : ''
   return `
-    <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+    <div class="bg-white rounded-xl border ${border} p-5 shadow-sm">
       <div class="flex items-center justify-between mb-1">
         <p class="text-xs text-gray-400 font-medium">${label}</p>
         ${trendHtml}
@@ -143,9 +165,10 @@ export function renderFormField(name: string, type: string, placeholder?: string
   return `<div><label class="block text-xs font-medium text-gray-600 mb-1.5">${name}</label><input type="${type}" placeholder="${ph}" class="w-full px-3.5 py-2.5 text-sm border border-gray-200 ${br} focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition"/></div>`
 }
 
-export function renderSectionCard(title: string, content: string): string {
+export function renderSectionCard(title: string, content: string, ds?: DesignSystem): string {
+  const border = ds ? dsBorderAccent(ds) : 'border-gray-100'
   return `
-    <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+    <div class="bg-white rounded-xl border ${border} p-5 shadow-sm">
       <h3 class="text-sm font-semibold text-gray-800 mb-3">${title}</h3>
       <div class="text-sm text-gray-600 leading-relaxed">${content}</div>
     </div>`

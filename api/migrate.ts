@@ -414,6 +414,16 @@ await query(`ALTER TABLE project_tokens ADD COLUMN IF NOT EXISTS design_system J
 await query(`ALTER TABLE project_tokens ADD COLUMN IF NOT EXISTS prototype_context JSONB DEFAULT '{}'`)
 console.log('✓ project_tokens extended (design_system, prototype_context)')
 
+// ── Performance Indexes ───────────────────────────────────────────────────
+await query(`CREATE INDEX IF NOT EXISTS idx_feedback_entity_user ON feedback (entity_type, entity_id, user_id)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_comments_unresolved ON comments (project_id, entity_type, entity_id) WHERE resolved = FALSE`)
+await query(`CREATE INDEX IF NOT EXISTS idx_elicit_session_updated ON elicitation_sessions (project_id, updated_at DESC)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_features_module_order ON features (module_id, order_index)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_pages_project_order ON pages (project_id, order_index)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_version_history_module_created ON version_history (module_id, created_at DESC)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_token_usage_project_time ON token_usage (project_id, created_at DESC)`)
+console.log('✓ performance indexes ready')
+
 // ── Feedback ──────────────────────────────────────────────────────────────
 await query(`
   CREATE TABLE IF NOT EXISTS feedback (

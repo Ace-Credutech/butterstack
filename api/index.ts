@@ -64,6 +64,46 @@ api.route('/feedback',             feedback)
 api.route('/usage',                usage)
 api.route('/share',                share)
 
+// Combined workspace init — single call instead of 3
+api.get('/workspace/init', async (c) => {
+  const { query: dbQuery } = await import('./db.ts')
+  const projectId = c.req.query('projectId') || 'default'
+
+  const [modulesRes, featuresRes, pagesRes, historyRes] = await Promise.all([
+    dbQuery(
+      `WITH RECURSIVE tree AS (
+         SELECT id, name, slug, parent_id, depth, path, order_index, raw_title, raw_description, clean_prompt, tokens
+         FROM modules WHERE project_id = $1 AND parent_id IS NULL
+         UNION ALL
+         SELECT m.id, m.name, m.slug, m.parent_id, m.depth, m.path, m.order_index, m.raw_title, m.raw_description, m.clean_prompt, m.tokens
+         FROM modules m JOIN tree t ON m.parent_id = t.id
+       ) SELECT * FROM tree ORDER BY path, order_index`, [projectId]
+    ),
+    dbQuery(`SELECT * FROM features WHERE project_id = $1 ORDER BY module_id, order_index`, [projectId]),
+    dbQuery(`SELECT p.* FROM pages p WHERE p.project_id = $1 ORDER BY p.order_index, p.name`, [projectId]),
+    dbQuery(`SELECT * FROM version_history WHERE project_id = $1 ORDER BY created_at DESC LIMIT 50`, [projectId]),
+  ])
+
+  const pageIds = pagesRes.rows.map((p: any) => p.id)
+  let pageFeatures: any[] = []
+  if (pageIds.length) {
+    const pf = await dbQuery(
+      `SELECT pf.page_id, f.id, f.name, m.name as module_name
+       FROM page_features pf JOIN features f ON f.id = pf.feature_id JOIN modules m ON m.id = f.module_id
+       WHERE pf.page_id = ANY($1::int[])`, [pageIds]
+    )
+    pageFeatures = pf.rows
+  }
+
+  return c.json({
+    modules: modulesRes.rows,
+    features: featuresRes.rows,
+    pages: pagesRes.rows,
+    pageFeatures,
+    history: historyRes.rows,
+  })
+})
+
 api.get('/users', async (c) => {
   const { query: dbQuery } = await import('./db.ts')
   const result = await dbQuery(`SELECT id, name, email, mobile, country_code, created_at FROM users ORDER BY name`)

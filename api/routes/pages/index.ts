@@ -23,15 +23,27 @@ app.post('/', async (c) => {
 
 app.get('/', async (c) => {
   const projectId = c.req.query('projectId') || 'default'
-  const result = await query(
-    `SELECT p.*, COALESCE(
-       (SELECT json_agg(json_build_object('id', f.id, 'name', f.name, 'moduleName', m.name))
-        FROM page_features pf JOIN features f ON f.id = pf.feature_id JOIN modules m ON m.id = f.module_id
-        WHERE pf.page_id = p.id), '[]'
-     ) as features
-     FROM pages p WHERE p.project_id = $1 ORDER BY p.order_index, p.name`, [projectId]
+  const pagesResult = await query(
+    `SELECT p.* FROM pages p WHERE p.project_id = $1 ORDER BY p.order_index, p.name`, [projectId]
   )
-  return c.json(result.rows)
+  if (!pagesResult.rows.length) return c.json([])
+
+  const pageIds = pagesResult.rows.map(p => p.id)
+  const linksResult = await query(
+    `SELECT pf.page_id, f.id, f.name, m.name as module_name
+     FROM page_features pf JOIN features f ON f.id = pf.feature_id JOIN modules m ON m.id = f.module_id
+     WHERE pf.page_id = ANY($1::int[])`,
+    [pageIds]
+  )
+
+  const linksByPage: Record<number, any[]> = {}
+  for (const row of linksResult.rows) {
+    if (!linksByPage[row.page_id]) linksByPage[row.page_id] = []
+    linksByPage[row.page_id].push({ id: row.id, name: row.name, moduleName: row.module_name })
+  }
+
+  const rows = pagesResult.rows.map(p => ({ ...p, features: linksByPage[p.id] || [] }))
+  return c.json(rows)
 })
 
 app.get('/:id', async (c) => {

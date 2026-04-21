@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, signal } from '@angular/core'
+import { Component, OnInit, AfterViewInit, ViewChild, signal } from '@angular/core'
 import { Router, ActivatedRoute }  from '@angular/router'
 import { PrototypeService }        from '../../services/prototype.service'
 import { ApiService }              from '../../services/api.service'
@@ -20,7 +20,7 @@ import type { UITokens, VersionEntry } from '../../models/ui-tokens.model'
   imports:     [RequirementInputComponent, PrototypePreviewComponent, VersionTimelineComponent, ModulesPanelComponent, UserAvatarComponent, MembersPanelComponent, ElicitationChatComponent, DesignSettingsComponent, UsagePanelComponent],
   templateUrl: './workspace.component.html',
 })
-export class WorkspaceComponent implements OnInit {
+export class WorkspaceComponent implements OnInit, AfterViewInit {
   @ViewChild(ModulesPanelComponent) modulesPanel!: ModulesPanelComponent
   @ViewChild(ElicitationChatComponent) chatPanel!: ElicitationChatComponent
   @ViewChild(PrototypePreviewComponent) protoPanel!: PrototypePreviewComponent
@@ -62,12 +62,22 @@ export class WorkspaceComponent implements OnInit {
   async ngOnInit() {
     this.projectId = this.route.snapshot.paramMap.get('id') ?? 'default'
 
-    const project = await this.api.get<any>(`/projects/${this.projectId}`)
+    const [project, initData] = await Promise.all([
+      this.api.get<any>(`/projects/${this.projectId}`),
+      this.api.get<any>('/workspace/init', { projectId: this.projectId }),
+    ])
+
     this.projectName.set(project.name)
 
-    const { history } = await this.api.get<{ history: any[] }>('/history', { projectId: this.projectId, limit: '50' })
+    // Pass init data to modules panel (avoids 3 extra API calls)
+    if (this.modulesPanel) {
+      this.modulesPanel.loadFromInit(initData.modules, initData.features, initData.pages, initData.pageFeatures)
+    }
+    this._initData = initData
+
+    const history = initData.history || []
     if (!history.length) return
-    const versions = history.map((h, i) => ({
+    const versions = history.map((h: any, i: number) => ({
       id:             history.length - i,
       dbId:           h.id,
       label:          h.label,
@@ -83,13 +93,16 @@ export class WorkspaceComponent implements OnInit {
     }))
     this.versions.set(versions)
     this.versionCounter = versions[0]?.id ?? 0
-    const latest = versions[0]
-    if (latest) {
-      this.tokens.set(latest.tokens)
-      this.cleanPrompt.set(latest.cleanPrompt)
-      this.source.set(latest.source)
-      this.restoredTitle.set(latest.rawTitle)
-      this.restoredDescription.set(latest.rawDescription)
+  }
+
+  private _initData: any = null
+
+  ngAfterViewInit() {
+    if (this._initData && this.modulesPanel) {
+      this.modulesPanel.loadFromInit(
+        this._initData.modules, this._initData.features,
+        this._initData.pages, this._initData.pageFeatures
+      )
     }
   }
 

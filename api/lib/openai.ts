@@ -13,12 +13,17 @@ const SYSTEM_PROMPT = `You are a UI token extractor. Given a product requirement
   "sections": array of section name strings,
   "actions": array of action button label strings,
   "fields": array of {name, type} objects (type: text|number|email|password|select|date|textarea|checkbox),
-  "stats": array of {label, value} objects for metrics/KPIs,
+  "stats": array of {label, value} objects for metrics/KPIs — use realistic numbers that make sense,
   "entity": main data entity name (singular),
   "search": boolean,
   "filters": boolean
 }
-Return only valid JSON. No explanation.`
+
+IMPORTANT:
+- Use EXACT field names/labels from the user's requirements. If user says "Captcha label should be Confirm You are Human", the field name MUST be "Confirm You are Human", NOT "Captcha".
+- Pay close attention to any label, placeholder, or text customizations mentioned in the requirements.
+- Stats should have realistic, consistent values (e.g., Active Users should be less than Total Users).
+- Return only valid JSON. No explanation.`
 
 async function callAI(prompt: string): Promise<UITokens> {
   const res = await aiChat(

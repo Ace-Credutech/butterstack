@@ -354,9 +354,15 @@ export class ElicitationChatComponent implements OnInit, AfterViewChecked {
     const e = this.docEntity()
     if (!e) return
     this.savingDoc.set(true)
+
+    // Save raw edits immediately
     const endpoint = e.kind === 'feature' ? '/features' : e.kind === 'page' ? '/pages' : '/modules'
     await this.api.patch(`${endpoint}/${e.id}`, { rawDescription: this.editRaw, aiDescription: this.editAi })
-    this.docEntity.set({ ...e, rawDescription: this.editRaw, aiDescription: this.editAi })
+
+    // Trigger reprocess in background (regenerates AI docs + prototype + cascades to affected entities)
+    this.api.post(`/reprocess/${e.kind}/${e.id}`, { rawDescription: this.editRaw }).catch(() => {})
+
+    this.docEntity.set({ ...e, rawDescription: this.editRaw, aiDescription: this.editAi + '\n\n(Regenerating documentation...)' })
     this.editingDoc.set(false)
     this.savingDoc.set(false)
   }

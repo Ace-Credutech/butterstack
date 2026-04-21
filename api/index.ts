@@ -23,6 +23,7 @@ import exports             from './routes/exports/index.ts'
 import feedback            from './routes/feedback/index.ts'
 import usage               from './routes/usage/index.ts'
 import share               from './routes/share/index.ts'
+import reprocess           from './routes/reprocess/index.ts'
 
 const app = new Hono()
 
@@ -63,6 +64,7 @@ api.route('/exports',              exports)
 api.route('/feedback',             feedback)
 api.route('/usage',                usage)
 api.route('/share',                share)
+api.route('/reprocess',            reprocess)
 
 // Combined workspace init — single call instead of 3
 api.get('/workspace/init', async (c) => {

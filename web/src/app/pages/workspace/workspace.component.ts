@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, signal } from '@angular/core'
+import { Component, OnInit, AfterViewInit, ViewChild, signal } from '@angular/core'
 import { Router, ActivatedRoute }  from '@angular/router'
 import { PrototypeService }        from '../../services/prototype.service'
 import { ApiService }              from '../../services/api.service'
@@ -8,18 +8,22 @@ import { VersionTimelineComponent }   from '../../components/version-timeline/ve
 import { ModulesPanelComponent, ModuleNode, FeatureNode, PageNode } from '../../components/modules-panel/modules-panel.component'
 import { UserAvatarComponent } from '../../components/user-avatar/user-avatar.component'
 import { MembersPanelComponent } from '../../components/members-panel/members-panel.component'
+import { ExportService } from '../../services/export.service'
 import { ElicitationChatComponent } from '../../components/elicitation-chat/elicitation-chat.component'
+import { DesignSettingsComponent } from '../../components/design-settings/design-settings.component'
+import { UsagePanelComponent } from '../../components/usage-panel/usage-panel.component'
 import type { UITokens, VersionEntry } from '../../models/ui-tokens.model'
 
 @Component({
   selector:    'app-workspace',
   standalone:  true,
-  imports:     [RequirementInputComponent, PrototypePreviewComponent, VersionTimelineComponent, ModulesPanelComponent, UserAvatarComponent, MembersPanelComponent, ElicitationChatComponent],
+  imports:     [RequirementInputComponent, PrototypePreviewComponent, VersionTimelineComponent, ModulesPanelComponent, UserAvatarComponent, MembersPanelComponent, ElicitationChatComponent, DesignSettingsComponent, UsagePanelComponent],
   templateUrl: './workspace.component.html',
 })
-export class WorkspaceComponent implements OnInit {
+export class WorkspaceComponent implements OnInit, AfterViewInit {
   @ViewChild(ModulesPanelComponent) modulesPanel!: ModulesPanelComponent
   @ViewChild(ElicitationChatComponent) chatPanel!: ElicitationChatComponent
+  @ViewChild(PrototypePreviewComponent) protoPanel!: PrototypePreviewComponent
 
   projectId   = ''
   projectName = signal('')
@@ -34,28 +38,46 @@ export class WorkspaceComponent implements OnInit {
   meetingTime   = signal('00:00')
   appFullscreen = signal(false)
   inputMode     = signal<'chat' | 'classic'>('chat')
+  relatedPages  = signal<{ id: number; name: string; pageType: string; tokens?: any }[]>([])
+  selectedContext = signal('')
+  scopeModuleId  = signal<number | null>(null)
+  scopePageId    = signal<number | null>(null)
+  scopeFeatureId = signal<number | null>(null)
 
   activeModule: ModuleNode | null = null
   private versionCounter = 0
   private meetingStart   = 0
   private meetingInterval: ReturnType<typeof setInterval> | null = null
 
+  showExportMenu = signal(false)
+
   constructor(
     private route:     ActivatedRoute,
     private router:    Router,
     private prototype: PrototypeService,
     private api:       ApiService,
+    public  exportSvc: ExportService,
   ) {}
 
   async ngOnInit() {
     this.projectId = this.route.snapshot.paramMap.get('id') ?? 'default'
 
-    const project = await this.api.get<any>(`/projects/${this.projectId}`)
+    const [project, initData] = await Promise.all([
+      this.api.get<any>(`/projects/${this.projectId}`),
+      this.api.get<any>('/workspace/init', { projectId: this.projectId }),
+    ])
+
     this.projectName.set(project.name)
 
-    const { history } = await this.api.get<{ history: any[] }>('/history', { projectId: this.projectId, limit: '50' })
+    // Pass init data to modules panel (avoids 3 extra API calls)
+    if (this.modulesPanel) {
+      this.modulesPanel.loadFromInit(initData.modules, initData.features, initData.pages, initData.pageFeatures)
+    }
+    this._initData = initData
+
+    const history = initData.history || []
     if (!history.length) return
-    const versions = history.map((h, i) => ({
+    const versions = history.map((h: any, i: number) => ({
       id:             history.length - i,
       dbId:           h.id,
       label:          h.label,
@@ -71,13 +93,16 @@ export class WorkspaceComponent implements OnInit {
     }))
     this.versions.set(versions)
     this.versionCounter = versions[0]?.id ?? 0
-    const latest = versions[0]
-    if (latest) {
-      this.tokens.set(latest.tokens)
-      this.cleanPrompt.set(latest.cleanPrompt)
-      this.source.set(latest.source)
-      this.restoredTitle.set(latest.rawTitle)
-      this.restoredDescription.set(latest.rawDescription)
+  }
+
+  private _initData: any = null
+
+  ngAfterViewInit() {
+    if (this._initData && this.modulesPanel) {
+      this.modulesPanel.loadFromInit(
+        this._initData.modules, this._initData.features,
+        this._initData.pages, this._initData.pageFeatures
+      )
     }
   }
 
@@ -101,14 +126,57 @@ export class WorkspaceComponent implements OnInit {
     }
   }
 
-  onModuleSelected(node: ModuleNode) {
+  async onModuleSelected(node: ModuleNode) {
     this.activeModule = node
-    if (node.tokens) {
+    this.source.set(`module: ${node.name}`)
+    this.selectedContext.set(node.name)
+    this.scopeModuleId.set(node.id)
+    this.scopePageId.set(null)
+    this.scopeFeatureId.set(null)
+
+    const allFeatureIds = this.collectFeatureIds(node)
+    if (allFeatureIds.length) {
+      await this.showRelatedPages(allFeatureIds)
+    } else if (node.tokens) {
+      this.relatedPages.set([])
       this.tokens.set(node.tokens)
       this.cleanPrompt.set(node.cleanPrompt ?? '')
-      this.source.set(`module: ${node.name}`)
-      this.restoredTitle.set(node.rawTitle ?? '')
-      this.restoredDescription.set(node.rawDescription ?? '')
+    }
+  }
+
+  private collectFeatureIds(node: ModuleNode): number[] {
+    const ids = node.features.map(f => f.id)
+    for (const child of node.children) {
+      ids.push(...this.collectFeatureIds(child))
+    }
+    return ids
+  }
+
+  private async showRelatedPages(featureIds: number[]) {
+    const allPages = await this.api.get<any[]>('/pages', { projectId: this.projectId })
+    const related = allPages.filter(p =>
+      p.features?.some((f: any) => featureIds.includes(f.id))
+    ).map(p => ({ id: p.id, name: p.name, pageType: p.page_type || 'page', tokens: p.tokens }))
+
+    if (related.length === 1 && related[0].tokens) {
+      this.relatedPages.set([])
+      this.tokens.set(related[0].tokens)
+    } else if (related.length > 0) {
+      this.relatedPages.set(related)
+    } else {
+      this.relatedPages.set([])
+    }
+  }
+
+  async selectRelatedPage(page: { id: number; name: string; tokens?: any }) {
+    this.relatedPages.set([])
+    if (page.tokens) {
+      this.tokens.set(page.tokens)
+      this.source.set(`page: ${page.name}`)
+    } else {
+      const full = await this.api.get<any>(`/pages/${page.id}`)
+      if (full.tokens) this.tokens.set(full.tokens)
+      this.source.set(`page: ${page.name}`)
     }
   }
 
@@ -140,29 +208,64 @@ export class WorkspaceComponent implements OnInit {
 
   goToProjects() { this.router.navigate(['/projects']) }
 
+  onDesignSaved() {
+    this.protoPanel?.reloadDesignSystem()
+  }
+
   onSessionCompleted(_created: { modules: number; features: number; pages: number }) {
     this.modulesPanel?.refresh()
   }
 
+  async onProjectSelected() {
+    this.source.set(`project: ${this.projectName()}`)
+    this.selectedContext.set(this.projectName())
+    this.scopeModuleId.set(null)
+    this.scopePageId.set(null)
+    this.scopeFeatureId.set(null)
+    const allPages = await this.api.get<any[]>('/pages', { projectId: this.projectId })
+    const pagesWithTokens = allPages.filter(p => p.tokens).map(p => ({ id: p.id, name: p.name, pageType: p.page_type || 'page', tokens: p.tokens }))
+    if (pagesWithTokens.length === 1) {
+      this.relatedPages.set([])
+      this.tokens.set(pagesWithTokens[0].tokens)
+    } else if (pagesWithTokens.length > 1) {
+      this.relatedPages.set(pagesWithTokens)
+    } else {
+      this.relatedPages.set([])
+      this.tokens.set(null)
+    }
+  }
+
   async onFeatureSelected(feat: FeatureNode) {
     this.source.set(`feature: ${feat.name}`)
+    this.selectedContext.set(feat.name)
+    this.scopeFeatureId.set(feat.id)
+    this.scopeModuleId.set(null)
+    this.scopePageId.set(null)
     const full = await this.api.get<any>(`/features/${feat.id}`)
     if (this.chatPanel) {
       this.chatPanel.showDoc({
         id: feat.id, kind: 'feature', name: feat.name,
         rawDescription: full.raw_description, aiDescription: full.ai_description, status: full.status,
+        pmStatus: full.pm_status, summary: full.summary, confidenceScore: full.confidence_score,
+        testCases: full.test_cases, useCases: full.use_cases,
       })
     }
+    await this.showRelatedPages([feat.id])
   }
 
   async onPageSelected(page: PageNode) {
     this.source.set(`page: ${page.name}`)
+    this.relatedPages.set([])
+    this.scopePageId.set(page.id)
+    this.scopeModuleId.set(null)
+    this.scopeFeatureId.set(null)
     const full = await this.api.get<any>(`/pages/${page.id}`)
     if (full.tokens) this.tokens.set(full.tokens)
     if (this.chatPanel) {
       this.chatPanel.showDoc({
         id: page.id, kind: 'page', name: page.name,
         rawDescription: full.raw_description, aiDescription: full.ai_description, status: full.status,
+        pmStatus: full.pm_status, summary: full.summary,
       })
     }
   }

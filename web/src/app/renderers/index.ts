@@ -8,16 +8,21 @@ import { renderDashboard } from './dashboard.renderer'
 import { renderForm }      from './form.renderer'
 import { renderList }      from './list.renderer'
 import { renderEmptyState } from './shared.renderer'
+import { DEFAULT_DESIGN, type DesignSystem, type PrototypeContext } from './components.renderer'
 
-export function renderTokens(tokens: UITokens): string {
+export function renderTokens(tokens: UITokens, ds?: DesignSystem, ctx?: PrototypeContext): string {
+  const design = ds || DEFAULT_DESIGN
+  if (ctx?.currentUser) {
+    design.avatarText = ctx.currentUser.avatar || ctx.currentUser.name
+  }
   switch (tokens.page_type) {
-    case 'login':     return renderLogin(tokens)
-    case 'dashboard': return renderDashboard(tokens)
-    case 'landing':   return renderDashboard(tokens)   // reuse dashboard layout for now
-    case 'form':      return renderForm(tokens)
-    case 'list':      return renderList(tokens)
-    case 'detail':    return renderForm(tokens)        // detail uses form-like layout
-    case 'settings':  return renderForm(tokens)
+    case 'login':     return renderLogin(tokens, design, ctx)
+    case 'dashboard': return renderDashboard(tokens, design, ctx)
+    case 'landing':   return renderDashboard(tokens, design, ctx)
+    case 'form':      return renderForm(tokens, design)
+    case 'list':      return renderList(tokens, design)
+    case 'detail':    return renderForm(tokens, design)
+    case 'settings':  return renderForm(tokens, design)
     case 'empty':     return renderEmptyState(tokens.intent)
     default:          return renderEmptyState(tokens.intent)
   }

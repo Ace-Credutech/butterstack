@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "bun --hot index.ts"
+    "dev": "bun --hot index.ts",
+    "start": "bun index.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.88.0",
@@ -11,7 +12,11 @@
     "jose": "^6.2.2",
     "openai": "^4.67.0",
     "pg": "^8.20.0",
+<<<<<<< HEAD
     "pg-types": "^4.1.0"
+=======
+    "xlsx": "^0.18.5"
+>>>>>>> c1443647607523c9012ce216fe2664cb377b78e5
   },
   "devDependencies": {
     "@types/pg": "^8.20.0"

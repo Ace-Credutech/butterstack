@@ -81,20 +81,37 @@ Prefer "text" type when presenting your assumptions for confirmation — let use
 IMPORTANT — KNOW WHEN TO STOP ASKING:
 After 2-3 exchanges, you should have enough context. DO NOT keep asking questions endlessly.
 When the user confirms your assumptions or says "looks good" / "go ahead" / "yes" / gives enough info — it means STOP ASKING and let the system propose the breakdown.
-Your response in this case should acknowledge and summarize what you'll build. The system will automatically generate the module/feature/page breakdown.`
+Your response in this case should acknowledge and summarize what you'll build. The system will automatically generate the module/feature/page breakdown.
+
+IMPACT ANALYSIS & CHANGE DECISIONS:
+When the user asks about changing something ("change X to Y", "what if we remove X", "add X to Y"), analyze the impact:
+- List which modules, features, and pages are affected
+- Explain what changes are needed
+- Flag any risks or dependencies
+- Suggest whether this is a minor tweak or a major restructuring
+Format: "Impact Analysis: [affected items]. Decision: [recommendation]."
+This helps stakeholders understand the ripple effect before committing.`
 
 export async function generateNextQuestion(
   context: ElicitationContext,
-  messageHistory: { role: string; content: string }[]
+  messageHistory: { role: string; content: string }[],
+  previousSessionSummaries?: string[],
+  userId?: number,
+  images?: string[]
 ): Promise<ElicitationQuestion> {
   const contextSummary = buildContextSummary(context)
+  const prevContext = previousSessionSummaries?.length
+    ? `\n\nPrevious conversations in this project decided:\n${previousSessionSummaries.map((s, i) => `Session ${i + 1}: ${s}`).join('\n')}`
+    : ''
+
+  const imageNote = images?.length ? `\n\nThe user has shared ${images.length} image(s) — reference screenshots, mockups, or wireframes. Acknowledge what you see and use it to inform your questions.` : ''
 
   const messages: ChatMessage[] = [
     { role: 'system', content: SYSTEM_PROMPT },
-    { role: 'user', content: `Current accumulated context:\n${contextSummary}\n\nConversation so far:\n${formatHistory(messageHistory)}\n\nGenerate the next question to ask. Consider what's missing and what would be most valuable to learn next.` },
+    { role: 'user', content: `Current accumulated context:\n${contextSummary}${prevContext}${imageNote}\n\nConversation so far:\n${formatHistory(messageHistory)}\n\nGenerate the next question to ask. Consider what's missing and what would be most valuable to learn next.` },
   ]
 
-  const res = await aiChat(messages, MODELS.tokens, true, 512)
+  const res = await aiChat(messages, MODELS.tokens, true, 512, userId)
   try {
     return JSON.parse(res.text) as ElicitationQuestion
   } catch {
@@ -151,7 +168,8 @@ Rules:
 
 export async function generateBreakdown(
   context: ElicitationContext,
-  existingModules: string[]
+  existingModules: string[],
+  userId?: number
 ): Promise<BreakdownProposal> {
   const contextSummary = buildContextSummary(context)
   const prompt = BREAKDOWN_PROMPT.replace('{existingModules}', existingModules.join(', ') || 'none yet')
@@ -161,7 +179,7 @@ export async function generateBreakdown(
     { role: 'user', content: `Context:\n${contextSummary}` },
   ]
 
-  const res = await aiChat(messages, MODELS.tokens, true, 2048)
+  const res = await aiChat(messages, MODELS.tokens, true, 2048, userId)
   try {
     return JSON.parse(res.text) as BreakdownProposal
   } catch {
@@ -235,6 +253,7 @@ export async function generateDocumentation(
   itemType: 'feature' | 'page',
   parentModule?: string,
   linkedFeatures?: string[],
+  userId?: number,
 ): Promise<{ userInput: string; aiDoc: string }> {
   const contextSummary = buildContextSummary(context)
   const linkedInfo = linkedFeatures?.length ? `\nLinked features: ${linkedFeatures.join(', ')}` : ''
@@ -245,14 +264,14 @@ export async function generateDocumentation(
     { role: 'user', content: `Project context:\n${contextSummary}\n\nConversation:\n${conversationHistory}\n\nGenerate documentation for: "${itemName}" (${itemType})${parentInfo}${linkedInfo}` },
   ]
 
-  const res = await aiChat(messages, MODELS.tokens, false, 2048)
+  const res = await aiChat(messages, MODELS.tokens, false, 2048, userId)
 
   const userInput = context.rawInput + (context.features?.length ? '\n\nDiscussed features: ' + context.features.join(', ') : '')
 
   return { userInput, aiDoc: res.text }
 }
 
-function buildContextSummary(ctx: ElicitationContext): string {
+export function buildContextSummary(ctx: ElicitationContext): string {
   const lines: string[] = []
   if (ctx.rawInput) lines.push(`Raw Input: ${ctx.rawInput}`)
   if (ctx.domain) lines.push(`Domain: ${ctx.domain}`)

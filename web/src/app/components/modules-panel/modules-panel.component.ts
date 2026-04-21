@@ -31,10 +31,12 @@ export interface ModuleNode {
 export class ModulesPanelComponent implements OnInit, OnChanges {
   @Input() approvedVersions: VersionEntry[] = []
   @Input() projectId: string = 'default'
+  @Input() projectName: string = ''
   @Output() restore         = new EventEmitter<VersionEntry>()
   @Output() moduleSelected  = new EventEmitter<ModuleNode>()
   @Output() featureSelected = new EventEmitter<FeatureNode>()
   @Output() pageSelected    = new EventEmitter<PageNode>()
+  @Output() projectSelected = new EventEmitter<void>()
 
   activeTab  = signal<'modules' | 'pages'>('modules')
   tree       = signal<ModuleNode[]>([])
@@ -45,13 +47,45 @@ export class ModulesPanelComponent implements OnInit, OnChanges {
   selectedId = signal<number | null>(null)
   selectedFeatureId = signal<number | null>(null)
   selectedPageId    = signal<number | null>(null)
+  projectNodeSelected = signal(false)
 
   constructor(private api: ApiService) {}
 
-  ngOnInit() { this.fetchTree(); this.fetchPages() }
+  private initialized = false
+
+  ngOnInit() {
+    if (!this.initialized) { this.fetchTree(); this.fetchPages() }
+  }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['approvedVersions'] || changes['projectId']) { this.fetchTree(); this.fetchPages() }
+    if (changes['approvedVersions'] && !changes['approvedVersions'].firstChange) { this.fetchTree() }
+  }
+
+  loadFromInit(modules: any[], features: any[], pages: any[], pageFeatures: any[]) {
+    this.initialized = true
+    this.tree.set(this.mapNodes(this.buildTreeFromFlat(modules), features))
+
+    const linksByPage: Record<number, any[]> = {}
+    for (const pf of pageFeatures) {
+      if (!linksByPage[pf.page_id]) linksByPage[pf.page_id] = []
+      linksByPage[pf.page_id].push({ id: pf.id, name: pf.name, moduleName: pf.module_name })
+    }
+
+    this.pages.set(pages.map(r => ({
+      id: r.id, name: r.name, pageType: r.page_type || 'page', status: r.status,
+      tokens: r.tokens, features: linksByPage[r.id] || [],
+    })))
+  }
+
+  private buildTreeFromFlat(rows: any[]): any[] {
+    const map: Record<number, any> = {}
+    const roots: any[] = []
+    for (const r of rows) { map[r.id] = { ...r, children: [] } }
+    for (const r of rows) {
+      if (r.parent_id && map[r.parent_id]) map[r.parent_id].children.push(map[r.id])
+      else roots.push(map[r.id])
+    }
+    return roots
   }
 
   toggleImport() {
@@ -87,7 +121,16 @@ export class ModulesPanelComponent implements OnInit, OnChanges {
   toggle(node: ModuleNode) { node.expanded = !node.expanded }
   togglePage(page: PageNode) { page.expanded = !page.expanded }
 
+  selectProject() {
+    this.projectNodeSelected.set(true)
+    this.selectedId.set(null)
+    this.selectedFeatureId.set(null)
+    this.selectedPageId.set(null)
+    this.projectSelected.emit()
+  }
+
   selectModule(node: ModuleNode) {
+    this.projectNodeSelected.set(false)
     this.selectedId.set(node.id)
     this.selectedFeatureId.set(null)
     this.selectedPageId.set(null)

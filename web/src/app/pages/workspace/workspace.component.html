@@ -50,6 +50,8 @@
         </svg>
       }
     </button>
+    <app-usage-panel [projectId]="projectId" />
+    <app-design-settings [projectId]="projectId" (designSaved)="onDesignSaved()" />
     <app-members-panel [projectId]="projectId" />
     <app-user-avatar />
   </header>
@@ -65,10 +67,12 @@
         style="display:flex;flex-direction:column;"
         [approvedVersions]="versions()"
         [projectId]="projectId"
+        [projectName]="projectName()"
         (restore)="onRestoreVersion($event)"
         (moduleSelected)="onModuleSelected($event)"
         (featureSelected)="onFeatureSelected($event)"
-        (pageSelected)="onPageSelected($event)"/>
+        (pageSelected)="onPageSelected($event)"
+        (projectSelected)="onProjectSelected()"/>
 
       <app-version-timeline
         class="h-64 flex flex-col bg-white shrink-0"
@@ -82,13 +86,20 @@
 
     </div>
 
-    <!-- Center: Prototype Preview — fills remaining space -->
+    <!-- Center: Prototype Preview (always visible — tabs stay) -->
     <app-prototype-preview
       class="flex flex-col flex-1 min-w-0 bg-gray-50"
       style="display: flex; flex-direction: column;"
       [tokens]="tokens()"
       [loading]="loading()"
-      [source]="source()"/>
+      [source]="source()"
+      [projectId]="projectId"
+      [scopeModuleId]="scopeModuleId()"
+      [scopePageId]="scopePageId()"
+      [scopeFeatureId]="scopeFeatureId()"
+      [relatedPages]="relatedPages()"
+      [selectedContext]="selectedContext()"
+      (pageClicked)="selectRelatedPage($event)"/>
 
     <!-- Right: Chat or Classic Input -->
     @if (inputMode() === 'chat') {

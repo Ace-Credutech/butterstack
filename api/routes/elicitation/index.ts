@@ -192,7 +192,7 @@ app.post('/sessions/:id/complete', async (c) => {
     const modSlug = mod.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
     const modResult = await query(
       `INSERT INTO modules (project_id, name, slug, depth, path) VALUES ($1, $2, $3, 0, $4)
-       ON CONFLICT (project_id, slug) DO UPDATE SET name = $2 RETURNING id, (xmax = 0) as inserted`,
+       ON CONFLICT (project_id, path) DO UPDATE SET name = $2 RETURNING id, (xmax = 0) as inserted`,
       [projectId, mod.name, modSlug, modSlug]
     )
     const modId = modResult.rows[0].id
@@ -203,7 +203,7 @@ app.post('/sessions/:id/complete', async (c) => {
       const subPath = `${modSlug}/${subSlug}`
       const subResult = await query(
         `INSERT INTO modules (project_id, name, slug, parent_id, depth, path) VALUES ($1, $2, $3, $4, 1, $5)
-         ON CONFLICT (project_id, slug) DO UPDATE SET name = $2, parent_id = $4 RETURNING id, (xmax = 0) as inserted`,
+         ON CONFLICT (project_id, path) DO UPDATE SET name = $2, parent_id = $4 RETURNING id, (xmax = 0) as inserted`,
         [projectId, sub.name, subSlug, modId, subPath]
       )
       const subId = subResult.rows[0].id

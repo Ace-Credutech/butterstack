@@ -11,12 +11,13 @@ import { MembersPanelComponent } from '../../components/members-panel/members-pa
 import { ExportService } from '../../services/export.service'
 import { ElicitationChatComponent } from '../../components/elicitation-chat/elicitation-chat.component'
 import { DesignSettingsComponent } from '../../components/design-settings/design-settings.component'
+import { UsagePanelComponent } from '../../components/usage-panel/usage-panel.component'
 import type { UITokens, VersionEntry } from '../../models/ui-tokens.model'
 
 @Component({
   selector:    'app-workspace',
   standalone:  true,
-  imports:     [RequirementInputComponent, PrototypePreviewComponent, VersionTimelineComponent, ModulesPanelComponent, UserAvatarComponent, MembersPanelComponent, ElicitationChatComponent, DesignSettingsComponent],
+  imports:     [RequirementInputComponent, PrototypePreviewComponent, VersionTimelineComponent, ModulesPanelComponent, UserAvatarComponent, MembersPanelComponent, ElicitationChatComponent, DesignSettingsComponent, UsagePanelComponent],
   templateUrl: './workspace.component.html',
 })
 export class WorkspaceComponent implements OnInit {
@@ -39,6 +40,9 @@ export class WorkspaceComponent implements OnInit {
   inputMode     = signal<'chat' | 'classic'>('chat')
   relatedPages  = signal<{ id: number; name: string; pageType: string; tokens?: any }[]>([])
   selectedContext = signal('')
+  scopeModuleId  = signal<number | null>(null)
+  scopePageId    = signal<number | null>(null)
+  scopeFeatureId = signal<number | null>(null)
 
   activeModule: ModuleNode | null = null
   private versionCounter = 0
@@ -113,6 +117,9 @@ export class WorkspaceComponent implements OnInit {
     this.activeModule = node
     this.source.set(`module: ${node.name}`)
     this.selectedContext.set(node.name)
+    this.scopeModuleId.set(node.id)
+    this.scopePageId.set(null)
+    this.scopeFeatureId.set(null)
 
     const allFeatureIds = this.collectFeatureIds(node)
     if (allFeatureIds.length) {
@@ -196,15 +203,37 @@ export class WorkspaceComponent implements OnInit {
     this.modulesPanel?.refresh()
   }
 
+  async onProjectSelected() {
+    this.source.set(`project: ${this.projectName()}`)
+    this.selectedContext.set(this.projectName())
+    this.scopeModuleId.set(null)
+    this.scopePageId.set(null)
+    this.scopeFeatureId.set(null)
+    const allPages = await this.api.get<any[]>('/pages', { projectId: this.projectId })
+    const pagesWithTokens = allPages.filter(p => p.tokens).map(p => ({ id: p.id, name: p.name, pageType: p.page_type || 'page', tokens: p.tokens }))
+    if (pagesWithTokens.length === 1) {
+      this.relatedPages.set([])
+      this.tokens.set(pagesWithTokens[0].tokens)
+    } else if (pagesWithTokens.length > 1) {
+      this.relatedPages.set(pagesWithTokens)
+    } else {
+      this.relatedPages.set([])
+      this.tokens.set(null)
+    }
+  }
+
   async onFeatureSelected(feat: FeatureNode) {
     this.source.set(`feature: ${feat.name}`)
     this.selectedContext.set(feat.name)
+    this.scopeFeatureId.set(feat.id)
+    this.scopeModuleId.set(null)
+    this.scopePageId.set(null)
     const full = await this.api.get<any>(`/features/${feat.id}`)
     if (this.chatPanel) {
       this.chatPanel.showDoc({
         id: feat.id, kind: 'feature', name: feat.name,
         rawDescription: full.raw_description, aiDescription: full.ai_description, status: full.status,
-        summary: full.summary, confidenceScore: full.confidence_score,
+        pmStatus: full.pm_status, summary: full.summary, confidenceScore: full.confidence_score,
         testCases: full.test_cases, useCases: full.use_cases,
       })
     }
@@ -214,13 +243,16 @@ export class WorkspaceComponent implements OnInit {
   async onPageSelected(page: PageNode) {
     this.source.set(`page: ${page.name}`)
     this.relatedPages.set([])
+    this.scopePageId.set(page.id)
+    this.scopeModuleId.set(null)
+    this.scopeFeatureId.set(null)
     const full = await this.api.get<any>(`/pages/${page.id}`)
     if (full.tokens) this.tokens.set(full.tokens)
     if (this.chatPanel) {
       this.chatPanel.showDoc({
         id: page.id, kind: 'page', name: page.name,
         rawDescription: full.raw_description, aiDescription: full.ai_description, status: full.status,
-        summary: full.summary,
+        pmStatus: full.pm_status, summary: full.summary,
       })
     }
   }

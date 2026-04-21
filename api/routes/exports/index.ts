@@ -9,12 +9,14 @@ app.get('/brd', async (c) => {
   const projectId = c.req.query('projectId')
   const moduleId = c.req.query('moduleId')
   const pageId = c.req.query('pageId')
+  const featureId = c.req.query('featureId')
   if (!projectId) return c.json({ error: 'projectId required' }, 400)
 
   const html = await generateBrd({
     projectId,
     moduleId: moduleId ? Number(moduleId) : undefined,
     pageId: pageId ? Number(pageId) : undefined,
+    featureId: featureId ? Number(featureId) : undefined,
   })
 
   return c.html(html)
@@ -22,9 +24,13 @@ app.get('/brd', async (c) => {
 
 app.get('/excel', async (c) => {
   const projectId = c.req.query('projectId')
+  const moduleId = c.req.query('moduleId')
   if (!projectId) return c.json({ error: 'projectId required' }, 400)
 
-  const data = await generateExcelData({ projectId })
+  const data = await generateExcelData({ projectId, moduleId: moduleId ? Number(moduleId) : undefined })
+
+  const format = c.req.query('format') || 'csv'
+  if (format === 'json') return c.json(data)
 
   const sheets = [
     { name: 'Modules', csv: csvFromRows(data.modules) },
@@ -32,13 +38,6 @@ app.get('/excel', async (c) => {
     { name: 'Pages', csv: csvFromRows(data.pages) },
     { name: 'Requirements', csv: csvFromRows(data.requirements) },
   ]
-
-  const format = c.req.query('format') || 'csv'
-
-  if (format === 'json') {
-    return c.json(data)
-  }
-
   const csv = sheets.map(s => `--- ${s.name} ---\n${s.csv}`).join('\n\n')
   c.header('Content-Type', 'text/csv')
   c.header('Content-Disposition', `attachment; filename="butterstack-export.csv"`)
@@ -47,13 +46,13 @@ app.get('/excel', async (c) => {
 
 app.get('/mindmap', async (c) => {
   const projectId = c.req.query('projectId')
+  const moduleId = c.req.query('moduleId')
   if (!projectId) return c.json({ error: 'projectId required' }, 400)
 
   const format = c.req.query('format') || 'html'
-  const data = await generateMindmapData(projectId)
+  const data = await generateMindmapData(projectId, moduleId ? Number(moduleId) : undefined)
 
   if (format === 'json') return c.json(data)
-
   return c.html(mindmapToHtml(data))
 })
 

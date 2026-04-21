@@ -44,8 +44,8 @@ export class ElicitationService {
     return this.api.get(`/elicitation/sessions/${id}`)
   }
 
-  sendMessage(sessionId: number, content: string, type = 'text', selected?: string | string[]): Promise<ChatMessage> {
-    return this.api.post(`/elicitation/sessions/${sessionId}/messages`, { content, type, selected })
+  sendMessage(sessionId: number, content: string, type = 'text', selected?: string | string[], images?: string[]): Promise<ChatMessage> {
+    return this.api.post(`/elicitation/sessions/${sessionId}/messages`, { content, type, selected, images })
   }
 
   completeSession(sessionId: number): Promise<{ ok: boolean; created: { modules: number; features: number; pages: number } }> {

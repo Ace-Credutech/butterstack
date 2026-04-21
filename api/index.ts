@@ -20,6 +20,9 @@ import pages               from './routes/pages/index.ts'
 import elicitation         from './routes/elicitation/index.ts'
 import comments            from './routes/comments/index.ts'
 import exports             from './routes/exports/index.ts'
+import feedback            from './routes/feedback/index.ts'
+import usage               from './routes/usage/index.ts'
+import share               from './routes/share/index.ts'
 
 const app = new Hono()
 
@@ -57,6 +60,9 @@ api.route('/pages',                pages)
 api.route('/elicitation',          elicitation)
 api.route('/comments',             comments)
 api.route('/exports',              exports)
+api.route('/feedback',             feedback)
+api.route('/usage',                usage)
+api.route('/share',                share)
 
 api.get('/users', async (c) => {
   const { query: dbQuery } = await import('./db.ts')

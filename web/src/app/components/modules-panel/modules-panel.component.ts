@@ -31,10 +31,12 @@ export interface ModuleNode {
 export class ModulesPanelComponent implements OnInit, OnChanges {
   @Input() approvedVersions: VersionEntry[] = []
   @Input() projectId: string = 'default'
+  @Input() projectName: string = ''
   @Output() restore         = new EventEmitter<VersionEntry>()
   @Output() moduleSelected  = new EventEmitter<ModuleNode>()
   @Output() featureSelected = new EventEmitter<FeatureNode>()
   @Output() pageSelected    = new EventEmitter<PageNode>()
+  @Output() projectSelected = new EventEmitter<void>()
 
   activeTab  = signal<'modules' | 'pages'>('modules')
   tree       = signal<ModuleNode[]>([])
@@ -45,6 +47,7 @@ export class ModulesPanelComponent implements OnInit, OnChanges {
   selectedId = signal<number | null>(null)
   selectedFeatureId = signal<number | null>(null)
   selectedPageId    = signal<number | null>(null)
+  projectNodeSelected = signal(false)
 
   constructor(private api: ApiService) {}
 
@@ -87,7 +90,16 @@ export class ModulesPanelComponent implements OnInit, OnChanges {
   toggle(node: ModuleNode) { node.expanded = !node.expanded }
   togglePage(page: PageNode) { page.expanded = !page.expanded }
 
+  selectProject() {
+    this.projectNodeSelected.set(true)
+    this.selectedId.set(null)
+    this.selectedFeatureId.set(null)
+    this.selectedPageId.set(null)
+    this.projectSelected.emit()
+  }
+
   selectModule(node: ModuleNode) {
+    this.projectNodeSelected.set(false)
     this.selectedId.set(node.id)
     this.selectedFeatureId.set(null)
     this.selectedPageId.set(null)

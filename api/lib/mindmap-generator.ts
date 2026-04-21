@@ -6,7 +6,7 @@ interface MindmapNode {
   children: MindmapNode[]
 }
 
-export async function generateMindmapData(projectId: string): Promise<MindmapNode> {
+export async function generateMindmapData(projectId: string, moduleId?: number): Promise<MindmapNode> {
   const project = await query(`SELECT name FROM projects WHERE id = $1`, [projectId])
   const modules = await query(
     `SELECT id, name, parent_id, depth FROM modules WHERE project_id = $1 ORDER BY path, order_index`, [projectId]

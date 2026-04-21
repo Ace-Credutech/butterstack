@@ -1,14 +1,20 @@
 import type { UITokens } from '../models/ui-tokens.model'
 import { renderSidebar, renderHeader, renderStatsGrid } from './shared.renderer'
-import { renderSectionCard, renderActivityList, renderDataTable, DEFAULT_DESIGN, type DesignSystem } from './components.renderer'
+import { renderSectionCard, renderActivityList, renderDataTable, DEFAULT_DESIGN, type DesignSystem, type PrototypeContext } from './components.renderer'
 
-export function renderDashboard(t: UITokens, ds: DesignSystem = DEFAULT_DESIGN): string {
-  const stats = t.stats.length ? t.stats : [
+export function renderDashboard(t: UITokens, ds: DesignSystem = DEFAULT_DESIGN, ctx?: PrototypeContext): string {
+  let stats = t.stats.length ? t.stats : [
     { label: 'Total Users', value: '1,248' },
     { label: 'Active Users', value: '847' },
     { label: 'Total Projects', value: '32' },
     { label: 'Completion Rate', value: '94%' },
   ]
+  if (ctx?.stats && !t.stats.length) {
+    stats = Object.entries(ctx.stats).map(([k, v]) => ({
+      label: k.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()),
+      value: String(v),
+    }))
+  }
   const sections = t.sections.length ? t.sections : ['Recent Activity', 'Quick Stats']
 
   const sectionContent = sections.map(s => {

@@ -60,8 +60,11 @@
       </button>
     }
 
-    @if (source && activeTab() === 'prototype') {
+    @if (activeTab() === 'prototype' && source) {
       <span class="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-400">{{ source }}</span>
+    }
+    @if (activeTab() !== 'prototype') {
+      <span class="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-400">{{ scopeLabel }} level</span>
     }
 
     <!-- Fullscreen -->

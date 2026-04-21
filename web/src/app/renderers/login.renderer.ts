@@ -1,7 +1,8 @@
 import type { UITokens } from '../models/ui-tokens.model'
-import { renderFormField, DEFAULT_DESIGN, type DesignSystem } from './components.renderer'
+import { renderFormField, DEFAULT_DESIGN, type DesignSystem, type PrototypeContext } from './components.renderer'
 
-export function renderLogin(t: UITokens, ds: DesignSystem = DEFAULT_DESIGN): string {
+export function renderLogin(t: UITokens, ds: DesignSystem = DEFAULT_DESIGN, ctx?: PrototypeContext): string {
+  const userEmail = ctx?.currentUser?.email || ''
   const fields = t.fields.length ? t.fields : [
     { name: 'Email', type: 'email' },
     { name: 'Password', type: 'password' },

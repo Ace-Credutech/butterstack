@@ -9,6 +9,13 @@ export interface DesignSystem {
   avatarText: string
 }
 
+export interface PrototypeContext {
+  currentUser?: { name: string; email: string; role: string; avatar: string }
+  stats?: Record<string, number>
+  recentItems?: string[]
+  entities?: Record<string, number>
+}
+
 export const DEFAULT_DESIGN: DesignSystem = {
   primaryColor: 'bg-green-600',
   primaryHover: 'hover:bg-green-700',

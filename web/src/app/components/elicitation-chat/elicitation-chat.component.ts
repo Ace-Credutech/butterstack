@@ -10,6 +10,7 @@ export interface DocEntity {
   rawDescription?: string
   aiDescription?: string
   status?: string
+  pmStatus?: string
   summary?: string
   confidenceScore?: { completeness: number; stability: number; intentFidelity: number }
   testCases?: string
@@ -64,6 +65,14 @@ export class ElicitationChatComponent implements OnInit, AfterViewChecked {
   newComment   = ''
   addingComment = signal(false)
 
+  // Feedback
+  myRating     = signal<string>('')
+  feedbackText = ''
+
+  // Image
+  pendingImages = signal<{ base64: string; preview: string }[]>([])
+  dragOver = signal(false)
+
   constructor(private elicitation: ElicitationService, private api: ApiService) {}
 
   async ngOnInit() {
@@ -111,21 +120,28 @@ export class ElicitationChatComponent implements OnInit, AfterViewChecked {
 
   async send(content?: string, selected?: string | string[]) {
     const text = content ?? this.inputText.trim()
-    if (!text && !selected) return
+    const images = this.pendingImages()
+    if (!text && !selected && !images.length) return
 
     this.sending.set(true)
     this.inputText = ''
+    const sentImages = [...images]
+    this.pendingImages.set([])
 
     if (!this.sessionId) {
       const session = await this.elicitation.createSession(this.projectId)
       this.sessionId = session.id
     }
 
-    this.messages.update(m => [...m, { role: 'user', content: text || (Array.isArray(selected) ? selected.join(', ') : selected!), type: 'text' }])
+    const displayContent = text || (Array.isArray(selected) ? selected.join(', ') : selected!)
+    this.messages.update(m => [...m, { role: 'user', content: displayContent, type: 'text', images: sentImages.map(i => i.preview) } as any])
     this.shouldScroll = true
 
     try {
-      const response = await this.elicitation.sendMessage(this.sessionId, text, 'text', selected)
+      const response = await this.elicitation.sendMessage(
+        this.sessionId, text, 'text', selected,
+        sentImages.length ? sentImages.map(i => i.base64) : undefined
+      )
       this.messages.update(m => [...m, {
         role: 'assistant', content: response.content, type: response.type,
         options: response.options, breakdown: (response as any).breakdown,
@@ -184,14 +200,91 @@ export class ElicitationChatComponent implements OnInit, AfterViewChecked {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.send() }
   }
 
+  onPaste(e: ClipboardEvent) {
+    const items = e.clipboardData?.items
+    if (!items) return
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.startsWith('image/')) {
+        e.preventDefault()
+        const file = items[i].getAsFile()
+        if (file) this.addImage(file)
+        return
+      }
+    }
+  }
+
+  onDragOver(e: DragEvent) { e.preventDefault(); this.dragOver.set(true) }
+  onDragLeave() { this.dragOver.set(false) }
+
+  onDrop(e: DragEvent) {
+    e.preventDefault()
+    this.dragOver.set(false)
+    const files = e.dataTransfer?.files
+    if (!files) return
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].type.startsWith('image/')) this.addImage(files[i])
+    }
+  }
+
+  private addImage(file: File) {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const base64 = reader.result as string
+      this.pendingImages.update(imgs => [...imgs, { base64, preview: base64 }])
+    }
+    reader.readAsDataURL(file)
+  }
+
+  removeImage(index: number) {
+    this.pendingImages.update(imgs => imgs.filter((_, i) => i !== index))
+  }
+
   // ── Documentation view ────────────────────────────────────
 
   showDoc(entity: DocEntity) {
     this.docEntity.set(entity)
     this.editingDoc.set(false)
     this.docTab.set('docs')
+    this.myRating.set('')
+    this.feedbackText = ''
     this.mode.set('doc')
     this.loadComments()
+    this.loadFeedback()
+  }
+
+  async loadFeedback() {
+    const e = this.docEntity()
+    if (!e) return
+    try {
+      const list = await this.api.get<any[]>('/feedback', { entityType: e.kind, entityId: String(e.id) })
+      const mine = list.find((f: any) => true)
+      if (mine) this.myRating.set(mine.rating)
+    } catch {}
+  }
+
+  pmStatuses = ['not_started', 'in_progress', 'review', 'done']
+
+  async updatePmStatus(status: string) {
+    const e = this.docEntity()
+    if (!e) return
+    const endpoint = e.kind === 'feature' ? '/features' : e.kind === 'page' ? '/pages' : '/modules'
+    await this.api.patch(`${endpoint}/${e.id}`, { pmStatus: status })
+    this.docEntity.set({ ...e, pmStatus: status })
+  }
+
+  pmStatusLabel(s: string): string {
+    return { not_started: 'Not Started', in_progress: 'In Progress', review: 'Review', done: 'Done' }[s] || s
+  }
+
+  pmStatusColor(s: string): string {
+    return { not_started: 'bg-gray-100 text-gray-500', in_progress: 'bg-blue-50 text-blue-600', review: 'bg-amber-50 text-amber-600', done: 'bg-green-50 text-green-600' }[s] || 'bg-gray-100 text-gray-500'
+  }
+
+  async submitFeedback(rating: string) {
+    const e = this.docEntity()
+    if (!e) return
+    this.myRating.set(rating)
+    await this.api.post('/feedback', { projectId: this.projectId, entityType: e.kind, entityId: e.id, rating, content: this.feedbackText || null })
   }
 
   async loadComments() {

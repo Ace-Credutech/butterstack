@@ -50,6 +50,7 @@
         </svg>
       }
     </button>
+    <app-usage-panel [projectId]="projectId" />
     <app-design-settings [projectId]="projectId" (designSaved)="onDesignSaved()" />
     <app-members-panel [projectId]="projectId" />
     <app-user-avatar />
@@ -66,10 +67,12 @@
         style="display:flex;flex-direction:column;"
         [approvedVersions]="versions()"
         [projectId]="projectId"
+        [projectName]="projectName()"
         (restore)="onRestoreVersion($event)"
         (moduleSelected)="onModuleSelected($event)"
         (featureSelected)="onFeatureSelected($event)"
-        (pageSelected)="onPageSelected($event)"/>
+        (pageSelected)="onPageSelected($event)"
+        (projectSelected)="onProjectSelected()"/>
 
       <app-version-timeline
         class="h-64 flex flex-col bg-white shrink-0"
@@ -114,7 +117,10 @@
         [tokens]="tokens()"
         [loading]="loading()"
         [source]="source()"
-        [projectId]="projectId"/>
+        [projectId]="projectId"
+        [scopeModuleId]="scopeModuleId()"
+        [scopePageId]="scopePageId()"
+        [scopeFeatureId]="scopeFeatureId()"/>
     }
 
     <!-- Right: Chat or Classic Input -->

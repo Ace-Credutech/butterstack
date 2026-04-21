@@ -59,6 +59,11 @@ app.patch('/:id', async (c) => {
   return c.json({ ok: true })
 })
 
+app.get('/:id/prototype-context', async (c) => {
+  const result = await query(`SELECT prototype_context FROM project_tokens WHERE project_id = $1`, [c.req.param('id')])
+  return c.json(result.rows[0]?.prototype_context || {})
+})
+
 app.get('/:id/design-system', async (c) => {
   const ds = await getDesignSystem(c.req.param('id'))
   return c.json(ds)

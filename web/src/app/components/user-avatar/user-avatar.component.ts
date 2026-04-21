@@ -1,9 +1,11 @@
 import { Component, signal, HostListener } from '@angular/core'
 import { AuthService } from '../../services/auth.service'
+import { ApiKeysSettingsComponent } from '../api-keys-settings/api-keys-settings.component'
 
 @Component({
   selector: 'app-user-avatar',
   standalone: true,
+  imports: [ApiKeysSettingsComponent],
   template: `
     <div class="relative">
       <button (click)="open.set(!open())" class="w-7 h-7 rounded-full bg-green-600 hover:bg-green-700 flex items-center justify-center text-white text-xs font-semibold transition cursor-pointer select-none">
@@ -15,6 +17,7 @@ import { AuthService } from '../../services/auth.service'
             <p class="text-sm font-medium text-gray-900 truncate">{{ auth.user()?.name }}</p>
             <p class="text-xs text-gray-400 truncate">{{ auth.user()?.email }}</p>
           </div>
+          <app-api-keys-settings />
           <button (click)="logout()" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"/>

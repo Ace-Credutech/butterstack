@@ -3,7 +3,7 @@ import { DomSanitizer, SafeHtml }  from '@angular/platform-browser'
 import type { UITokens }           from '../../models/ui-tokens.model'
 import { renderTokens }            from '../../renderers/index'
 import { ApiService }              from '../../services/api.service'
-import { type DesignSystem, DEFAULT_DESIGN } from '../../renderers/components.renderer'
+import { type DesignSystem, type PrototypeContext, DEFAULT_DESIGN } from '../../renderers/components.renderer'
 
 type Viewport = 'desktop' | 'tablet' | 'mobile'
 type CenterTab = 'prototype' | 'brd' | 'excel' | 'mindmap'
@@ -19,6 +19,9 @@ export class PrototypePreviewComponent implements OnChanges {
   @Input() loading   = false
   @Input() source    = ''
   @Input() projectId = ''
+  @Input() scopeModuleId: number | null = null
+  @Input() scopePageId: number | null = null
+  @Input() scopeFeatureId: number | null = null
 
   activeTab       = signal<CenterTab>('prototype')
   safeHtml:         SafeHtml | null = null
@@ -35,6 +38,7 @@ export class PrototypePreviewComponent implements OnChanges {
   mindmapHtml  = signal<SafeHtml | null>(null)
   mindmapLoading = signal(false)
   designSystem: DesignSystem = DEFAULT_DESIGN
+  protoContext: PrototypeContext = {}
   private dsLoaded = false
 
   constructor(
@@ -57,10 +61,11 @@ export class PrototypePreviewComponent implements OnChanges {
       if (!this.dsLoaded && this.projectId) {
         try {
           this.designSystem = await this.api.get<DesignSystem>(`/projects/${this.projectId}/design-system`)
+          this.protoContext = await this.api.get<PrototypeContext>(`/projects/${this.projectId}/prototype-context`)
         } catch {}
         this.dsLoaded = true
       }
-      this.rawHtml  = renderTokens(this.tokens, this.designSystem)
+      this.rawHtml  = renderTokens(this.tokens, this.designSystem, this.protoContext)
       this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(this.rawHtml)
       this.cdr.detectChanges()
     }
@@ -70,10 +75,11 @@ export class PrototypePreviewComponent implements OnChanges {
     if (!this.projectId) return
     try {
       this.designSystem = await this.api.get<DesignSystem>(`/projects/${this.projectId}/design-system`)
+      this.protoContext = await this.api.get<PrototypeContext>(`/projects/${this.projectId}/prototype-context`)
     } catch {}
     this.dsLoaded = true
     if (this.tokens) {
-      this.rawHtml  = renderTokens(this.tokens, this.designSystem)
+      this.rawHtml  = renderTokens(this.tokens, this.designSystem, this.protoContext)
       this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(this.rawHtml)
       this.cdr.detectChanges()
     }
@@ -81,16 +87,31 @@ export class PrototypePreviewComponent implements OnChanges {
 
   async setTab(tab: CenterTab) {
     this.activeTab.set(tab)
-    if (tab === 'brd' && !this.brdHtml()) await this.loadBrd()
-    if (tab === 'excel' && !this.excelData()) await this.loadExcel()
-    if (tab === 'mindmap' && !this.mindmapHtml()) await this.loadMindmap()
+    if (tab === 'brd') { this.brdHtml.set(null); await this.loadBrd() }
+    if (tab === 'excel') { this.excelData.set(null); await this.loadExcel() }
+    if (tab === 'mindmap') { this.mindmapHtml.set(null); await this.loadMindmap() }
+  }
+
+  private get scopeParams(): string {
+    let params = `projectId=${this.projectId}`
+    if (this.scopeModuleId) params += `&moduleId=${this.scopeModuleId}`
+    if (this.scopePageId) params += `&pageId=${this.scopePageId}`
+    if (this.scopeFeatureId) params += `&featureId=${this.scopeFeatureId}`
+    return params
+  }
+
+  get scopeLabel(): string {
+    if (this.scopeFeatureId) return 'feature'
+    if (this.scopePageId) return 'page'
+    if (this.scopeModuleId) return 'module'
+    return 'project'
   }
 
   async loadBrd() {
     this.brdLoading.set(true)
     try {
       const token = localStorage.getItem('bs_token')
-      const res = await fetch(`/api/exports/brd?projectId=${this.projectId}&token=${token}`)
+      const res = await fetch(`/api/exports/brd?${this.scopeParams}&token=${token}`)
       const html = await res.text()
       this.brdHtml.set(this.sanitizer.bypassSecurityTrustHtml(html))
     } catch {} finally { this.brdLoading.set(false) }
@@ -99,7 +120,9 @@ export class PrototypePreviewComponent implements OnChanges {
   async loadExcel() {
     this.excelLoading.set(true)
     try {
-      this.excelData.set(await this.api.get('/exports/excel', { projectId: this.projectId, format: 'json' }))
+      const params: Record<string, string> = { projectId: this.projectId, format: 'json' }
+      if (this.scopeModuleId) params['moduleId'] = String(this.scopeModuleId)
+      this.excelData.set(await this.api.get('/exports/excel', params))
     } catch {} finally { this.excelLoading.set(false) }
   }
 
@@ -107,7 +130,7 @@ export class PrototypePreviewComponent implements OnChanges {
     this.mindmapLoading.set(true)
     try {
       const token = localStorage.getItem('bs_token')
-      const res = await fetch(`/api/exports/mindmap?projectId=${this.projectId}&token=${token}`)
+      const res = await fetch(`/api/exports/mindmap?${this.scopeParams}&token=${token}`)
       const html = await res.text()
       this.mindmapHtml.set(this.sanitizer.bypassSecurityTrustHtml(html))
     } catch {} finally { this.mindmapLoading.set(false) }
@@ -115,12 +138,12 @@ export class PrototypePreviewComponent implements OnChanges {
 
   downloadBrd() {
     const token = localStorage.getItem('bs_token')
-    window.open(`/api/exports/brd?projectId=${this.projectId}&token=${token}`, '_blank')
+    window.open(`/api/exports/brd?${this.scopeParams}&token=${token}`, '_blank')
   }
 
   async downloadExcel() {
     const token = localStorage.getItem('bs_token')
-    const res = await fetch(`/api/exports/excel?projectId=${this.projectId}&token=${token}`)
+    const res = await fetch(`/api/exports/excel?${this.scopeParams}&token=${token}`)
     const blob = await res.blob()
     const a = document.createElement('a')
     a.href = URL.createObjectURL(blob)
@@ -131,7 +154,7 @@ export class PrototypePreviewComponent implements OnChanges {
 
   downloadMindmap() {
     const token = localStorage.getItem('bs_token')
-    window.open(`/api/exports/mindmap?projectId=${this.projectId}&token=${token}`, '_blank')
+    window.open(`/api/exports/mindmap?${this.scopeParams}&token=${token}`, '_blank')
   }
 
   refreshTab() {

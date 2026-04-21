@@ -376,7 +376,10 @@ console.log('✓ elicitation_messages ready')
 // ── Extend modules with documentation fields ─────────────────────────────
 await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS user_input TEXT`)
 await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS ai_documentation TEXT`)
-console.log('✓ modules extended (user_input, ai_documentation)')
+await query(`ALTER TABLE modules ADD COLUMN IF NOT EXISTS pm_status VARCHAR(30) NOT NULL DEFAULT 'not_started'`)
+await query(`ALTER TABLE features ADD COLUMN IF NOT EXISTS pm_status VARCHAR(30) NOT NULL DEFAULT 'not_started'`)
+await query(`ALTER TABLE pages ADD COLUMN IF NOT EXISTS pm_status VARCHAR(30) NOT NULL DEFAULT 'not_started'`)
+console.log('✓ modules extended (user_input, ai_documentation, pm_status)')
 
 // ── Comments ──────────────────────────────────────────────────────────────
 await query(`
@@ -410,5 +413,43 @@ console.log('✓ pages extended (summary)')
 await query(`ALTER TABLE project_tokens ADD COLUMN IF NOT EXISTS design_system JSONB DEFAULT '{}'`)
 await query(`ALTER TABLE project_tokens ADD COLUMN IF NOT EXISTS prototype_context JSONB DEFAULT '{}'`)
 console.log('✓ project_tokens extended (design_system, prototype_context)')
+
+// ── Feedback ──────────────────────────────────────────────────────────────
+await query(`
+  CREATE TABLE IF NOT EXISTS feedback (
+    id          SERIAL PRIMARY KEY,
+    project_id  VARCHAR(64)  NOT NULL,
+    entity_type VARCHAR(30)  NOT NULL,
+    entity_id   INTEGER      NOT NULL,
+    user_id     INTEGER      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    rating      VARCHAR(10)  NOT NULL,
+    content     TEXT,
+    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+  )
+`)
+await query(`CREATE INDEX IF NOT EXISTS idx_feedback_entity ON feedback (entity_type, entity_id)`)
+console.log('✓ feedback ready')
+
+// ── User API Keys ─────────────────────────────────────────────────────────
+await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS api_keys JSONB DEFAULT '{}'`)
+console.log('✓ users extended (api_keys)')
+
+// ── Token Usage Logs ──────────────────────────────────────────────────────
+await query(`
+  CREATE TABLE IF NOT EXISTS token_usage (
+    id          SERIAL PRIMARY KEY,
+    project_id  VARCHAR(64)  NOT NULL,
+    user_id     INTEGER      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    model       VARCHAR(100) NOT NULL,
+    tokens_in   INTEGER      NOT NULL DEFAULT 0,
+    tokens_out  INTEGER      NOT NULL DEFAULT 0,
+    cost_usd    FLOAT        NOT NULL DEFAULT 0,
+    endpoint    VARCHAR(100),
+    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+  )
+`)
+await query(`CREATE INDEX IF NOT EXISTS idx_token_usage_project ON token_usage (project_id, created_at DESC)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_token_usage_user    ON token_usage (user_id)`)
+console.log('✓ token_usage ready')
 
 process.exit(0)

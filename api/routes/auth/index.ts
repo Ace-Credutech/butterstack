@@ -109,7 +109,29 @@ app.get('/me', requireAuth, async (c) => {
   )
   if (!result.rows.length) return c.json({ error: 'not found' }, 404)
   const u = result.rows[0]
-  return c.json({ id: u.id, name: u.name, email: u.email, mobile: u.mobile, countryCode: u.country_code, createdAt: u.created_at })
+  return c.json({ id: u.id, name: u.name, email: u.email, mobile: u.mobile, countryCode: u.country_code, createdAt: u.created_at, apiKeys: u.api_keys || {} })
+})
+
+app.get('/me/api-keys', requireAuth, async (c) => {
+  const userId = c.get('userId')
+  const result = await query(`SELECT api_keys FROM users WHERE id = $1`, [userId])
+  const keys = result.rows[0]?.api_keys || {}
+  const masked: Record<string, string> = {}
+  for (const [k, v] of Object.entries(keys)) {
+    const val = String(v)
+    masked[k] = val.length > 8 ? val.slice(0, 4) + '...' + val.slice(-4) : '****'
+  }
+  return c.json(masked)
+})
+
+app.patch('/me/api-keys', requireAuth, async (c) => {
+  const userId = c.get('userId')
+  const keys = await c.req.json<Record<string, string>>()
+  const current = (await query(`SELECT api_keys FROM users WHERE id = $1`, [userId])).rows[0]?.api_keys || {}
+  const merged = { ...current, ...keys }
+  for (const [k, v] of Object.entries(merged)) { if (!v) delete merged[k] }
+  await query(`UPDATE users SET api_keys = $1 WHERE id = $2`, [JSON.stringify(merged), userId])
+  return c.json({ ok: true })
 })
 
 export default app

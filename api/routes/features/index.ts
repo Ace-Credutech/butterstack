@@ -47,13 +47,14 @@ app.get('/:id', async (c) => {
 })
 
 app.patch('/:id', async (c) => {
-  const { name, rawDescription, aiDescription, status } = await c.req.json<{
-    name?: string; rawDescription?: string; aiDescription?: string; status?: string
+  const { name, rawDescription, aiDescription, status, pmStatus } = await c.req.json<{
+    name?: string; rawDescription?: string; aiDescription?: string; status?: string; pmStatus?: string
   }>()
   await query(
     `UPDATE features SET name = COALESCE($1, name), raw_description = COALESCE($2, raw_description),
-     ai_description = COALESCE($3, ai_description), status = COALESCE($4, status), updated_at = NOW() WHERE id = $5`,
-    [name ?? null, rawDescription ?? null, aiDescription ?? null, status ?? null, c.req.param('id')]
+     ai_description = COALESCE($3, ai_description), status = COALESCE($4, status),
+     pm_status = COALESCE($5, pm_status), updated_at = NOW() WHERE id = $6`,
+    [name ?? null, rawDescription ?? null, aiDescription ?? null, status ?? null, pmStatus ?? null, c.req.param('id')]
   )
   return c.json({ ok: true })
 })

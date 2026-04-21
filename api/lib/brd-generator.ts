@@ -4,6 +4,7 @@ interface BrdOptions {
   projectId: string
   moduleId?: number
   pageId?: number
+  featureId?: number
 }
 
 export async function generateBrd(opts: BrdOptions): Promise<string> {
@@ -28,12 +29,22 @@ export async function generateBrd(opts: BrdOptions): Promise<string> {
     params
   )
 
-  const features = await query(
-    `SELECT f.*, m.name as module_name, m.path as module_path
+  let featQuery = `SELECT f.*, m.name as module_name, m.path as module_path
      FROM features f JOIN modules m ON m.id = f.module_id
-     WHERE f.project_id = $1 ORDER BY m.path, f.order_index`,
-    [opts.projectId]
-  )
+     WHERE f.project_id = $1`
+  const featParams: unknown[] = [opts.projectId]
+  if (opts.featureId) {
+    featQuery += ` AND f.id = $${featParams.length + 1}`
+    featParams.push(opts.featureId)
+  } else if (opts.moduleId) {
+    const moduleIds = modules.rows.map(m => m.id)
+    if (moduleIds.length) {
+      featQuery += ` AND f.module_id = ANY($${featParams.length + 1}::int[])`
+      featParams.push(moduleIds)
+    }
+  }
+  featQuery += ` ORDER BY m.path, f.order_index`
+  const features = await query(featQuery, featParams)
 
   let pages
   if (opts.pageId) {

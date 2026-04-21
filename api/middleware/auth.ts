@@ -10,7 +10,7 @@ declare module 'hono' {
 
 export const requireAuth = createMiddleware(async (c, next) => {
   const path = c.req.path
-  if (path === '/' || path === '' || path.startsWith('/auth') || path.startsWith('/api/auth') || path === '/api' || path === '/api/') {
+  if (path === '/' || path === '' || path.startsWith('/auth') || path.startsWith('/api/auth') || path === '/api' || path === '/api/' || path.startsWith('/share') || path.startsWith('/api/share')) {
     return next()
   }
 

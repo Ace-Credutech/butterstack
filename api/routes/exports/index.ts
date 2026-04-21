@@ -1,56 +1,53 @@
 import { Hono } from 'hono'
 import { generateBrd } from '../../lib/brd-generator.ts'
-import { generateExcelData, csvFromRows } from '../../lib/excel-generator.ts'
+import { generateExcel, generateExcelData } from '../../lib/excel-generator.ts'
 import { generateMindmapData, mindmapToHtml } from '../../lib/mindmap-generator.ts'
 
 const app = new Hono()
 
 app.get('/brd', async (c) => {
   const projectId = c.req.query('projectId')
-  const moduleId = c.req.query('moduleId')
-  const pageId = c.req.query('pageId')
-  const featureId = c.req.query('featureId')
   if (!projectId) return c.json({ error: 'projectId required' }, 400)
 
   const html = await generateBrd({
     projectId,
-    moduleId: moduleId ? Number(moduleId) : undefined,
-    pageId: pageId ? Number(pageId) : undefined,
-    featureId: featureId ? Number(featureId) : undefined,
+    moduleId: c.req.query('moduleId') ? Number(c.req.query('moduleId')) : undefined,
+    pageId: c.req.query('pageId') ? Number(c.req.query('pageId')) : undefined,
+    featureId: c.req.query('featureId') ? Number(c.req.query('featureId')) : undefined,
   })
-
   return c.html(html)
 })
 
 app.get('/excel', async (c) => {
   const projectId = c.req.query('projectId')
-  const moduleId = c.req.query('moduleId')
   if (!projectId) return c.json({ error: 'projectId required' }, 400)
 
-  const data = await generateExcelData({ projectId, moduleId: moduleId ? Number(moduleId) : undefined })
+  const opts = {
+    projectId,
+    moduleId: c.req.query('moduleId') ? Number(c.req.query('moduleId')) : undefined,
+    featureId: c.req.query('featureId') ? Number(c.req.query('featureId')) : undefined,
+    pageId: c.req.query('pageId') ? Number(c.req.query('pageId')) : undefined,
+  }
 
-  const format = c.req.query('format') || 'csv'
-  if (format === 'json') return c.json(data)
+  const format = c.req.query('format') || 'xlsx'
 
-  const sheets = [
-    { name: 'Modules', csv: csvFromRows(data.modules) },
-    { name: 'Features', csv: csvFromRows(data.features) },
-    { name: 'Pages', csv: csvFromRows(data.pages) },
-    { name: 'Requirements', csv: csvFromRows(data.requirements) },
-  ]
-  const csv = sheets.map(s => `--- ${s.name} ---\n${s.csv}`).join('\n\n')
-  c.header('Content-Type', 'text/csv')
-  c.header('Content-Disposition', `attachment; filename="butterstack-export.csv"`)
-  return c.body(csv)
+  if (format === 'json') {
+    return c.json(await generateExcelData(opts))
+  }
+
+  const buffer = await generateExcel(opts)
+  c.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+  c.header('Content-Disposition', 'attachment; filename="butterstack-export.xlsx"')
+  return c.body(buffer)
 })
 
 app.get('/mindmap', async (c) => {
   const projectId = c.req.query('projectId')
-  const moduleId = c.req.query('moduleId')
   if (!projectId) return c.json({ error: 'projectId required' }, 400)
 
+  const moduleId = c.req.query('moduleId') ? Number(c.req.query('moduleId')) : undefined
   const format = c.req.query('format') || 'html'
-  const data = await generateMindmapData(projectId, moduleId ? Number(moduleId) : undefined)
+  const data = await generateMindmapData(projectId, moduleId)
 
   if (format === 'json') return c.json(data)
   return c.html(mindmapToHtml(data))

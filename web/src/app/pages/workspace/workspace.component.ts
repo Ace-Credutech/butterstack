@@ -50,6 +50,7 @@ export class WorkspaceComponent implements OnInit, AfterViewInit {
   private meetingInterval: ReturnType<typeof setInterval> | null = null
 
   showExportMenu = signal(false)
+  historyHeight  = signal(256)
 
   constructor(
     private route:     ActivatedRoute,
@@ -268,6 +269,22 @@ export class WorkspaceComponent implements OnInit, AfterViewInit {
         pmStatus: full.pm_status, summary: full.summary,
       })
     }
+  }
+
+  startResizeSidebar(event: MouseEvent) {
+    event.preventDefault()
+    const startY = event.clientY
+    const startH = this.historyHeight()
+    const onMove = (e: MouseEvent) => {
+      const newH = Math.max(80, Math.min(600, startH + (startY - e.clientY)))
+      this.historyHeight.set(newH)
+    }
+    const onUp = () => {
+      document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseup', onUp)
+    }
+    document.addEventListener('mousemove', onMove)
+    document.addEventListener('mouseup', onUp)
   }
 
   onToggleMeeting() {

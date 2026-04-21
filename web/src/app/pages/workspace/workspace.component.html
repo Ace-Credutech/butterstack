@@ -74,8 +74,15 @@
         (pageSelected)="onPageSelected($event)"
         (projectSelected)="onProjectSelected()"/>
 
+      <!-- Resize handle -->
+      <div
+        class="h-1.5 cursor-row-resize bg-gray-100 hover:bg-green-100 shrink-0 select-none border-t border-gray-200 transition-colors"
+        (mousedown)="startResizeSidebar($event)">
+      </div>
+
       <app-version-timeline
-        class="h-64 flex flex-col bg-white shrink-0"
+        class="flex flex-col bg-white shrink-0"
+        [style.height.px]="historyHeight()"
         style="display:flex;flex-direction:column;"
         [versions]="versions()"
         [meetingActive]="meetingActive()"

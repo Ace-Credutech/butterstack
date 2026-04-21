@@ -1,0 +1,10 @@
+node_modules
+src
+.angular
+*.md
+tsconfig*.json
+angular.json
+proxy.conf.json
+Dockerfile
+nginx.conf
+docker-compose.yml

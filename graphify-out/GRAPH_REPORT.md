@@ -1,11 +1,11 @@
 # Graph Report - .  (2026-04-21)
 
 ## Corpus Check
-- 81 files · ~54,138 words
+- 81 files · ~55,560 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 434 nodes · 485 edges · 71 communities detected
+- 438 nodes · 492 edges · 71 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -119,8 +119,8 @@ Cohesion: 0.06
 Nodes (5): bgWork(), extractSection(), parseIndented(), parseLocal(), parseNumbered()
 
 ### Community 2 - "Community 2"
-Cohesion: 0.09
-Nodes (13): ensureLoaded(), learnFromStreamline(), learnFromTokens(), lookup(), schedulFlush(), translatePhrase(), upsertEntry(), cleanPunctuation() (+5 more)
+Cohesion: 0.1
+Nodes (10): aiChat(), getClients(), getUserKeys(), buildContextSummary(), formatHistory(), generateBreakdown(), generateDocumentation(), generateNextQuestion() (+2 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.11
@@ -136,31 +136,31 @@ Nodes (1): PrototypePreviewComponent
 
 ### Community 6 - "Community 6"
 Cohesion: 0.18
-Nodes (8): dsBgGradient(), dsBorderAccent(), dsCheckboxColor(), dsColorName(), initials(), renderAvatar(), renderSectionCard(), renderStatCard()
+Nodes (11): ensureLoaded(), learnFromStreamline(), learnFromTokens(), lookup(), schedulFlush(), translatePhrase(), upsertEntry(), cleanPunctuation() (+3 more)
 
 ### Community 7 - "Community 7"
+Cohesion: 0.18
+Nodes (8): dsBgGradient(), dsBorderAccent(), dsCheckboxColor(), dsColorName(), initials(), renderAvatar(), renderSectionCard(), renderStatCard()
+
+### Community 8 - "Community 8"
 Cohesion: 0.27
 Nodes (2): ModuleStructureInputComponent, uid()
 
-### Community 8 - "Community 8"
+### Community 9 - "Community 9"
 Cohesion: 0.24
 Nodes (15): renderCardsGrid(), renderComponent(), renderDataTable(), renderElements(), renderEmptyState(), renderForm(), renderHeader(), renderHero() (+7 more)
 
-### Community 9 - "Community 9"
+### Community 10 - "Community 10"
 Cohesion: 0.18
 Nodes (1): DesignSettingsComponent
 
-### Community 10 - "Community 10"
+### Community 11 - "Community 11"
 Cohesion: 0.24
 Nodes (1): MembersPanelComponent
 
-### Community 11 - "Community 11"
+### Community 12 - "Community 12"
 Cohesion: 0.18
 Nodes (1): RequirementInputComponent
-
-### Community 12 - "Community 12"
-Cohesion: 0.26
-Nodes (8): aiChat(), getClients(), getUserKeys(), buildContextSummary(), formatHistory(), generateBreakdown(), generateDocumentation(), generateNextQuestion()
 
 ### Community 13 - "Community 13"
 Cohesion: 0.22
@@ -211,32 +211,32 @@ Cohesion: 0.4
 Nodes (1): RegisterComponent
 
 ### Community 25 - "Community 25"
+Cohesion: 0.6
+Nodes (3): generateExcel(), generateExcelData(), getScopedModuleIds()
+
+### Community 26 - "Community 26"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 26 - "Community 26"
+### Community 27 - "Community 27"
 Cohesion: 0.6
 Nodes (3): logComm(), sendEmail(), updateLog()
 
-### Community 27 - "Community 27"
+### Community 28 - "Community 28"
 Cohesion: 0.6
 Nodes (3): logComm(), sendSms(), updateLog()
 
-### Community 28 - "Community 28"
+### Community 29 - "Community 29"
 Cohesion: 0.5
 Nodes (1): LoginComponent
 
-### Community 29 - "Community 29"
+### Community 30 - "Community 30"
 Cohesion: 0.83
 Nodes (3): delay(), generatePrototype(), run()
 
-### Community 30 - "Community 30"
-Cohesion: 0.67
-Nodes (0): 
-
 ### Community 31 - "Community 31"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (2): mdToHtml(), renderNumberedSections()
 
 ### Community 32 - "Community 32"
 Cohesion: 0.67
@@ -247,12 +247,12 @@ Cohesion: 0.67
 Nodes (0): 
 
 ### Community 34 - "Community 34"
-Cohesion: 1.0
-Nodes (1): App
+Cohesion: 0.67
+Nodes (0): 
 
 ### Community 35 - "Community 35"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): App
 
 ### Community 36 - "Community 36"
 Cohesion: 1.0
@@ -276,11 +276,11 @@ Nodes (0):
 
 ### Community 41 - "Community 41"
 Cohesion: 1.0
-Nodes (1): VersionTimelineComponent
+Nodes (0): 
 
 ### Community 42 - "Community 42"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): VersionTimelineComponent
 
 ### Community 43 - "Community 43"
 Cohesion: 1.0
@@ -397,25 +397,23 @@ Nodes (1): Speed Non-Negotiable Principle (millisecond-class)
 ## Knowledge Gaps
 - **22 isolated node(s):** `App`, `VersionTimelineComponent`, `Butterstack Project (CLAUDE.md)`, `Backend Returns Pure UITokens (Key Principle)`, `Phase 1 Ideation` (+17 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 34`** (2 nodes): `App`, `app.ts`
+- **Thin community `Community 35`** (2 nodes): `App`, `app.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 35`** (2 nodes): `authInterceptor()`, `auth.interceptor.ts`
+- **Thin community `Community 36`** (2 nodes): `authInterceptor()`, `auth.interceptor.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 36`** (2 nodes): `renderForm()`, `form.renderer.ts`
+- **Thin community `Community 37`** (2 nodes): `renderForm()`, `form.renderer.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 37`** (2 nodes): `renderDashboard()`, `dashboard.renderer.ts`
+- **Thin community `Community 38`** (2 nodes): `renderDashboard()`, `dashboard.renderer.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 38`** (2 nodes): `renderTokens()`, `index.ts`
+- **Thin community `Community 39`** (2 nodes): `renderTokens()`, `index.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 39`** (2 nodes): `renderLogin()`, `login.renderer.ts`
+- **Thin community `Community 40`** (2 nodes): `renderLogin()`, `login.renderer.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 40`** (2 nodes): `renderList()`, `list.renderer.ts`
+- **Thin community `Community 41`** (2 nodes): `renderList()`, `list.renderer.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 41`** (2 nodes): `VersionTimelineComponent`, `version-timeline.component.ts`
+- **Thin community `Community 42`** (2 nodes): `VersionTimelineComponent`, `version-timeline.component.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 42`** (2 nodes): `authGuard()`, `auth.guard.ts`
-  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 43`** (2 nodes): `brd-generator.ts`, `generateBrd()`
+- **Thin community `Community 43`** (2 nodes): `authGuard()`, `auth.guard.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 44`** (1 nodes): `main.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -482,7 +480,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.06 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.09 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.1 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
   _Cohesion score 0.11 - nodes in this community are weakly interconnected._
 - **Should `Community 4` be split into smaller, more focused modules?**

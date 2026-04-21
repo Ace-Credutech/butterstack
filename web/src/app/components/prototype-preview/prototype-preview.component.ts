@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, ChangeDetectorRef, ElementRef, signal } from '@angular/core'
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectorRef, ElementRef, signal } from '@angular/core'
 import { DomSanitizer, SafeHtml }  from '@angular/platform-browser'
 import type { UITokens }           from '../../models/ui-tokens.model'
 import { renderTokens }            from '../../renderers/index'
@@ -22,6 +22,9 @@ export class PrototypePreviewComponent implements OnChanges {
   @Input() scopeModuleId: number | null = null
   @Input() scopePageId: number | null = null
   @Input() scopeFeatureId: number | null = null
+  @Input() relatedPages: { id: number; name: string; pageType: string; tokens?: any }[] = []
+  @Input() selectedContext = ''
+  @Output() pageClicked = new EventEmitter<{ id: number; name: string; tokens?: any }>()
 
   activeTab       = signal<CenterTab>('prototype')
   safeHtml:         SafeHtml | null = null
@@ -30,6 +33,7 @@ export class PrototypePreviewComponent implements OnChanges {
   protoFullscreen   = false
 
   brdHtml     = signal<SafeHtml | null>(null)
+  brdRaw      = ''
   brdLoading  = signal(false)
 
   excelData   = signal<any>(null)
@@ -113,7 +117,10 @@ export class PrototypePreviewComponent implements OnChanges {
       const token = localStorage.getItem('bs_token')
       const res = await fetch(`/api/exports/brd?${this.scopeParams}&token=${token}`)
       const html = await res.text()
-      this.brdHtml.set(this.sanitizer.bypassSecurityTrustHtml(html))
+      this.brdRaw = html
+      this.brdHtml.set(this.sanitizer.bypassSecurityTrustResourceUrl(
+        'data:text/html;charset=utf-8,' + encodeURIComponent(html)
+      ))
     } catch {} finally { this.brdLoading.set(false) }
   }
 
@@ -122,6 +129,8 @@ export class PrototypePreviewComponent implements OnChanges {
     try {
       const params: Record<string, string> = { projectId: this.projectId, format: 'json' }
       if (this.scopeModuleId) params['moduleId'] = String(this.scopeModuleId)
+      if (this.scopeFeatureId) params['featureId'] = String(this.scopeFeatureId)
+      if (this.scopePageId) params['pageId'] = String(this.scopePageId)
       this.excelData.set(await this.api.get('/exports/excel', params))
     } catch {} finally { this.excelLoading.set(false) }
   }
@@ -132,7 +141,9 @@ export class PrototypePreviewComponent implements OnChanges {
       const token = localStorage.getItem('bs_token')
       const res = await fetch(`/api/exports/mindmap?${this.scopeParams}&token=${token}`)
       const html = await res.text()
-      this.mindmapHtml.set(this.sanitizer.bypassSecurityTrustHtml(html))
+      this.mindmapHtml.set(this.sanitizer.bypassSecurityTrustResourceUrl(
+        'data:text/html;charset=utf-8,' + encodeURIComponent(html)
+      ))
     } catch {} finally { this.mindmapLoading.set(false) }
   }
 
@@ -147,7 +158,7 @@ export class PrototypePreviewComponent implements OnChanges {
     const blob = await res.blob()
     const a = document.createElement('a')
     a.href = URL.createObjectURL(blob)
-    a.download = 'butterstack-export.csv'
+    a.download = 'butterstack-export.xlsx'
     a.click()
     URL.revokeObjectURL(a.href)
   }

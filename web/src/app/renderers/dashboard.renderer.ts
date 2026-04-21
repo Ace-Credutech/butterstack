@@ -1,6 +1,6 @@
 import type { UITokens } from '../models/ui-tokens.model'
 import { renderSidebar, renderHeader, renderStatsGrid } from './shared.renderer'
-import { renderSectionCard, renderActivityList, renderDataTable, DEFAULT_DESIGN, type DesignSystem, type PrototypeContext } from './components.renderer'
+import { renderSectionCard, renderActivityList, renderDataTable, DEFAULT_DESIGN, type DesignSystem, type PrototypeContext, dsColorName, dsBorderAccent } from './components.renderer'
 
 export function renderDashboard(t: UITokens, ds: DesignSystem = DEFAULT_DESIGN, ctx?: PrototypeContext): string {
   let stats = t.stats.length ? t.stats : [
@@ -17,17 +17,18 @@ export function renderDashboard(t: UITokens, ds: DesignSystem = DEFAULT_DESIGN, 
   }
   const sections = t.sections.length ? t.sections : ['Recent Activity', 'Quick Stats']
 
+  const color = dsColorName(ds)
   const sectionContent = sections.map(s => {
     const lc = s.toLowerCase()
     if (lc.includes('activity') || lc.includes('recent')) {
-      return renderSectionCard(s, renderActivityList(ds))
+      return renderSectionCard(s, renderActivityList(ds), ds)
     }
     if (lc.includes('chart') || lc.includes('graph') || lc.includes('analytics')) {
       return renderSectionCard(s, `
-        <div class="h-40 bg-gradient-to-t from-green-50 to-white rounded-lg flex items-end justify-center gap-2 p-4">
+        <div class="h-40 bg-gradient-to-t from-${color}-50 to-white rounded-lg flex items-end justify-center gap-2 p-4">
           ${[40, 65, 45, 80, 55, 70, 90, 60].map(h => `<div class="w-6 ${ds.primaryColor} rounded-t opacity-70" style="height: ${h}%"></div>`).join('')}
         </div>
-        <div class="flex justify-between text-xs text-gray-400 mt-2 px-2"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span><span>Today</span></div>`)
+        <div class="flex justify-between text-xs text-gray-400 mt-2 px-2"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span><span>Today</span></div>`, ds)
     }
     return renderSectionCard(s, `
       <div class="space-y-3">
@@ -35,7 +36,7 @@ export function renderDashboard(t: UITokens, ds: DesignSystem = DEFAULT_DESIGN, 
         <div class="h-2 bg-gray-100 rounded-full overflow-hidden"><div class="h-full ${ds.primaryColor} rounded-full" style="width: 78%"></div></div>
         <div class="flex items-center justify-between"><span class="text-sm text-gray-600">Requirements finalized</span><span class="text-sm font-medium text-gray-800">45/58</span></div>
         <div class="h-2 bg-gray-100 rounded-full overflow-hidden"><div class="h-full ${ds.primaryColor} rounded-full" style="width: 77%"></div></div>
-      </div>`)
+      </div>`, ds)
   }).join('')
 
   const main = `

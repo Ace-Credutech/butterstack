@@ -1,6 +1,6 @@
 import type { UITokens } from '../models/ui-tokens.model'
 import { renderSidebar, renderHeader } from './shared.renderer'
-import { renderDataTable, renderButton, renderButtonGroup, DEFAULT_DESIGN, type DesignSystem } from './components.renderer'
+import { renderDataTable, renderButton, renderButtonGroup, DEFAULT_DESIGN, type DesignSystem, dsBorderAccent } from './components.renderer'
 
 export function renderList(t: UITokens, ds: DesignSystem = DEFAULT_DESIGN): string {
   const columns = t.fields.length ? t.fields.map(f => f.name) : t.sections.length ? t.sections : ['Name', 'Email', 'Status', 'Role', 'Date', 'Actions']
@@ -28,7 +28,7 @@ export function renderList(t: UITokens, ds: DesignSystem = DEFAULT_DESIGN): stri
         <h1 class="text-lg font-bold text-gray-900">${t.intent}</h1>
         ${actionBtn}
       </div>
-      <div class="bg-white ${ds.borderRadius} border border-gray-100 shadow-sm overflow-hidden">
+      <div class="bg-white ${ds.borderRadius} border ${dsBorderAccent(ds)} shadow-sm overflow-hidden">
         ${search || filter ? `<div class="flex items-center gap-3 p-4 border-b border-gray-50">${search}${filter}</div>` : ''}
         ${renderDataTable(columns, 6, ds, t.entity || 'record')}
       </div>

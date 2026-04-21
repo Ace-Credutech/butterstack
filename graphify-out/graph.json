@@ -203,7 +203,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L1",
       "id": "web_src_app_renderers_components_renderer_ts",
-      "community": 7
+      "community": 6
     },
     {
       "label": "dsColorName()",
@@ -211,7 +211,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L19",
       "id": "components_renderer_dscolorname",
-      "community": 7
+      "community": 6
     },
     {
       "label": "dsBgGradient()",
@@ -219,7 +219,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L24",
       "id": "components_renderer_dsbggradient",
-      "community": 7
+      "community": 6
     },
     {
       "label": "dsBorderAccent()",
@@ -227,7 +227,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L29",
       "id": "components_renderer_dsborderaccent",
-      "community": 7
+      "community": 6
     },
     {
       "label": "dsCheckboxColor()",
@@ -235,7 +235,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L34",
       "id": "components_renderer_dscheckboxcolor",
-      "community": 7
+      "community": 6
     },
     {
       "label": "initials()",
@@ -243,7 +243,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L56",
       "id": "components_renderer_initials",
-      "community": 7
+      "community": 6
     },
     {
       "label": "renderAvatar()",
@@ -251,7 +251,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L60",
       "id": "components_renderer_renderavatar",
-      "community": 7
+      "community": 6
     },
     {
       "label": "renderButton()",
@@ -259,7 +259,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L64",
       "id": "components_renderer_renderbutton",
-      "community": 7
+      "community": 6
     },
     {
       "label": "renderButtonGroup()",
@@ -267,7 +267,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L73",
       "id": "components_renderer_renderbuttongroup",
-      "community": 7
+      "community": 6
     },
     {
       "label": "renderStatusBadge()",
@@ -275,7 +275,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L87",
       "id": "components_renderer_renderstatusbadge",
-      "community": 7
+      "community": 6
     },
     {
       "label": "renderRoleBadge()",
@@ -283,7 +283,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L96",
       "id": "components_renderer_renderrolebadge",
-      "community": 7
+      "community": 6
     },
     {
       "label": "renderDataTable()",
@@ -291,7 +291,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L103",
       "id": "components_renderer_renderdatatable",
-      "community": 7
+      "community": 6
     },
     {
       "label": "renderStatCard()",
@@ -299,7 +299,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L140",
       "id": "components_renderer_renderstatcard",
-      "community": 7
+      "community": 6
     },
     {
       "label": "renderFormField()",
@@ -307,7 +307,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L154",
       "id": "components_renderer_renderformfield",
-      "community": 7
+      "community": 6
     },
     {
       "label": "renderSectionCard()",
@@ -315,7 +315,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L168",
       "id": "components_renderer_rendersectioncard",
-      "community": 7
+      "community": 6
     },
     {
       "label": "renderActivityList()",
@@ -323,7 +323,7 @@
       "source_file": "web/src/app/renderers/components.renderer.ts",
       "source_location": "L177",
       "id": "components_renderer_renderactivitylist",
-      "community": 7
+      "community": 6
     },
     {
       "label": "form.renderer.ts",
@@ -451,7 +451,7 @@
       "source_file": "web/src/app/components/members-panel/members-panel.component.ts",
       "source_location": "L1",
       "id": "web_src_app_components_members_panel_members_panel_component_ts",
-      "community": 11
+      "community": 10
     },
     {
       "label": "MembersPanelComponent",
@@ -459,7 +459,7 @@
       "source_file": "web/src/app/components/members-panel/members-panel.component.ts",
       "source_location": "L26",
       "id": "members_panel_component_memberspanelcomponent",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".constructor()",
@@ -467,7 +467,7 @@
       "source_file": "web/src/app/components/members-panel/members-panel.component.ts",
       "source_location": "L39",
       "id": "members_panel_component_memberspanelcomponent_constructor",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".ngOnInit()",
@@ -475,7 +475,7 @@
       "source_file": "web/src/app/components/members-panel/members-panel.component.ts",
       "source_location": "L41",
       "id": "members_panel_component_memberspanelcomponent_ngoninit",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".toggle()",
@@ -483,7 +483,7 @@
       "source_file": "web/src/app/components/members-panel/members-panel.component.ts",
       "source_location": "L45",
       "id": "members_panel_component_memberspanelcomponent_toggle",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".loadMembers()",
@@ -491,7 +491,7 @@
       "source_file": "web/src/app/components/members-panel/members-panel.component.ts",
       "source_location": "L50",
       "id": "members_panel_component_memberspanelcomponent_loadmembers",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".addMember()",
@@ -499,7 +499,7 @@
       "source_file": "web/src/app/components/members-panel/members-panel.component.ts",
       "source_location": "L62",
       "id": "members_panel_component_memberspanelcomponent_addmember",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".changeRole()",
@@ -507,7 +507,7 @@
       "source_file": "web/src/app/components/members-panel/members-panel.component.ts",
       "source_location": "L77",
       "id": "members_panel_component_memberspanelcomponent_changerole",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".removeMember()",
@@ -515,7 +515,7 @@
       "source_file": "web/src/app/components/members-panel/members-panel.component.ts",
       "source_location": "L82",
       "id": "members_panel_component_memberspanelcomponent_removemember",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".initials()",
@@ -523,7 +523,7 @@
       "source_file": "web/src/app/components/members-panel/members-panel.component.ts",
       "source_location": "L87",
       "id": "members_panel_component_memberspanelcomponent_initials",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".isMe()",
@@ -531,7 +531,7 @@
       "source_file": "web/src/app/components/members-panel/members-panel.component.ts",
       "source_location": "L91",
       "id": "members_panel_component_memberspanelcomponent_isme",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".onEsc()",
@@ -539,7 +539,7 @@
       "source_file": "web/src/app/components/members-panel/members-panel.component.ts",
       "source_location": "L96",
       "id": "members_panel_component_memberspanelcomponent_onesc",
-      "community": 11
+      "community": 10
     },
     {
       "label": "requirement-input.component.ts",
@@ -547,7 +547,7 @@
       "source_file": "web/src/app/components/requirement-input/requirement-input.component.ts",
       "source_location": "L1",
       "id": "web_src_app_components_requirement_input_requirement_input_component_ts",
-      "community": 12
+      "community": 11
     },
     {
       "label": "RequirementInputComponent",
@@ -555,7 +555,7 @@
       "source_file": "web/src/app/components/requirement-input/requirement-input.component.ts",
       "source_location": "L23",
       "id": "requirement_input_component_requirementinputcomponent",
-      "community": 12
+      "community": 11
     },
     {
       "label": ".constructor()",
@@ -563,7 +563,7 @@
       "source_file": "web/src/app/components/requirement-input/requirement-input.component.ts",
       "source_location": "L57",
       "id": "requirement_input_component_requirementinputcomponent_constructor",
-      "community": 12
+      "community": 11
     },
     {
       "label": ".ngOnChanges()",
@@ -571,7 +571,7 @@
       "source_file": "web/src/app/components/requirement-input/requirement-input.component.ts",
       "source_location": "L59",
       "id": "requirement_input_component_requirementinputcomponent_ngonchanges",
-      "community": 12
+      "community": 11
     },
     {
       "label": ".onInput()",
@@ -579,7 +579,7 @@
       "source_file": "web/src/app/components/requirement-input/requirement-input.component.ts",
       "source_location": "L68",
       "id": "requirement_input_component_requirementinputcomponent_oninput",
-      "community": 12
+      "community": 11
     },
     {
       "label": ".onSubmit()",
@@ -587,7 +587,7 @@
       "source_file": "web/src/app/components/requirement-input/requirement-input.component.ts",
       "source_location": "L72",
       "id": "requirement_input_component_requirementinputcomponent_onsubmit",
-      "community": 12
+      "community": 11
     },
     {
       "label": ".onBack()",
@@ -595,7 +595,7 @@
       "source_file": "web/src/app/components/requirement-input/requirement-input.component.ts",
       "source_location": "L86",
       "id": "requirement_input_component_requirementinputcomponent_onback",
-      "community": 12
+      "community": 11
     },
     {
       "label": ".onConfirm()",
@@ -603,7 +603,7 @@
       "source_file": "web/src/app/components/requirement-input/requirement-input.component.ts",
       "source_location": "L91",
       "id": "requirement_input_component_requirementinputcomponent_onconfirm",
-      "community": 12
+      "community": 11
     },
     {
       "label": ".flatten()",
@@ -611,7 +611,7 @@
       "source_file": "web/src/app/components/requirement-input/requirement-input.component.ts",
       "source_location": "L106",
       "id": "requirement_input_component_requirementinputcomponent_flatten",
-      "community": 12
+      "community": 11
     },
     {
       "label": ".selectModule()",
@@ -619,7 +619,7 @@
       "source_file": "web/src/app/components/requirement-input/requirement-input.component.ts",
       "source_location": "L115",
       "id": "requirement_input_component_requirementinputcomponent_selectmodule",
-      "community": 12
+      "community": 11
     },
     {
       "label": ".onSave()",
@@ -627,7 +627,7 @@
       "source_file": "web/src/app/components/requirement-input/requirement-input.component.ts",
       "source_location": "L120",
       "id": "requirement_input_component_requirementinputcomponent_onsave",
-      "community": 12
+      "community": 11
     },
     {
       "label": ".onRegenerate()",
@@ -635,7 +635,7 @@
       "source_file": "web/src/app/components/requirement-input/requirement-input.component.ts",
       "source_location": "L148",
       "id": "requirement_input_component_requirementinputcomponent_onregenerate",
-      "community": 12
+      "community": 11
     },
     {
       "label": "design-settings.component.ts",
@@ -643,7 +643,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L1",
       "id": "web_src_app_components_design_settings_design_settings_component_ts",
-      "community": 10
+      "community": 9
     },
     {
       "label": "DesignSettingsComponent",
@@ -651,7 +651,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L29",
       "id": "design_settings_component_designsettingscomponent",
-      "community": 10
+      "community": 9
     },
     {
       "label": ".constructor()",
@@ -659,7 +659,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L69",
       "id": "design_settings_component_designsettingscomponent_constructor",
-      "community": 10
+      "community": 9
     },
     {
       "label": ".ngOnInit()",
@@ -667,7 +667,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L71",
       "id": "design_settings_component_designsettingscomponent_ngoninit",
-      "community": 10
+      "community": 9
     },
     {
       "label": ".toggle()",
@@ -675,7 +675,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L73",
       "id": "design_settings_component_designsettingscomponent_toggle",
-      "community": 10
+      "community": 9
     },
     {
       "label": ".load()",
@@ -683,7 +683,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L78",
       "id": "design_settings_component_designsettingscomponent_load",
-      "community": 10
+      "community": 9
     },
     {
       "label": ".selectPreset()",
@@ -691,7 +691,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L86",
       "id": "design_settings_component_designsettingscomponent_selectpreset",
-      "community": 10
+      "community": 9
     },
     {
       "label": ".setRadius()",
@@ -699,7 +699,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L90",
       "id": "design_settings_component_designsettingscomponent_setradius",
-      "community": 10
+      "community": 9
     },
     {
       "label": ".setFont()",
@@ -707,7 +707,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L91",
       "id": "design_settings_component_designsettingscomponent_setfont",
-      "community": 10
+      "community": 9
     },
     {
       "label": ".isActivePreset()",
@@ -715,7 +715,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L93",
       "id": "design_settings_component_designsettingscomponent_isactivepreset",
-      "community": 10
+      "community": 9
     },
     {
       "label": ".save()",
@@ -723,7 +723,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L95",
       "id": "design_settings_component_designsettingscomponent_save",
-      "community": 10
+      "community": 9
     },
     {
       "label": ".presetBgClass()",
@@ -731,7 +731,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L103",
       "id": "design_settings_component_designsettingscomponent_presetbgclass",
-      "community": 10
+      "community": 9
     },
     {
       "label": ".onEsc()",
@@ -739,7 +739,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L106",
       "id": "design_settings_component_designsettingscomponent_onesc",
-      "community": 10
+      "community": 9
     },
     {
       "label": "api-keys-settings.component.ts",
@@ -795,159 +795,167 @@
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
       "source_location": "L1",
       "id": "web_src_app_components_prototype_preview_prototype_preview_component_ts",
-      "community": 5
+      "community": 4
     },
     {
       "label": "PrototypePreviewComponent",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L17",
+      "source_location": "L18",
       "id": "prototype_preview_component_prototypepreviewcomponent",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".constructor()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L48",
+      "source_location": "L49",
       "id": "prototype_preview_component_prototypepreviewcomponent_constructor",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".ngOnChanges()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L60",
+      "source_location": "L61",
       "id": "prototype_preview_component_prototypepreviewcomponent_ngonchanges",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".reloadDesignSystem()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L78",
+      "source_location": "L79",
       "id": "prototype_preview_component_prototypepreviewcomponent_reloaddesignsystem",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".setTab()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L92",
+      "source_location": "L93",
       "id": "prototype_preview_component_prototypepreviewcomponent_settab",
-      "community": 5
+      "community": 4
+    },
+    {
+      "label": ".apiBase()",
+      "file_type": "code",
+      "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
+      "source_location": "L100",
+      "id": "prototype_preview_component_prototypepreviewcomponent_apibase",
+      "community": 4
     },
     {
       "label": ".scopeParams()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L99",
+      "source_location": "L102",
       "id": "prototype_preview_component_prototypepreviewcomponent_scopeparams",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".scopeLabel()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L107",
+      "source_location": "L110",
       "id": "prototype_preview_component_prototypepreviewcomponent_scopelabel",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".loadBrd()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L114",
+      "source_location": "L117",
       "id": "prototype_preview_component_prototypepreviewcomponent_loadbrd",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".loadExcel()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L127",
+      "source_location": "L130",
       "id": "prototype_preview_component_prototypepreviewcomponent_loadexcel",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".loadMindmap()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L138",
+      "source_location": "L141",
       "id": "prototype_preview_component_prototypepreviewcomponent_loadmindmap",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".downloadBrd()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L150",
+      "source_location": "L153",
       "id": "prototype_preview_component_prototypepreviewcomponent_downloadbrd",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".downloadExcel()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L155",
+      "source_location": "L158",
       "id": "prototype_preview_component_prototypepreviewcomponent_downloadexcel",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".downloadMindmap()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L166",
+      "source_location": "L169",
       "id": "prototype_preview_component_prototypepreviewcomponent_downloadmindmap",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".refreshTab()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L171",
+      "source_location": "L174",
       "id": "prototype_preview_component_prototypepreviewcomponent_refreshtab",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".setViewport()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L181",
+      "source_location": "L184",
       "id": "prototype_preview_component_prototypepreviewcomponent_setviewport",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".copyHtml()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L182",
+      "source_location": "L185",
       "id": "prototype_preview_component_prototypepreviewcomponent_copyhtml",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".toggleProtoFullscreen()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L184",
+      "source_location": "L187",
       "id": "prototype_preview_component_prototypepreviewcomponent_toggleprotofullscreen",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".objectKeys()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L190",
+      "source_location": "L193",
       "id": "prototype_preview_component_prototypepreviewcomponent_objectkeys",
-      "community": 5
+      "community": 4
     },
     {
       "label": ".wrapperWidth()",
       "file_type": "code",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L192",
+      "source_location": "L195",
       "id": "prototype_preview_component_prototypepreviewcomponent_wrapperwidth",
-      "community": 5
+      "community": 4
     },
     {
       "label": "elicitation-chat.component.ts",
@@ -1419,7 +1427,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L1",
       "id": "web_src_app_components_module_structure_input_module_structure_input_component_ts",
-      "community": 8
+      "community": 7
     },
     {
       "label": "uid()",
@@ -1427,7 +1435,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L8",
       "id": "module_structure_input_component_uid",
-      "community": 8
+      "community": 7
     },
     {
       "label": "ModuleStructureInputComponent",
@@ -1435,7 +1443,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L15",
       "id": "module_structure_input_component_modulestructureinputcomponent",
-      "community": 8
+      "community": 7
     },
     {
       "label": ".ngOnChanges()",
@@ -1443,7 +1451,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L31",
       "id": "module_structure_input_component_modulestructureinputcomponent_ngonchanges",
-      "community": 8
+      "community": 7
     },
     {
       "label": ".recompute()",
@@ -1451,7 +1459,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L36",
       "id": "module_structure_input_component_modulestructureinputcomponent_recompute",
-      "community": 8
+      "community": 7
     },
     {
       "label": ".onEnter()",
@@ -1459,7 +1467,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L48",
       "id": "module_structure_input_component_modulestructureinputcomponent_onenter",
-      "community": 8
+      "community": 7
     },
     {
       "label": ".onTab()",
@@ -1467,7 +1475,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L56",
       "id": "module_structure_input_component_modulestructureinputcomponent_ontab",
-      "community": 8
+      "community": 7
     },
     {
       "label": ".onBackspace()",
@@ -1475,7 +1483,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L67",
       "id": "module_structure_input_component_modulestructureinputcomponent_onbackspace",
-      "community": 8
+      "community": 7
     },
     {
       "label": ".onNameChange()",
@@ -1483,7 +1491,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L76",
       "id": "module_structure_input_component_modulestructureinputcomponent_onnamechange",
-      "community": 8
+      "community": 7
     },
     {
       "label": ".addRoot()",
@@ -1491,7 +1499,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L81",
       "id": "module_structure_input_component_modulestructureinputcomponent_addroot",
-      "community": 8
+      "community": 7
     },
     {
       "label": ".remove()",
@@ -1499,7 +1507,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L87",
       "id": "module_structure_input_component_modulestructureinputcomponent_remove",
-      "community": 8
+      "community": 7
     },
     {
       "label": ".fromText()",
@@ -1507,7 +1515,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L97",
       "id": "module_structure_input_component_modulestructureinputcomponent_fromtext",
-      "community": 8
+      "community": 7
     },
     {
       "label": ".toText()",
@@ -1515,7 +1523,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L110",
       "id": "module_structure_input_component_modulestructureinputcomponent_totext",
-      "community": 8
+      "community": 7
     },
     {
       "label": ".onChange()",
@@ -1523,7 +1531,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L118",
       "id": "module_structure_input_component_modulestructureinputcomponent_onchange",
-      "community": 8
+      "community": 7
     },
     {
       "label": ".focusAfter()",
@@ -1531,7 +1539,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L123",
       "id": "module_structure_input_component_modulestructureinputcomponent_focusafter",
-      "community": 8
+      "community": 7
     },
     {
       "label": ".ngOnDestroy()",
@@ -1539,7 +1547,7 @@
       "source_file": "web/src/app/components/module-structure-input/module-structure-input.component.ts",
       "source_location": "L127",
       "id": "module_structure_input_component_modulestructureinputcomponent_ngondestroy",
-      "community": 8
+      "community": 7
     },
     {
       "label": "modules-panel.component.ts",
@@ -1547,7 +1555,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L1",
       "id": "web_src_app_components_modules_panel_modules_panel_component_ts",
-      "community": 4
+      "community": 5
     },
     {
       "label": "ModulesPanelComponent",
@@ -1555,7 +1563,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L31",
       "id": "modules_panel_component_modulespanelcomponent",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".constructor()",
@@ -1563,7 +1571,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L52",
       "id": "modules_panel_component_modulespanelcomponent_constructor",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".ngOnInit()",
@@ -1571,7 +1579,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L56",
       "id": "modules_panel_component_modulespanelcomponent_ngoninit",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".ngOnChanges()",
@@ -1579,7 +1587,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L60",
       "id": "modules_panel_component_modulespanelcomponent_ngonchanges",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".loadFromInit()",
@@ -1587,7 +1595,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L64",
       "id": "modules_panel_component_modulespanelcomponent_loadfrominit",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".buildTreeFromFlat()",
@@ -1595,7 +1603,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L80",
       "id": "modules_panel_component_modulespanelcomponent_buildtreefromflat",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".toggleImport()",
@@ -1603,7 +1611,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L91",
       "id": "modules_panel_component_modulespanelcomponent_toggleimport",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".onCommitted()",
@@ -1611,7 +1619,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L96",
       "id": "modules_panel_component_modulespanelcomponent_oncommitted",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".fetchTree()",
@@ -1619,7 +1627,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L107",
       "id": "modules_panel_component_modulespanelcomponent_fetchtree",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".fetchPages()",
@@ -1627,7 +1635,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L113",
       "id": "modules_panel_component_modulespanelcomponent_fetchpages",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".toggle()",
@@ -1635,7 +1643,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L121",
       "id": "modules_panel_component_modulespanelcomponent_toggle",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".togglePage()",
@@ -1643,7 +1651,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L122",
       "id": "modules_panel_component_modulespanelcomponent_togglepage",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".selectProject()",
@@ -1651,7 +1659,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L124",
       "id": "modules_panel_component_modulespanelcomponent_selectproject",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".selectModule()",
@@ -1659,7 +1667,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L132",
       "id": "modules_panel_component_modulespanelcomponent_selectmodule",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".selectFeature()",
@@ -1667,7 +1675,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L140",
       "id": "modules_panel_component_modulespanelcomponent_selectfeature",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".selectPage()",
@@ -1675,7 +1683,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L147",
       "id": "modules_panel_component_modulespanelcomponent_selectpage",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".refresh()",
@@ -1683,7 +1691,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L154",
       "id": "modules_panel_component_modulespanelcomponent_refresh",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".approvedCount()",
@@ -1691,7 +1699,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L156",
       "id": "modules_panel_component_modulespanelcomponent_approvedcount",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".treeToText()",
@@ -1699,7 +1707,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L158",
       "id": "modules_panel_component_modulespanelcomponent_treetotext",
-      "community": 4
+      "community": 5
     },
     {
       "label": ".mapNodes()",
@@ -1707,7 +1715,7 @@
       "source_file": "web/src/app/components/modules-panel/modules-panel.component.ts",
       "source_location": "L166",
       "id": "modules_panel_component_modulespanelcomponent_mapnodes",
-      "community": 4
+      "community": 5
     },
     {
       "label": "landing.component.ts",
@@ -2499,7 +2507,7 @@
       "source_file": "api/lib/ai-client.ts",
       "source_location": "L1",
       "id": "api_lib_ai_client_ts",
-      "community": 2
+      "community": 12
     },
     {
       "label": "getUserKeys()",
@@ -2507,7 +2515,7 @@
       "source_file": "api/lib/ai-client.ts",
       "source_location": "L41",
       "id": "ai_client_getuserkeys",
-      "community": 2
+      "community": 12
     },
     {
       "label": "getClients()",
@@ -2515,7 +2523,7 @@
       "source_file": "api/lib/ai-client.ts",
       "source_location": "L51",
       "id": "ai_client_getclients",
-      "community": 2
+      "community": 12
     },
     {
       "label": "aiChat()",
@@ -2523,7 +2531,7 @@
       "source_file": "api/lib/ai-client.ts",
       "source_location": "L73",
       "id": "ai_client_aichat",
-      "community": 2
+      "community": 12
     },
     {
       "label": "excel-generator.ts",
@@ -2571,7 +2579,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L1",
       "id": "api_lib_dictionary_ts",
-      "community": 6
+      "community": 2
     },
     {
       "label": "ensureLoaded()",
@@ -2579,7 +2587,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L26",
       "id": "dictionary_ensureloaded",
-      "community": 6
+      "community": 2
     },
     {
       "label": "lookup()",
@@ -2587,7 +2595,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L42",
       "id": "dictionary_lookup",
-      "community": 6
+      "community": 2
     },
     {
       "label": "translatePhrase()",
@@ -2595,7 +2603,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L49",
       "id": "dictionary_translatephrase",
-      "community": 6
+      "community": 2
     },
     {
       "label": "learnFromStreamline()",
@@ -2603,7 +2611,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L71",
       "id": "dictionary_learnfromstreamline",
-      "community": 6
+      "community": 2
     },
     {
       "label": "learnFromTokens()",
@@ -2611,7 +2619,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L91",
       "id": "dictionary_learnfromtokens",
-      "community": 6
+      "community": 2
     },
     {
       "label": "upsertEntry()",
@@ -2619,7 +2627,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L117",
       "id": "dictionary_upsertentry",
-      "community": 6
+      "community": 2
     },
     {
       "label": "schedulFlush()",
@@ -2627,7 +2635,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L136",
       "id": "dictionary_schedulflush",
-      "community": 6
+      "community": 2
     },
     {
       "label": "flushToDB()",
@@ -2635,7 +2643,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L141",
       "id": "dictionary_flushtodb",
-      "community": 6
+      "community": 2
     },
     {
       "label": "dictionaryStats()",
@@ -2643,7 +2651,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L164",
       "id": "dictionary_dictionarystats",
-      "community": 6
+      "community": 2
     },
     {
       "label": "mindmap-generator.ts",
@@ -2675,7 +2683,7 @@
       "source_file": "api/lib/local-streamline.ts",
       "source_location": "L1",
       "id": "api_lib_local_streamline_ts",
-      "community": 6
+      "community": 2
     },
     {
       "label": "replaceHinglish()",
@@ -2683,7 +2691,7 @@
       "source_file": "api/lib/local-streamline.ts",
       "source_location": "L56",
       "id": "local_streamline_replacehinglish",
-      "community": 6
+      "community": 2
     },
     {
       "label": "replaceUIKeywords()",
@@ -2691,7 +2699,7 @@
       "source_file": "api/lib/local-streamline.ts",
       "source_location": "L63",
       "id": "local_streamline_replaceuikeywords",
-      "community": 6
+      "community": 2
     },
     {
       "label": "cleanPunctuation()",
@@ -2699,7 +2707,7 @@
       "source_file": "api/lib/local-streamline.ts",
       "source_location": "L71",
       "id": "local_streamline_cleanpunctuation",
-      "community": 6
+      "community": 2
     },
     {
       "label": "localStreamline()",
@@ -2707,7 +2715,7 @@
       "source_file": "api/lib/local-streamline.ts",
       "source_location": "L83",
       "id": "local_streamline_localstreamline",
-      "community": 6
+      "community": 2
     },
     {
       "label": "diff.ts",
@@ -2731,7 +2739,7 @@
       "source_file": "api/lib/elicitation.ts",
       "source_location": "L1",
       "id": "api_lib_elicitation_ts",
-      "community": 2
+      "community": 12
     },
     {
       "label": "generateNextQuestion()",
@@ -2739,7 +2747,7 @@
       "source_file": "api/lib/elicitation.ts",
       "source_location": "L95",
       "id": "elicitation_generatenextquestion",
-      "community": 2
+      "community": 12
     },
     {
       "label": "shouldPropose()",
@@ -2747,7 +2755,7 @@
       "source_file": "api/lib/elicitation.ts",
       "source_location": "L124",
       "id": "elicitation_shouldpropose",
-      "community": 2
+      "community": 12
     },
     {
       "label": "generateBreakdown()",
@@ -2755,7 +2763,7 @@
       "source_file": "api/lib/elicitation.ts",
       "source_location": "L169",
       "id": "elicitation_generatebreakdown",
-      "community": 2
+      "community": 12
     },
     {
       "label": "updateContext()",
@@ -2763,7 +2771,7 @@
       "source_file": "api/lib/elicitation.ts",
       "source_location": "L190",
       "id": "elicitation_updatecontext",
-      "community": 2
+      "community": 12
     },
     {
       "label": "generateDocumentation()",
@@ -2771,7 +2779,7 @@
       "source_file": "api/lib/elicitation.ts",
       "source_location": "L249",
       "id": "elicitation_generatedocumentation",
-      "community": 2
+      "community": 12
     },
     {
       "label": "buildContextSummary()",
@@ -2779,7 +2787,7 @@
       "source_file": "api/lib/elicitation.ts",
       "source_location": "L274",
       "id": "elicitation_buildcontextsummary",
-      "community": 2
+      "community": 12
     },
     {
       "label": "formatHistory()",
@@ -2787,7 +2795,7 @@
       "source_file": "api/lib/elicitation.ts",
       "source_location": "L292",
       "id": "elicitation_formathistory",
-      "community": 2
+      "community": 12
     },
     {
       "label": "brd-generator.ts",
@@ -2867,7 +2875,7 @@
       "source_file": "api/lib/streamline.ts",
       "source_location": "L1",
       "id": "api_lib_streamline_ts",
-      "community": 6
+      "community": 2
     },
     {
       "label": "streamlineInput()",
@@ -2875,7 +2883,7 @@
       "source_file": "api/lib/streamline.ts",
       "source_location": "L24",
       "id": "streamline_streamlineinput",
-      "community": 6
+      "community": 2
     },
     {
       "label": "invalidateStreamlineCache()",
@@ -2883,7 +2891,7 @@
       "source_file": "api/lib/streamline.ts",
       "source_location": "L80",
       "id": "streamline_invalidatestreamlinecache",
-      "community": 6
+      "community": 2
     },
     {
       "label": "hash.ts",
@@ -2963,7 +2971,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L1",
       "id": "api_lib_renderer_ts",
-      "community": 9
+      "community": 8
     },
     {
       "label": "renderSidebar()",
@@ -2971,7 +2979,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L32",
       "id": "renderer_rendersidebar",
-      "community": 9
+      "community": 8
     },
     {
       "label": "renderHeader()",
@@ -2979,7 +2987,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L46",
       "id": "renderer_renderheader",
-      "community": 9
+      "community": 8
     },
     {
       "label": "renderPageTitle()",
@@ -2987,7 +2995,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L62",
       "id": "renderer_renderpagetitle",
-      "community": 9
+      "community": 8
     },
     {
       "label": "renderStatsGrid()",
@@ -2995,7 +3003,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L70",
       "id": "renderer_renderstatsgrid",
-      "community": 9
+      "community": 8
     },
     {
       "label": "renderDataTable()",
@@ -3003,7 +3011,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L81",
       "id": "renderer_renderdatatable",
-      "community": 9
+      "community": 8
     },
     {
       "label": "renderForm()",
@@ -3011,7 +3019,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L104",
       "id": "renderer_renderform",
-      "community": 9
+      "community": 8
     },
     {
       "label": "renderCardsGrid()",
@@ -3019,7 +3027,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L143",
       "id": "renderer_rendercardsgrid",
-      "community": 9
+      "community": 8
     },
     {
       "label": "renderLogin()",
@@ -3027,7 +3035,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L156",
       "id": "renderer_renderlogin",
-      "community": 9
+      "community": 8
     },
     {
       "label": "renderHero()",
@@ -3035,7 +3043,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L189",
       "id": "renderer_renderhero",
-      "community": 9
+      "community": 8
     },
     {
       "label": "renderTabs()",
@@ -3043,7 +3051,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L198",
       "id": "renderer_rendertabs",
-      "community": 9
+      "community": 8
     },
     {
       "label": "renderEmptyState()",
@@ -3051,7 +3059,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L207",
       "id": "renderer_renderemptystate",
-      "community": 9
+      "community": 8
     },
     {
       "label": "renderComponent()",
@@ -3059,7 +3067,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L222",
       "id": "renderer_rendercomponent",
-      "community": 9
+      "community": 8
     },
     {
       "label": "tokensToComponents()",
@@ -3067,7 +3075,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L244",
       "id": "renderer_tokenstocomponents",
-      "community": 9
+      "community": 8
     },
     {
       "label": "renderTokens()",
@@ -3075,7 +3083,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L276",
       "id": "renderer_rendertokens",
-      "community": 9
+      "community": 8
     },
     {
       "label": "renderElements()",
@@ -3083,7 +3091,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L283",
       "id": "renderer_renderelements",
-      "community": 9
+      "community": 8
     },
     {
       "label": "fuzzy.ts",
@@ -4683,7 +4691,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0,
       "_src": "web_src_app_components_prototype_preview_prototype_preview_component_ts",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent",
@@ -4695,7 +4703,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L48",
+      "source_location": "L49",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_constructor",
@@ -4707,7 +4715,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L60",
+      "source_location": "L61",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_ngonchanges",
@@ -4719,7 +4727,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L78",
+      "source_location": "L79",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_reloaddesignsystem",
@@ -4731,7 +4739,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L92",
+      "source_location": "L93",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_settab",
@@ -4743,7 +4751,19 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L99",
+      "source_location": "L100",
+      "weight": 1.0,
+      "_src": "prototype_preview_component_prototypepreviewcomponent",
+      "_tgt": "prototype_preview_component_prototypepreviewcomponent_apibase",
+      "source": "prototype_preview_component_prototypepreviewcomponent",
+      "target": "prototype_preview_component_prototypepreviewcomponent_apibase",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
+      "source_location": "L102",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_scopeparams",
@@ -4755,7 +4775,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L107",
+      "source_location": "L110",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_scopelabel",
@@ -4767,7 +4787,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L114",
+      "source_location": "L117",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_loadbrd",
@@ -4779,7 +4799,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L127",
+      "source_location": "L130",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_loadexcel",
@@ -4791,7 +4811,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L138",
+      "source_location": "L141",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_loadmindmap",
@@ -4803,7 +4823,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L150",
+      "source_location": "L153",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_downloadbrd",
@@ -4815,7 +4835,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L155",
+      "source_location": "L158",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_downloadexcel",
@@ -4827,7 +4847,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L166",
+      "source_location": "L169",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_downloadmindmap",
@@ -4839,7 +4859,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L171",
+      "source_location": "L174",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_refreshtab",
@@ -4851,7 +4871,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L181",
+      "source_location": "L184",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_setviewport",
@@ -4863,7 +4883,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L182",
+      "source_location": "L185",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_copyhtml",
@@ -4875,7 +4895,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L184",
+      "source_location": "L187",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_toggleprotofullscreen",
@@ -4887,7 +4907,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L190",
+      "source_location": "L193",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_objectkeys",
@@ -4899,7 +4919,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L192",
+      "source_location": "L195",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_wrapperwidth",
@@ -4911,7 +4931,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L94",
+      "source_location": "L95",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent_settab",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_loadbrd",
@@ -4923,7 +4943,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L95",
+      "source_location": "L96",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent_settab",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_loadexcel",
@@ -4935,7 +4955,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L96",
+      "source_location": "L97",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent_settab",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_loadmindmap",
@@ -4947,7 +4967,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L176",
+      "source_location": "L179",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent_refreshtab",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_loadbrd",
@@ -4959,7 +4979,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L177",
+      "source_location": "L180",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent_refreshtab",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_loadexcel",
@@ -4971,7 +4991,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/prototype-preview/prototype-preview.component.ts",
-      "source_location": "L178",
+      "source_location": "L181",
       "weight": 1.0,
       "_src": "prototype_preview_component_prototypepreviewcomponent_refreshtab",
       "_tgt": "prototype_preview_component_prototypepreviewcomponent_loadmindmap",

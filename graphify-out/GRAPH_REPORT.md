@@ -1,11 +1,11 @@
 # Graph Report - .  (2026-04-21)
 
 ## Corpus Check
-- 81 files · ~55,560 words
+- 81 files · ~55,572 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 438 nodes · 492 edges · 71 communities detected
+- 439 nodes · 493 edges · 71 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -85,8 +85,8 @@
 ## God Nodes (most connected - your core abstractions)
 1. `ElicitationChatComponent` - 43 edges
 2. `WorkspaceComponent` - 21 edges
-3. `ModulesPanelComponent` - 20 edges
-4. `PrototypePreviewComponent` - 19 edges
+3. `PrototypePreviewComponent` - 20 edges
+4. `ModulesPanelComponent` - 20 edges
 5. `ModuleStructureInputComponent` - 14 edges
 6. `DesignSettingsComponent` - 12 edges
 7. `renderComponent()` - 12 edges
@@ -119,48 +119,48 @@ Cohesion: 0.06
 Nodes (5): bgWork(), extractSection(), parseIndented(), parseLocal(), parseNumbered()
 
 ### Community 2 - "Community 2"
-Cohesion: 0.1
-Nodes (10): aiChat(), getClients(), getUserKeys(), buildContextSummary(), formatHistory(), generateBreakdown(), generateDocumentation(), generateNextQuestion() (+2 more)
+Cohesion: 0.09
+Nodes (13): ensureLoaded(), learnFromStreamline(), learnFromTokens(), lookup(), schedulFlush(), translatePhrase(), upsertEntry(), cleanPunctuation() (+5 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.11
 Nodes (1): WorkspaceComponent
 
 ### Community 4 - "Community 4"
+Cohesion: 0.12
+Nodes (1): PrototypePreviewComponent
+
+### Community 5 - "Community 5"
 Cohesion: 0.14
 Nodes (1): ModulesPanelComponent
 
-### Community 5 - "Community 5"
-Cohesion: 0.13
-Nodes (1): PrototypePreviewComponent
-
 ### Community 6 - "Community 6"
-Cohesion: 0.18
-Nodes (11): ensureLoaded(), learnFromStreamline(), learnFromTokens(), lookup(), schedulFlush(), translatePhrase(), upsertEntry(), cleanPunctuation() (+3 more)
-
-### Community 7 - "Community 7"
 Cohesion: 0.18
 Nodes (8): dsBgGradient(), dsBorderAccent(), dsCheckboxColor(), dsColorName(), initials(), renderAvatar(), renderSectionCard(), renderStatCard()
 
-### Community 8 - "Community 8"
+### Community 7 - "Community 7"
 Cohesion: 0.27
 Nodes (2): ModuleStructureInputComponent, uid()
 
-### Community 9 - "Community 9"
+### Community 8 - "Community 8"
 Cohesion: 0.24
 Nodes (15): renderCardsGrid(), renderComponent(), renderDataTable(), renderElements(), renderEmptyState(), renderForm(), renderHeader(), renderHero() (+7 more)
 
-### Community 10 - "Community 10"
+### Community 9 - "Community 9"
 Cohesion: 0.18
 Nodes (1): DesignSettingsComponent
 
-### Community 11 - "Community 11"
+### Community 10 - "Community 10"
 Cohesion: 0.24
 Nodes (1): MembersPanelComponent
 
-### Community 12 - "Community 12"
+### Community 11 - "Community 11"
 Cohesion: 0.18
 Nodes (1): RequirementInputComponent
+
+### Community 12 - "Community 12"
+Cohesion: 0.26
+Nodes (8): aiChat(), getClients(), getUserKeys(), buildContextSummary(), formatHistory(), generateBreakdown(), generateDocumentation(), generateNextQuestion()
 
 ### Community 13 - "Community 13"
 Cohesion: 0.22
@@ -480,10 +480,10 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.06 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.1 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
   _Cohesion score 0.11 - nodes in this community are weakly interconnected._
 - **Should `Community 4` be split into smaller, more focused modules?**
-  _Cohesion score 0.14 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12 - nodes in this community are weakly interconnected._
 - **Should `Community 5` be split into smaller, more focused modules?**
-  _Cohesion score 0.13 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.14 - nodes in this community are weakly interconnected._

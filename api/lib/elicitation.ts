@@ -157,14 +157,18 @@ Return valid JSON:
   ]
 }
 
-Rules:
+CRITICAL RULES:
+- NEVER create duplicates. If a module/feature/page already exists, use the EXACT SAME NAME.
+- Only add NEW items that don't already exist.
+- Reuse these existing module names EXACTLY: {existingModules}
+- If the user is adding to an existing module, include that module with its existing sub-modules + the new additions.
 - Modules are broad domains (Authentication, Dashboard, Reports, Settings)
 - Sub-modules are specific areas (Login, User Profile, Invoice List)
 - Features are individual capabilities under sub-modules
 - Pages are UI screens — each page has a type and links to features it implements
-- Reuse these existing module names if relevant: {existingModules}
 - Keep names concise, Title Case
-- Max 3 module levels deep`
+- Max 3 module levels deep
+- When in doubt about whether something is new or existing, include it — the system will deduplicate.`
 
 export async function generateBreakdown(
   context: ElicitationContext,

@@ -101,12 +101,23 @@ app.post('/sessions/:id/messages', async (c) => {
   const userMessageCount = prevMessages.rows.filter((m: any) => m.role === 'user').length
 
   if (shouldPropose(context, userMessageCount, content)) {
-    const existingModules = await query(
-      `SELECT name FROM modules WHERE project_id = $1`, [session.rows[0].project_id]
-    )
+    const pid = session.rows[0].project_id
+    const [existingModules, existingFeatures, existingPages] = await Promise.all([
+      query(`SELECT name FROM modules WHERE project_id = $1`, [pid]),
+      query(`SELECT f.name, m.name as module_name FROM features f JOIN modules m ON m.id = f.module_id WHERE f.project_id = $1`, [pid]),
+      query(`SELECT name, page_type FROM pages WHERE project_id = $1`, [pid]),
+    ])
     const moduleNames = existingModules.rows.map((r: any) => r.name)
+    const featList = existingFeatures.rows.map((f: any) => `${f.name} (${f.module_name})`).slice(0, 50).join(', ')
+    const pageList = existingPages.rows.map((p: any) => p.name).slice(0, 30).join(', ')
+    const existingInfo = existingFeatures.rows.length
+      ? `\nExisting features (DO NOT duplicate): ${featList}`
+      + `\nExisting pages (DO NOT duplicate): ${pageList}`
+      : ''
     const userId = c.get('userId')
-    const breakdown = await generateBreakdown(context, moduleNames, userId)
+    // Inject existing entities info into context so AI avoids duplicates
+    const enrichedContext = { ...context, constraints: [...(context.constraints || []), existingInfo] }
+    const breakdown = await generateBreakdown(enrichedContext, moduleNames, userId)
 
     const assistantMsg = {
       text: 'Based on our conversation, here\'s the proposed structure for your project:',
@@ -200,7 +211,23 @@ app.post('/sessions/:id/complete', async (c) => {
 
       for (const feat of sub.features) {
         const featSlug = feat.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-        const existing = await query(`SELECT id FROM features WHERE module_id = $1 AND slug = $2`, [subId, featSlug])
+
+        // Check 1: exact slug match under this module
+        let existing = await query(`SELECT id FROM features WHERE module_id = $1 AND slug = $2`, [subId, featSlug])
+
+        // Check 2: if not found, check project-wide by slug (might be under different module)
+        if (!existing.rows.length) {
+          existing = await query(`SELECT id FROM features WHERE project_id = $1 AND slug = $2`, [projectId, featSlug])
+        }
+
+        // Check 3: if still not found, fuzzy check — name contains or is contained
+        if (!existing.rows.length) {
+          existing = await query(
+            `SELECT id FROM features WHERE project_id = $1 AND (LOWER(name) = $2 OR slug = $3)`,
+            [projectId, feat.toLowerCase(), featSlug]
+          )
+        }
+
         if (existing.rows.length) {
           featureIdMap[feat] = existing.rows[0].id
           existingFeatureIds.push({ id: existing.rows[0].id, name: feat, parentPath: `${mod.name} > ${sub.name}` })
@@ -253,11 +280,19 @@ app.post('/sessions/:id/complete', async (c) => {
 
     // Generate docs + tokens for ALL pages (new + existing)
     const allPages = [...newPageIds, ...existingPageIds]
+    // Extract last 5 user messages for page-specific context
+    const recentUserContext = allMessages.rows
+      .filter((m: any) => m.role === 'user')
+      .slice(-5)
+      .map((m: any) => m.content)
+      .join('. ')
+
     const pagePromises = allPages.map(async (p) => {
       try {
+        const pagePrompt = `${p.name} - page with features: ${p.linkedFeatures.join(', ')}. User requirements: ${recentUserContext.slice(0, 500)}`
         const [doc, tokenResult] = await Promise.all([
           generateDocumentation(context, conversationHistory, p.name, 'page', undefined, p.linkedFeatures, userId),
-          extractTokens(`${p.name} page with: ${p.linkedFeatures.join(', ')}`).catch(() => null),
+          extractTokens(pagePrompt).catch(() => null),
         ])
         await query(
           `UPDATE pages SET raw_description = $1, ai_description = $2, tokens = COALESCE($3, tokens) WHERE id = $4`,

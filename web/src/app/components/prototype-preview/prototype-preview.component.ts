@@ -42,6 +42,7 @@ export class PrototypePreviewComponent implements OnChanges {
 
   mindmapHtml  = signal<SafeHtml | null>(null)
   mindmapLoading = signal(false)
+  reprocessing = signal(false)
   designSystem: DesignSystem = DEFAULT_DESIGN
   protoContext: PrototypeContext = {}
   private dsLoaded = false
@@ -188,6 +189,31 @@ export class PrototypePreviewComponent implements OnChanges {
     const panel = this.el.nativeElement as HTMLElement
     if (!document.fullscreenElement) panel.requestFullscreen()
     else document.exitFullscreen()
+  }
+
+  async reprocessPrototype() {
+    const entityType = this.scopePageId ? 'page' : this.scopeFeatureId ? 'feature' : null
+    const entityId = this.scopePageId || this.scopeFeatureId
+    if (!entityType || !entityId) return
+
+    this.reprocessing.set(true)
+    try {
+      await this.api.post(`/reprocess/${entityType}/${entityId}`, {})
+      // Wait a bit for background processing, then reload
+      await new Promise(r => setTimeout(r, 8000))
+      // Fetch updated tokens
+      if (this.scopePageId) {
+        const page = await this.api.get<any>(`/pages/${this.scopePageId}`)
+        if (page.tokens) {
+          this.tokens = page.tokens
+          this.rawHtml = renderTokens(this.tokens!, this.designSystem, this.protoContext)
+          this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(this.rawHtml)
+          this.cdr.detectChanges()
+        }
+      }
+    } catch {} finally {
+      this.reprocessing.set(false)
+    }
   }
 
   objectKeys(obj: any): string[] { return obj ? Object.keys(obj) : [] }

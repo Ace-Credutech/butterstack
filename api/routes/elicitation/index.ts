@@ -190,24 +190,40 @@ app.post('/sessions/:id/complete', async (c) => {
 
   for (const mod of breakdown.modules) {
     const modSlug = mod.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-    const modResult = await query(
-      `INSERT INTO modules (project_id, name, slug, depth, path) VALUES ($1, $2, $3, 0, $4)
-       ON CONFLICT (project_id, path) DO UPDATE SET name = $2 RETURNING id, (xmax = 0) as inserted`,
-      [projectId, mod.name, modSlug, modSlug]
+    const modExisting = await query(
+      `SELECT id FROM modules WHERE project_id = $1 AND path = $2`, [projectId, modSlug]
     )
-    const modId = modResult.rows[0].id
-    if (modResult.rows[0].inserted) created.modules++
+    let modId: number
+    if (modExisting.rows.length) {
+      modId = modExisting.rows[0].id
+      await query(`UPDATE modules SET name = $1 WHERE id = $2`, [mod.name, modId])
+    } else {
+      const r = await query(
+        `INSERT INTO modules (project_id, name, slug, depth, path) VALUES ($1, $2, $3, 0, $4) RETURNING id`,
+        [projectId, mod.name, modSlug, modSlug]
+      )
+      modId = r.rows[0].id
+      created.modules++
+    }
 
     for (const sub of mod.subModules) {
       const subSlug = sub.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
       const subPath = `${modSlug}/${subSlug}`
-      const subResult = await query(
-        `INSERT INTO modules (project_id, name, slug, parent_id, depth, path) VALUES ($1, $2, $3, $4, 1, $5)
-         ON CONFLICT (project_id, path) DO UPDATE SET name = $2, parent_id = $4 RETURNING id, (xmax = 0) as inserted`,
-        [projectId, sub.name, subSlug, modId, subPath]
+      const subExisting = await query(
+        `SELECT id FROM modules WHERE project_id = $1 AND path = $2`, [projectId, subPath]
       )
-      const subId = subResult.rows[0].id
-      if (subResult.rows[0].inserted) created.modules++
+      let subId: number
+      if (subExisting.rows.length) {
+        subId = subExisting.rows[0].id
+        await query(`UPDATE modules SET name = $1, parent_id = $2 WHERE id = $3`, [sub.name, modId, subId])
+      } else {
+        const r = await query(
+          `INSERT INTO modules (project_id, name, slug, parent_id, depth, path) VALUES ($1, $2, $3, $4, 1, $5) RETURNING id`,
+          [projectId, sub.name, subSlug, modId, subPath]
+        )
+        subId = r.rows[0].id
+        created.modules++
+      }
 
       for (const feat of sub.features) {
         const featSlug = feat.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')

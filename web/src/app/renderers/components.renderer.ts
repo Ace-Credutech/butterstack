@@ -71,15 +71,15 @@ export function renderButton(label: string, ds: DesignSystem, variant: 'primary'
 }
 
 export function renderButtonGroup(primary: string, options: string[], ds: DesignSystem): string {
-  const dropdownItems = options.map(o => `<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">${o}</a>`).join('')
+  const dropdownItems = options.map(o => `<a href="#" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">${o}</a>`).join('')
   return `
-    <div class="inline-flex ${ds.borderRadius} overflow-hidden shadow-sm border border-gray-200">
+    <div class="inline-flex ${ds.borderRadius} overflow-hidden shadow-sm border border-gray-200" style="position:relative">
       <button class="px-4 py-2 text-sm font-medium ${ds.primaryColor} text-white">${primary}</button>
-      <div class="relative group">
-        <button class="px-2 py-2 ${ds.primaryColor} text-white border-l border-white/20">
+      <div style="position:relative">
+        <button onclick="this.nextElementSibling.classList.toggle('hidden')" class="px-2.5 py-2 ${ds.primaryColor} text-white border-l border-white/20 cursor-pointer" style="height:100%">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
         </button>
-        <div class="hidden group-hover:block absolute right-0 top-full mt-1 w-48 bg-white ${ds.borderRadius} shadow-lg border border-gray-200 z-10">${dropdownItems}</div>
+        <div class="hidden absolute right-0 top-full mt-1 w-52 bg-white ${ds.borderRadius} shadow-xl border border-gray-200 py-1" style="z-index:50">${dropdownItems}</div>
       </div>
     </div>`
 }
@@ -106,14 +106,16 @@ export function renderDataTable(columns: string[], rowCount: number, ds: DesignS
   const rows = Array.from({ length: Math.min(rowCount, 8) }, (_, i) => {
     const cells = columns.map(col => {
       const lc = col.toLowerCase()
-      if (lc === 'name' || lc === 'user' || lc === 'member') return `<td class="px-4 py-3"><div class="flex items-center gap-2.5">${renderAvatar(NAMES[i], ds, 7)}<div><p class="text-sm font-medium text-gray-800">${NAMES[i]}</p><p class="text-xs text-gray-400">${EMAILS[i]}</p></div></div></td>`
-      if (lc === 'email') return `<td class="px-4 py-3 text-sm text-gray-600">${EMAILS[i]}</td>`
-      if (lc === 'status') return `<td class="px-4 py-3">${renderStatusBadge(STATUSES[i])}</td>`
-      if (lc === 'role') return `<td class="px-4 py-3">${renderRoleBadge(ROLES[i])}</td>`
-      if (lc === 'date' || lc === 'created' || lc.includes('date')) return `<td class="px-4 py-3 text-sm text-gray-500">${DATES[i]}</td>`
-      if (lc === 'actions') return `<td class="px-4 py-3"><div class="flex gap-1"><button class="text-xs text-gray-400 hover:text-blue-600 px-2 py-1 rounded hover:bg-blue-50">Edit</button><button class="text-xs text-gray-400 hover:text-red-600 px-2 py-1 rounded hover:bg-red-50">Delete</button></div></td>`
+      if (lc.includes('name') || lc.includes('user') || lc.includes('member') || lc.includes('list')) return `<td class="px-4 py-3"><div class="flex items-center gap-2.5">${renderAvatar(NAMES[i], ds, 7)}<div><p class="text-sm font-medium text-gray-800">${NAMES[i]}</p><p class="text-xs text-gray-400">${EMAILS[i]}</p></div></div></td>`
+      if (lc.includes('email')) return `<td class="px-4 py-3 text-sm text-gray-600">${EMAILS[i]}</td>`
+      if (lc.includes('phone') || lc.includes('mobile')) return `<td class="px-4 py-3 text-sm text-gray-600">+91 ${9800000000 + i * 111}</td>`
+      if (lc.includes('status')) return `<td class="px-4 py-3">${renderStatusBadge(STATUSES[i])}</td>`
+      if (lc.includes('role')) return `<td class="px-4 py-3">${renderRoleBadge(ROLES[i])}</td>`
+      if (lc.includes('date') || lc.includes('created') || lc.includes('time')) return `<td class="px-4 py-3 text-sm text-gray-500">${DATES[i]}</td>`
+      if (lc.includes('action') || lc.includes('button')) return `<td class="px-4 py-3"><div class="flex gap-1"><button class="text-xs text-gray-400 hover:text-blue-600 px-2 py-1 rounded hover:bg-blue-50">Edit</button><button class="text-xs text-gray-400 hover:text-red-600 px-2 py-1 rounded hover:bg-red-50">Delete</button></div></td>`
       if (lc === 'id' || lc === '#') return `<td class="px-4 py-3 text-sm text-gray-400">#${1000 + i}</td>`
-      return `<td class="px-4 py-3 text-sm text-gray-600">${entity} ${i + 1}</td>`
+      if (lc.includes('display')) return `<td class="px-4 py-3 text-sm text-gray-600">${NAMES[i].split(' ')[0]}</td>`
+      return `<td class="px-4 py-3 text-sm text-gray-600">${NAMES[i]}</td>`
     }).join('')
     return `<tr class="border-b border-gray-50 hover:bg-gray-50/50 transition">${cells}</tr>`
   }).join('')

@@ -1,0 +1,132 @@
+@if (open()) {
+  <div class="fixed inset-0 z-[100] bg-white flex flex-col">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between px-8 py-4 border-b border-gray-200 shrink-0">
+      <div class="flex items-center gap-4">
+        <button (click)="close()" class="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+        <div>
+          <h2 class="text-sm font-semibold text-gray-900">Confidence Quiz</h2>
+          <p class="text-xs text-gray-400">{{ featureName }}</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-xs text-gray-400">Question {{ questionCount() }}</span>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl font-bold" [class]="currentScore() >= 80 ? 'text-green-600' : currentScore() >= 50 ? 'text-amber-600' : 'text-red-600'">{{ currentScore() }}%</span>
+          <span class="text-[10px] text-gray-400">FCS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-1 flex items-center justify-center px-8">
+      <div class="w-full max-w-2xl">
+
+        @if (loading()) {
+          <div class="text-center py-20">
+            <div class="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-sm text-gray-400">Generating question...</p>
+          </div>
+        } @else if (completed()) {
+          <!-- Completion state -->
+          <div class="text-center py-16">
+            <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">
+              @if (currentScore() >= 100) { Feature fully confident! }
+              @else { Quiz session complete }
+            </h2>
+            <p class="text-sm text-gray-500 mb-2">Answered {{ answeredCount() }} questions</p>
+            <p class="text-3xl font-bold mb-6" [class]="currentScore() >= 80 ? 'text-green-600' : 'text-amber-600'">{{ currentScore() }}%</p>
+            <div class="flex gap-3 justify-center">
+              <button (click)="close()" class="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition">Done</button>
+              @if (currentScore() < 100) {
+                <button (click)="completed.set(false); loadNextQuestion()" class="px-6 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition">Continue answering</button>
+              }
+            </div>
+          </div>
+        } @else if (question()) {
+          <!-- Question card -->
+          <div class="mb-8">
+            <p class="text-xs text-gray-400 mb-3 flex items-center gap-2">
+              <span class="px-2 py-0.5 bg-green-50 text-green-600 rounded text-[10px] font-medium">{{ question()!.confidenceImpact }}</span>
+              <span>{{ question()!.contextKey }}</span>
+              @if (question()!.multiSelect) {
+                <span class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[10px] font-medium">Select all that apply</span>
+              }
+            </p>
+            <h3 class="text-xl font-semibold text-gray-900 leading-relaxed">{{ question()!.question }}</h3>
+          </div>
+
+          <!-- Options A-D -->
+          <div class="space-y-3 mb-4">
+            @for (opt of question()!.options; track opt.id) {
+              <button (click)="selectOption(opt.id)"
+                class="w-full text-left px-5 py-4 rounded-xl border-2 transition flex items-center gap-4"
+                [class]="isSelected(opt.id)
+                  ? 'border-green-500 bg-green-50'
+                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'">
+                <span class="w-8 h-8 border-2 flex items-center justify-center text-sm font-semibold shrink-0"
+                  [class]="(question()!.multiSelect ? 'rounded-md ' : 'rounded-full ') + (isSelected(opt.id) ? 'border-green-500 text-green-600 bg-green-100' : 'border-gray-300 text-gray-400')">
+                  @if (question()!.multiSelect && isSelected(opt.id)) {
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  } @else {
+                    {{ opt.id }}
+                  }
+                </span>
+                <span class="text-sm" [class]="isSelected(opt.id) ? 'text-green-800 font-medium' : 'text-gray-700'">{{ opt.label }}</span>
+              </button>
+            }
+
+            <!-- Option E — custom -->
+            <button (click)="selectOption('E')"
+              class="w-full text-left px-5 py-4 rounded-xl border-2 transition"
+              [class]="selectedOption() === 'E' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'">
+              <div class="flex items-center gap-4">
+                <span class="w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-semibold shrink-0"
+                  [class]="selectedOption() === 'E' ? 'border-green-500 text-green-600 bg-green-100' : 'border-gray-300 text-gray-400'">E</span>
+                <span class="text-sm" [class]="selectedOption() === 'E' ? 'text-green-800 font-medium' : 'text-gray-700'">Enter your own answer</span>
+              </div>
+              @if (showCustom()) {
+                <textarea [(ngModel)]="customAnswer" rows="3" placeholder="Type your answer..."
+                  class="w-full mt-3 px-4 py-3 border border-green-300 rounded-lg text-sm focus:outline-none focus:border-green-500 resize-none"></textarea>
+              }
+            </button>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center justify-between pt-4">
+            <button (click)="skip()" class="text-sm text-gray-400 hover:text-gray-600 transition">Skip this question</button>
+            <button (click)="submit()" [disabled]="submitting() || (!question()!.multiSelect && !selectedOption()) || (question()!.multiSelect && !selectedOptions().size && !customAnswer.trim()) || (selectedOption() === 'E' && !customAnswer.trim() && !question()!.multiSelect)"
+              class="px-8 py-2.5 bg-green-600 hover:bg-green-700 disabled:opacity-30 text-white text-sm font-semibold rounded-lg transition">
+              {{ submitting() ? 'Submitting...' : 'Submit' }}
+            </button>
+          </div>
+        }
+
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    @if (!completed()) {
+      <div class="px-8 py-3 border-t border-gray-100 shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="text-[10px] text-gray-400">Progress</span>
+          <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-full bg-green-500 rounded-full transition-all" [style.width]="currentScore() + '%'"></div>
+          </div>
+          <span class="text-[10px] text-gray-500 font-medium">{{ currentScore() }}%</span>
+        </div>
+      </div>
+    }
+
+  </div>
+}

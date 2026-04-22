@@ -1,29 +1,19 @@
-// Dispatcher — routes UITokens to the correct renderer.
-// Each renderer is a pure function: UITokens → HTML string.
-// Add new page types here as the app grows.
+// Single dispatcher. All page types go through one dynamic renderer driven purely by tokens.
+// If tokens.page_type === 'empty' or the token payload is trivial, we still show the empty state.
 
 import type { UITokens } from '../models/ui-tokens.model'
-import { renderLogin }     from './login.renderer'
-import { renderDashboard } from './dashboard.renderer'
-import { renderForm }      from './form.renderer'
-import { renderList }      from './list.renderer'
+import { renderDynamic } from './dynamic.renderer'
 import { renderEmptyState } from './shared.renderer'
 import { DEFAULT_DESIGN, type DesignSystem, type PrototypeContext } from './components.renderer'
+import { prototypeScripts } from './prototype-scripts'
 
 export function renderTokens(tokens: UITokens, ds?: DesignSystem, ctx?: PrototypeContext): string {
   const design = ds || DEFAULT_DESIGN
   if (ctx?.currentUser) {
     design.avatarText = ctx.currentUser.avatar || ctx.currentUser.name
   }
-  switch (tokens.page_type) {
-    case 'login':     return renderLogin(tokens, design, ctx)
-    case 'dashboard': return renderDashboard(tokens, design, ctx)
-    case 'landing':   return renderDashboard(tokens, design, ctx)
-    case 'form':      return renderForm(tokens, design)
-    case 'list':      return renderList(tokens, design)
-    case 'detail':    return renderForm(tokens, design)
-    case 'settings':  return renderForm(tokens, design)
-    case 'empty':     return renderEmptyState(tokens.intent)
-    default:          return renderEmptyState(tokens.intent)
-  }
+  if (tokens.page_type === 'empty') return renderEmptyState(tokens.intent)
+  const hasAny = (tokens.fields?.length || tokens.stats?.length || tokens.sections?.length || tokens.actions?.length || tokens.navigation?.length || tokens.search || tokens.filters)
+  if (!hasAny && !tokens.intent) return renderEmptyState(tokens.intent)
+  return renderDynamic(tokens, design, ctx) + prototypeScripts()
 }

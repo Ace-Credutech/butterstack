@@ -117,7 +117,12 @@ app.post('/sessions/:id/messages', async (c) => {
     const userId = c.get('userId')
     // Inject existing entities info into context so AI avoids duplicates
     const enrichedContext = { ...context, constraints: [...(context.constraints || []), existingInfo] }
-    const breakdown = await generateBreakdown(enrichedContext, moduleNames, userId)
+    const priorRows = await query(
+      `SELECT summary FROM elicitation_sessions WHERE project_id = $1 AND id <> $2 AND summary IS NOT NULL AND status = 'completed' ORDER BY updated_at DESC LIMIT 5`,
+      [pid, sessionId]
+    )
+    const priorSummaries = priorRows.rows.map((r: any) => r.summary).filter(Boolean)
+    const breakdown = await generateBreakdown(enrichedContext, moduleNames, userId, history, priorSummaries)
 
     const assistantMsg = {
       text: 'Based on our conversation, here\'s the proposed structure for your project:',
@@ -157,6 +162,20 @@ app.post('/sessions/:id/messages', async (c) => {
   })
 })
 
+app.patch('/sessions/:id/breakdown', async (c) => {
+  const sessionId = c.req.param('id')
+  const { breakdown } = await c.req.json<{ breakdown: BreakdownProposal }>()
+  if (!breakdown || !Array.isArray(breakdown.modules)) return c.json({ error: 'invalid breakdown' }, 400)
+  const last = await query(
+    `SELECT id, metadata FROM elicitation_messages WHERE session_id = $1 AND message_type = 'breakdown_proposal' ORDER BY created_at DESC LIMIT 1`,
+    [sessionId]
+  )
+  if (!last.rows.length) return c.json({ error: 'no breakdown proposal found' }, 404)
+  const newMeta = { ...(last.rows[0].metadata || {}), breakdown }
+  await query(`UPDATE elicitation_messages SET metadata = $1 WHERE id = $2`, [JSON.stringify(newMeta), last.rows[0].id])
+  return c.json({ ok: true })
+})
+
 app.post('/sessions/:id/complete', async (c) => {
   const sessionId = c.req.param('id')
   const userId = c.get('userId')
@@ -180,6 +199,19 @@ app.post('/sessions/:id/complete', async (c) => {
   )
   const conversationHistory = allMessages.rows.map((m: any) => `${m.role}: ${m.content}`).join('\n')
 
+  // User text only — used to decide which existing features this session actually touched
+  const userText = allMessages.rows
+    .filter((m: any) => m.role === 'user')
+    .map((m: any) => String(m.content || '').toLowerCase())
+    .join(' ')
+
+  // Prior session summaries — inherited context for NEW features so they stay consistent with earlier decisions
+  const priorSummariesRows = await query(
+    `SELECT summary FROM elicitation_sessions WHERE project_id = $1 AND id <> $2 AND summary IS NOT NULL AND status = 'completed' ORDER BY updated_at DESC LIMIT 5`,
+    [projectId, sessionId]
+  )
+  const priorSessionSummaries: string[] = priorSummariesRows.rows.map((r: any) => r.summary).filter(Boolean)
+
   const featureIdMap: Record<string, number> = {}
   const newFeatureIds: { id: number; name: string; parentPath: string }[] = []
   const existingFeatureIds: { id: number; name: string; parentPath: string }[] = []
@@ -192,7 +224,7 @@ app.post('/sessions/:id/complete', async (c) => {
     const modSlug = mod.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
     const modResult = await query(
       `INSERT INTO modules (project_id, name, slug, depth, path) VALUES ($1, $2, $3, 0, $4)
-       ON CONFLICT (project_id, slug) DO UPDATE SET name = $2 RETURNING id, (xmax = 0) as inserted`,
+       ON CONFLICT (project_id, path) DO UPDATE SET name = $2 RETURNING id, (xmax = 0) as inserted`,
       [projectId, mod.name, modSlug, modSlug]
     )
     const modId = modResult.rows[0].id
@@ -203,7 +235,7 @@ app.post('/sessions/:id/complete', async (c) => {
       const subPath = `${modSlug}/${subSlug}`
       const subResult = await query(
         `INSERT INTO modules (project_id, name, slug, parent_id, depth, path) VALUES ($1, $2, $3, $4, 1, $5)
-         ON CONFLICT (project_id, slug) DO UPDATE SET name = $2, parent_id = $4 RETURNING id, (xmax = 0) as inserted`,
+         ON CONFLICT (project_id, path) DO UPDATE SET name = $2, parent_id = $4 RETURNING id, (xmax = 0) as inserted`,
         [projectId, sub.name, subSlug, modId, subPath]
       )
       const subId = subResult.rows[0].id
@@ -267,19 +299,73 @@ app.post('/sessions/:id/complete', async (c) => {
 
   await query(`UPDATE elicitation_sessions SET status = 'completed', updated_at = NOW() WHERE id = $1`, [sessionId])
 
-  // ── Step 2: Background — generate docs + page tokens (fire-and-forget) ──
+  // ── Step 2: Background — generate docs + page tokens (tracked via reprocess_jobs) ──
+  const jobRow = await query(
+    `INSERT INTO reprocess_jobs (project_id, entity_type, entity_id, user_id, status, step) VALUES ($1, 'session', $2, $3, 'pending', 'queued') RETURNING id`,
+    [projectId, sessionId, userId]
+  )
+  const jobId: number = jobRow.rows[0].id
+  const setStep = async (step: string) => {
+    try { await query(`UPDATE reprocess_jobs SET step = $2 WHERE id = $1`, [jobId, step]) } catch {}
+  }
+
   const bgWork = async () => {
-    // Generate docs for ALL features (new + existing that were in the breakdown)
-    const allFeatures = [...newFeatureIds, ...existingFeatureIds]
-    const docPromises = allFeatures.map(async (f) => {
+    await query(`UPDATE reprocess_jobs SET status = 'running', started_at = NOW(), step = 'scoping' WHERE id = $1`, [jobId])
+    // Decide which existing entities this session actually pertains to.
+    // Rules, in order:
+    //   1. If the session's breakdown has only 1–2 existing features total, trust it — the whole
+    //      session is scoped to those. User can add details ("add T&C link") without re-saying the name.
+    //   2. Otherwise require the entity's name (or a 3+ char word of it) to appear in user text.
+    const narrowScope = existingFeatureIds.length <= 2 && existingPageIds.length <= 2
+    // Does any existing-entity name appear in the user's text? If not, the user probably used generic
+    // wording ("add T&C link", "Sign Up link chahiye") and we should still treat the whole session's
+    // scope as touched rather than silently dropping the turn.
+    const noNameMatchesInUser = ![...existingFeatureIds, ...existingPageIds].some(e => {
+      const n = (e.name || '').toLowerCase().trim()
+      if (!n) return false
+      if (userText.includes(n)) return true
+      const words = n.split(/\s+/).filter(w => w.length > 3)
+      return words.length > 0 && words.every(w => userText.includes(w))
+    })
+    const mediumScope = existingFeatureIds.length <= 5 && existingPageIds.length <= 5
+    const trustAllAsTouched = narrowScope || (mediumScope && noNameMatchesInUser)
+
+    const touchedByUser = (name: string) => {
+      if (trustAllAsTouched) return true
+      const n = name.toLowerCase().trim()
+      if (!n) return false
+      if (userText.includes(n)) return true
+      const words = n.split(/\s+/).filter(w => w.length > 3)
+      return words.length > 0 && words.every(w => userText.includes(w))
+    }
+
+    // Features to regen: all new, plus existing ones this session explicitly touched
+    const featuresToRegen = [
+      ...newFeatureIds,
+      ...existingFeatureIds.filter(f => touchedByUser(f.name)),
+    ]
+    await setStep(`generating docs for ${featuresToRegen.length} feature(s)`)
+    const docPromises = featuresToRegen.map(async (f) => {
       try {
-        const doc = await generateDocumentation(context, conversationHistory, f.name, 'feature', f.parentPath, undefined, userId)
+        // Load existing doc (for existing features) so the AI preserves untouched sections
+        const existing = await query(`SELECT ai_description FROM features WHERE id = $1`, [f.id])
+        const existingDoc = existing.rows[0]?.ai_description || undefined
+        const doc = await generateDocumentation(
+          context, conversationHistory, f.name, 'feature',
+          f.parentPath, undefined, userId, priorSessionSummaries, existingDoc
+        )
         await query(`UPDATE features SET raw_description = $1, ai_description = $2 WHERE id = $3`, [doc.userInput, doc.aiDoc, f.id])
       } catch {}
     })
 
-    // Generate docs + tokens for ALL pages (new + existing)
-    const allPages = [...newPageIds, ...existingPageIds]
+    // Pages to regen: all new, plus existing ones this session explicitly touched
+    const pagesToRegen = [
+      ...newPageIds,
+      ...existingPageIds.filter(p => touchedByUser(p.name)),
+    ]
+    const allPages = pagesToRegen
+    // `allFeatures` retained for downstream FCS/testcase/usecase passes — but only over regenerated features
+    const allFeatures = featuresToRegen
     // Extract last 5 user messages for page-specific context
     const recentUserContext = allMessages.rows
       .filter((m: any) => m.role === 'user')
@@ -287,13 +373,41 @@ app.post('/sessions/:id/complete', async (c) => {
       .map((m: any) => m.content)
       .join('. ')
 
+    await setStep(`generating docs + prototypes for ${allPages.length} page(s)`)
     const pagePromises = allPages.map(async (p) => {
       try {
-        const pagePrompt = `${p.name} - page with features: ${p.linkedFeatures.join(', ')}. User requirements: ${recentUserContext.slice(0, 500)}`
-        const [doc, tokenResult] = await Promise.all([
-          generateDocumentation(context, conversationHistory, p.name, 'page', undefined, p.linkedFeatures, userId),
-          extractTokens(pagePrompt).catch(() => null),
-        ])
+        const existingPageDoc = (await query(`SELECT ai_description FROM pages WHERE id = $1`, [p.id])).rows[0]?.ai_description || undefined
+        // Generate docs FIRST so token extraction can use the authoritative vocabulary (field names, labels, errors).
+        const doc = await generateDocumentation(
+          context, conversationHistory, p.name, 'page',
+          undefined, p.linkedFeatures, userId, priorSessionSummaries, existingPageDoc
+        )
+
+        // Pull the sections that actually define UI vocabulary from the doc
+        const pickSection = (title: string) => {
+          const re = new RegExp(`##\\s*${title}\\s*\\n([\\s\\S]*?)(?=\\n##\\s|$)`, 'i')
+          return (doc.aiDoc.match(re)?.[1] || '').trim()
+        }
+        const uiSpec = pickSection('UI/UX Specifications') || pickSection('UI/UX')
+        const validations = pickSection('Validations')
+        const errors = pickSection('Error Messages')
+        const funcs = pickSection('Functional Requirements') || pickSection('Functionalities')
+
+        const auxLinkFeatures = (p.linkedFeatures || []).filter((f: string) =>
+          /registration|register|sign[- ]?up|password reset|forgot|t&c|terms|help/i.test(f)
+        )
+        const pagePrompt = [
+          `${p.name} — page with features: ${p.linkedFeatures.join(', ')}.`,
+          `User requirements (verbatim — use these EXACT terms for field names and labels): ${recentUserContext.slice(0, 500)}`,
+          funcs     && `Functionalities:\n${funcs.slice(0, 700)}`,
+          uiSpec    && `UI/UX spec:\n${uiSpec.slice(0, 700)}`,
+          validations && `Validations:\n${validations.slice(0, 500)}`,
+          errors    && `Error messages:\n${errors.slice(0, 400)}`,
+          auxLinkFeatures.length && `IMPORTANT: Every one of these linked auxiliary flows MUST appear as a visible link in this page's "navigation" token array (using the user's own wording for the link label): ${auxLinkFeatures.join(', ')}. Do NOT omit them just because they are separate features.`,
+        ].filter(Boolean).join('\n\n')
+
+        // Bypass cache so updated vocabulary/nav links from this conversation actually land.
+        const tokenResult = await extractTokens(pagePrompt, { bypassCache: true }).catch(() => null)
         await query(
           `UPDATE pages SET raw_description = $1, ai_description = $2, tokens = COALESCE($3, tokens) WHERE id = $4`,
           [doc.userInput, doc.aiDoc, tokenResult ? JSON.stringify(tokenResult.tokens) : null, p.id]
@@ -304,17 +418,39 @@ app.post('/sessions/:id/complete', async (c) => {
     await Promise.all([...docPromises, ...pagePromises])
 
     // After docs generated, generate summaries + confidence + test/use cases
+    await setStep(`computing confidence + test cases for ${allFeatures.length} feature(s)`)
     for (const f of allFeatures) {
       try {
         const feat = await query(`SELECT ai_description FROM features WHERE id = $1`, [f.id])
         const aiDesc = feat.rows[0]?.ai_description || ''
 
+        // 5-axis DEASV confidence calculation
         const sections = aiDesc.split('## ').filter(Boolean)
         const filledSections = sections.filter(s => s.trim().split('\n').length > 2)
-        const completeness = sections.length ? filledSections.length / Math.max(sections.length, 10) : 0
 
+        // D — Documentation (25%): how many of 15 sections are filled substantively
+        const docScore = sections.length ? Math.min(1, filledSections.length / 15) : 0
+        // Check for vague language penalty
+        const vagueTerms = (aiDesc.match(/\b(TBD|as needed|to be decided|appropriate|relevant|suitable)\b/gi) || []).length
+        const dScore = Math.max(0, docScore - (vagueTerms * 0.05))
+
+        // E — Elicitation Depth (25%): conversation depth
         const msgCount = allMessages.rows.filter((m: any) => m.role === 'user').length
-        const intentFidelity = Math.min(1, msgCount / 5)
+        const eScore = Math.min(1, msgCount / 6)
+
+        // A — Assumption Risk (20%): fewer unvalidated assumptions = higher
+        const assumptions = extractSection(aiDesc, 'Assumptions')
+        const assumptionCount = (assumptions.match(/^[-•\d]/gm) || []).length
+        const aScore = Math.max(0, 1 - (assumptionCount * 0.12))
+
+        // S — Stability (15%): 1.0 for new, decays over time
+        const sScore = 1.0
+
+        // V — Prototype Validation (15%): 0.2 if tokens exist (prototype generated)
+        const vScore = 0.2
+
+        const overall = (dScore * 0.25) + (eScore * 0.25) + (aScore * 0.20) + (sScore * 0.15) + (vScore * 0.15)
+        const r = (n: number) => Math.round(n * 100) / 100
 
         await query(
           `UPDATE features SET
@@ -325,7 +461,7 @@ app.post('/sessions/:id/complete', async (c) => {
           WHERE id = $5`,
           [
             aiDesc.split('\n').find((l: string) => l.trim() && !l.startsWith('#'))?.trim().slice(0, 200) || f.name,
-            JSON.stringify({ completeness: Math.round(completeness * 100) / 100, stability: 1.0, intentFidelity: Math.round(intentFidelity * 100) / 100 }),
+            JSON.stringify({ documentation: r(dScore), elicitationDepth: r(eScore), assumptionRisk: r(aScore), stability: r(sScore), prototypeValidation: r(vScore), overall: r(overall) }),
             extractSection(aiDesc, 'Acceptance Criteria') || null,
             extractSection(aiDesc, 'Business Context') || null,
             f.id
@@ -343,6 +479,7 @@ app.post('/sessions/:id/complete', async (c) => {
     }
 
     // Generate conversation summary for shared context
+    await setStep('summarizing conversation')
     try {
       const summaryRes = await aiChat(
         [{ role: 'system', content: 'Summarize the key decisions and context from this requirements conversation in 3-5 bullet points. Be specific about what was decided.' },
@@ -353,6 +490,7 @@ app.post('/sessions/:id/complete', async (c) => {
     } catch {}
 
     // Generate prototype context for cross-page consistency
+    await setStep('generating prototype context')
     try {
       const allPageNames = newPageIds.map(p => p.name).join(', ')
       const ctxRes = await aiChat(
@@ -375,9 +513,26 @@ Use realistic data that matches the project domain. Stats numbers should be cons
       )
     } catch {}
   }
-  bgWork().catch(() => {})
+  ;(async () => {
+    try {
+      await bgWork()
+      await query(`UPDATE reprocess_jobs SET status = 'done', step = 'done', finished_at = NOW() WHERE id = $1`, [jobId])
+    } catch (err: any) {
+      await query(`UPDATE reprocess_jobs SET status = 'failed', error = $2, finished_at = NOW() WHERE id = $1`, [jobId, String(err?.message || err)])
+    }
+  })()
 
-  return c.json({ ok: true, created })
+  const updated = {
+    features: existingFeatureIds.length,
+    pages: existingPageIds.length,
+    featureNames: existingFeatureIds.map(f => f.name),
+    pageNames: existingPageIds.map(p => p.name),
+  }
+  const createdNames = {
+    features: newFeatureIds.map(f => f.name),
+    pages: newPageIds.map(p => p.name),
+  }
+  return c.json({ ok: true, jobId, created, updated, createdNames })
 })
 
 export default app

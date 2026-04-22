@@ -7,5 +7,6 @@ export const routes: Routes = [
   { path: 'register', loadComponent: () => import('./pages/auth/register.component').then(m => m.RegisterComponent) },
   { path: 'projects', loadComponent: () => import('./pages/projects/projects.component').then(m => m.ProjectsComponent), canActivate: [authGuard] },
   { path: 'projects/:id', loadComponent: () => import('./pages/workspace/workspace.component').then(m => m.WorkspaceComponent), canActivate: [authGuard] },
+  { path: 'projects/:id/confidence', loadComponent: () => import('./pages/confidence/confidence.component').then(m => m.ConfidenceComponent), canActivate: [authGuard] },
   { path: '**', redirectTo: '' },
 ]

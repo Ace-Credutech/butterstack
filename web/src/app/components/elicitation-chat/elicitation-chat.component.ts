@@ -12,7 +12,7 @@ export interface DocEntity {
   status?: string
   pmStatus?: string
   summary?: string
-  confidenceScore?: { completeness: number; stability: number; intentFidelity: number }
+  confidenceScore?: { documentation: number; elicitationDepth: number; assumptionRisk: number; stability: number; prototypeValidation: number; overall: number }
   testCases?: string
   useCases?: string
 }
@@ -146,6 +146,8 @@ export class ElicitationChatComponent implements OnInit, AfterViewChecked {
         role: 'assistant', content: response.content, type: response.type,
         options: response.options, breakdown: (response as any).breakdown,
       }])
+      // If a new breakdown proposal arrives (even after a completed session was reactivated), re-enable the Confirm/Adjust buttons
+      if (response.type === 'breakdown_proposal') this.completed.set(false)
       this.shouldScroll = true
     } catch {
       this.messages.update(m => [...m, { role: 'assistant', content: 'Something went wrong. Please try again.', type: 'text' }])
@@ -156,6 +158,72 @@ export class ElicitationChatComponent implements OnInit, AfterViewChecked {
   }
 
   selectOption(optionId: string, optionLabel: string) { this.send(optionLabel, optionId) }
+
+  // ── Bullet extraction & selection (for assistant messages that list proposals) ──
+  bulletSelected = signal<Record<number, Set<number>>>({})
+
+  parseBullets(content: string): { intro: string; bullets: string[]; outro: string } {
+    if (!content) return { intro: '', bullets: [], outro: '' }
+    const lines = content.split('\n')
+    const intro: string[] = []
+    const bullets: string[] = []
+    const outro: string[] = []
+    let phase: 'intro' | 'bullets' | 'outro' = 'intro'
+    for (const line of lines) {
+      const bm = line.match(/^\s*(?:[-•*]|\d+\.)\s+(.*)$/)
+      if (bm) {
+        if (phase === 'outro') { // bullets resumed — merge outro back
+          bullets.push(...outro.filter(l => /^\s*(?:[-•*]|\d+\.)\s+/.test(l)).map(l => l.replace(/^\s*(?:[-•*]|\d+\.)\s+/, '')))
+          outro.length = 0
+        }
+        bullets.push(bm[1].trim())
+        phase = 'bullets'
+      } else if (phase === 'bullets' && line.trim()) {
+        outro.push(line)
+        phase = 'outro'
+      } else if (phase === 'intro') {
+        intro.push(line)
+      } else if (phase === 'outro') {
+        outro.push(line)
+      }
+    }
+    return { intro: intro.join('\n').trim(), bullets, outro: outro.join('\n').trim() }
+  }
+
+  isBulletSelected(msgIdx: number, bulletIdx: number): boolean {
+    return this.bulletSelected()[msgIdx]?.has(bulletIdx) ?? false
+  }
+
+  toggleBullet(msgIdx: number, bulletIdx: number) {
+    const current = { ...this.bulletSelected() }
+    const set = new Set(current[msgIdx] || [])
+    if (set.has(bulletIdx)) set.delete(bulletIdx); else set.add(bulletIdx)
+    current[msgIdx] = set
+    this.bulletSelected.set(current)
+  }
+
+  includeSelectedBullets(msgIdx: number, bullets: string[]) {
+    const sel = this.bulletSelected()[msgIdx]
+    if (!sel || !sel.size) return
+    const picked = Array.from(sel).sort((a, b) => a - b).map(i => bullets[i]).filter(Boolean)
+    const current = { ...this.bulletSelected() }
+    delete current[msgIdx]
+    this.bulletSelected.set(current)
+    this.send(`Include: ${picked.map(p => `"${p}"`).join('; ')}`)
+  }
+
+  includeAllBullets(msgIdx: number, bullets: string[]) {
+    // Tick every checkbox first so the user sees the selection land, then send.
+    const current = { ...this.bulletSelected() }
+    current[msgIdx] = new Set(bullets.map((_, i) => i))
+    this.bulletSelected.set(current)
+    setTimeout(() => {
+      const cleared = { ...this.bulletSelected() }
+      delete cleared[msgIdx]
+      this.bulletSelected.set(cleared)
+      this.send(`Include all of it: ${bullets.map(p => `"${p}"`).join('; ')}`)
+    }, 250)
+  }
 
   toggleMultiOption(optionId: string) {
     this.multiSelected.update(s => s.includes(optionId) ? s.filter(x => x !== optionId) : [...s, optionId])
@@ -172,13 +240,37 @@ export class ElicitationChatComponent implements OnInit, AfterViewChecked {
     if (!this.sessionId) return
     this.sending.set(true)
     try {
-      const result = await this.elicitation.completeSession(this.sessionId)
+      const result: any = await this.elicitation.completeSession(this.sessionId)
       this.completed.set(true)
-      this.messages.update(m => [...m, {
-        role: 'assistant',
-        content: `Structure created: ${result.created.modules} modules, ${result.created.features} features, ${result.created.pages} pages.`,
-        type: 'confirmation',
-      }])
+      const c = result.created || { modules: 0, features: 0, pages: 0 }
+      const cn = result.createdNames || { features: [], pages: [] }
+      const u = result.updated || { features: 0, pages: 0, featureNames: [], pageNames: [] }
+      const parts: string[] = []
+      const createdNames = [...(cn.features || []), ...(cn.pages || [])]
+      if (createdNames.length) {
+        parts.push(`Created: ${createdNames.join(', ')}`)
+      } else if (c.modules) {
+        parts.push(`Created ${c.modules} module(s)`)
+      }
+      const updatedNames = [...(u.featureNames || []), ...(u.pageNames || [])]
+      if (updatedNames.length) {
+        parts.push(`Updating: ${updatedNames.join(', ')} — docs + prototype regenerating in background (10-20s)`)
+      }
+      if (!parts.length) parts.push('Breakdown had nothing new — if you expected changes, try rephrasing more specifically.')
+      const summary = parts.join(' · ')
+
+      // Insert a live-updating status message if a background job is running
+      if (result.jobId) {
+        this.messages.update(m => [...m, {
+          role: 'assistant',
+          content: `${summary}\n\n⏳ Regenerating: queued...`,
+          type: 'job_status',
+          jobId: result.jobId,
+        } as any])
+        this.pollJob(result.jobId, summary)
+      } else {
+        this.messages.update(m => [...m, { role: 'assistant', content: summary, type: 'confirmation' }])
+      }
       this.sessionCompleted.emit(result.created)
     } catch {
       this.messages.update(m => [...m, { role: 'assistant', content: 'Failed to create structure. Please try again.', type: 'text' }])
@@ -186,7 +278,105 @@ export class ElicitationChatComponent implements OnInit, AfterViewChecked {
     this.sending.set(false)
   }
 
-  adjustBreakdown() { this.send('I\'d like to adjust the breakdown. Let me explain what should change.') }
+  private async pollJob(jobId: number, summaryPrefix: string) {
+    const deadline = Date.now() + 180_000
+    while (Date.now() < deadline) {
+      await new Promise(r => setTimeout(r, 1500))
+      let job: any
+      try { job = await this.api.get<any>(`/reprocess/status/${jobId}`) } catch { break }
+      const icon = job.status === 'done' ? '✓' : job.status === 'failed' ? '✗' : '⏳'
+      const label = job.status === 'done'
+        ? 'Done — docs + prototypes updated'
+        : job.status === 'failed'
+          ? `Failed${job.error ? ': ' + String(job.error).slice(0, 120) : ''}`
+          : `Regenerating: ${job.step || job.status}...`
+      this.messages.update(m => m.map(msg =>
+        (msg as any).jobId === jobId
+          ? { ...msg, content: `${summaryPrefix}\n\n${icon} ${label}` }
+          : msg
+      ))
+      if (job.status === 'done' || job.status === 'failed') {
+        if (job.status === 'done') this.sessionCompleted.emit({ modules: 0, features: 0, pages: 0 } as any)
+        break
+      }
+    }
+  }
+
+  editingBreakdownIdx = signal<number | null>(null)
+  savingBreakdown = signal(false)
+
+  adjustBreakdown(msgIdx: number) { this.editingBreakdownIdx.set(msgIdx) }
+  cancelAdjust() { this.editingBreakdownIdx.set(null) }
+
+  renameModule(msgIdx: number, modIdx: number, value: string) {
+    this.messages.update(m => {
+      const copy = [...m]; const msg: any = { ...copy[msgIdx] }
+      msg.breakdown = structuredClone(msg.breakdown)
+      msg.breakdown.modules[modIdx].name = value
+      copy[msgIdx] = msg; return copy
+    })
+  }
+  renameSub(msgIdx: number, modIdx: number, subIdx: number, value: string) {
+    this.messages.update(m => {
+      const copy = [...m]; const msg: any = { ...copy[msgIdx] }
+      msg.breakdown = structuredClone(msg.breakdown)
+      msg.breakdown.modules[modIdx].subModules[subIdx].name = value
+      copy[msgIdx] = msg; return copy
+    })
+  }
+  renameFeature(msgIdx: number, modIdx: number, subIdx: number, fIdx: number, value: string) {
+    this.messages.update(m => {
+      const copy = [...m]; const msg: any = { ...copy[msgIdx] }
+      msg.breakdown = structuredClone(msg.breakdown)
+      msg.breakdown.modules[modIdx].subModules[subIdx].features[fIdx] = value
+      copy[msgIdx] = msg; return copy
+    })
+  }
+  removeFeature(msgIdx: number, modIdx: number, subIdx: number, fIdx: number) {
+    this.messages.update(m => {
+      const copy = [...m]; const msg: any = { ...copy[msgIdx] }
+      msg.breakdown = structuredClone(msg.breakdown)
+      msg.breakdown.modules[modIdx].subModules[subIdx].features.splice(fIdx, 1)
+      copy[msgIdx] = msg; return copy
+    })
+  }
+  addFeature(msgIdx: number, modIdx: number, subIdx: number) {
+    const name = prompt('New feature name?')
+    if (!name?.trim()) return
+    this.messages.update(m => {
+      const copy = [...m]; const msg: any = { ...copy[msgIdx] }
+      msg.breakdown = structuredClone(msg.breakdown)
+      msg.breakdown.modules[modIdx].subModules[subIdx].features.push(name.trim())
+      copy[msgIdx] = msg; return copy
+    })
+  }
+  removeSub(msgIdx: number, modIdx: number, subIdx: number) {
+    this.messages.update(m => {
+      const copy = [...m]; const msg: any = { ...copy[msgIdx] }
+      msg.breakdown = structuredClone(msg.breakdown)
+      msg.breakdown.modules[modIdx].subModules.splice(subIdx, 1)
+      copy[msgIdx] = msg; return copy
+    })
+  }
+  removeModule(msgIdx: number, modIdx: number) {
+    this.messages.update(m => {
+      const copy = [...m]; const msg: any = { ...copy[msgIdx] }
+      msg.breakdown = structuredClone(msg.breakdown)
+      msg.breakdown.modules.splice(modIdx, 1)
+      copy[msgIdx] = msg; return copy
+    })
+  }
+
+  async saveBreakdown(msgIdx: number) {
+    if (!this.sessionId) return
+    const breakdown = (this.messages()[msgIdx] as any).breakdown
+    this.savingBreakdown.set(true)
+    try {
+      await this.api.patch(`/elicitation/sessions/${this.sessionId}/breakdown`, { breakdown })
+      this.editingBreakdownIdx.set(null)
+    } catch {}
+    this.savingBreakdown.set(false)
+  }
 
   isLastBreakdown(index: number): boolean {
     const msgs = this.messages()
@@ -260,6 +450,11 @@ export class ElicitationChatComponent implements OnInit, AfterViewChecked {
       const mine = list.find((f: any) => true)
       if (mine) this.myRating.set(mine.rating)
     } catch {}
+  }
+
+  hasVagueLanguage(): boolean {
+    const desc = this.docEntity()?.aiDescription || ''
+    return /\b(TBD|as needed|to be decided|appropriate|relevant|suitable)\b/i.test(desc)
   }
 
   pmStatuses = ['not_started', 'in_progress', 'review', 'done']
@@ -355,16 +550,20 @@ export class ElicitationChatComponent implements OnInit, AfterViewChecked {
     if (!e) return
     this.savingDoc.set(true)
 
-    // Save raw edits immediately
     const endpoint = e.kind === 'feature' ? '/features' : e.kind === 'page' ? '/pages' : '/modules'
     await this.api.patch(`${endpoint}/${e.id}`, { rawDescription: this.editRaw, aiDescription: this.editAi })
-
-    // Trigger reprocess in background (regenerates AI docs + prototype + cascades to affected entities)
     this.api.post(`/reprocess/${e.kind}/${e.id}`, { rawDescription: this.editRaw }).catch(() => {})
 
-    this.docEntity.set({ ...e, rawDescription: this.editRaw, aiDescription: this.editAi + '\n\n(Regenerating documentation...)' })
+    this.docEntity.set({ ...e, rawDescription: this.editRaw, aiDescription: this.editAi })
     this.editingDoc.set(false)
     this.savingDoc.set(false)
+  }
+
+  // Auto-save on blur for inline editing
+  private autoSaveTimer: any = null
+  onDocFieldBlur() {
+    if (this.autoSaveTimer) clearTimeout(this.autoSaveTimer)
+    this.autoSaveTimer = setTimeout(() => this.saveDoc(), 500)
   }
 
   backFromDoc() {

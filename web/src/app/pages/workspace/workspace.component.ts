@@ -1,8 +1,7 @@
-import { Component, OnInit, AfterViewInit, ViewChild, signal } from '@angular/core'
+import { Component, OnInit, AfterViewInit, ViewChild, signal, HostListener } from '@angular/core'
 import { Router, ActivatedRoute }  from '@angular/router'
 import { PrototypeService }        from '../../services/prototype.service'
 import { ApiService }              from '../../services/api.service'
-import { RequirementInputComponent, RequirementSaved } from '../../components/requirement-input/requirement-input.component'
 import { PrototypePreviewComponent }  from '../../components/prototype-preview/prototype-preview.component'
 import { VersionTimelineComponent }   from '../../components/version-timeline/version-timeline.component'
 import { ModulesPanelComponent, ModuleNode, FeatureNode, PageNode } from '../../components/modules-panel/modules-panel.component'
@@ -11,19 +10,21 @@ import { MembersPanelComponent } from '../../components/members-panel/members-pa
 import { ExportService } from '../../services/export.service'
 import { ElicitationChatComponent } from '../../components/elicitation-chat/elicitation-chat.component'
 import { DesignSettingsComponent } from '../../components/design-settings/design-settings.component'
+import { QuizModalComponent } from '../../components/quiz-modal/quiz-modal.component'
 import { UsagePanelComponent } from '../../components/usage-panel/usage-panel.component'
 import type { UITokens, VersionEntry } from '../../models/ui-tokens.model'
 
 @Component({
   selector:    'app-workspace',
   standalone:  true,
-  imports:     [RequirementInputComponent, PrototypePreviewComponent, VersionTimelineComponent, ModulesPanelComponent, UserAvatarComponent, MembersPanelComponent, ElicitationChatComponent, DesignSettingsComponent, UsagePanelComponent],
+  imports:     [PrototypePreviewComponent, VersionTimelineComponent, ModulesPanelComponent, UserAvatarComponent, MembersPanelComponent, ElicitationChatComponent, DesignSettingsComponent, UsagePanelComponent, QuizModalComponent],
   templateUrl: './workspace.component.html',
 })
 export class WorkspaceComponent implements OnInit, AfterViewInit {
   @ViewChild(ModulesPanelComponent) modulesPanel!: ModulesPanelComponent
   @ViewChild(ElicitationChatComponent) chatPanel!: ElicitationChatComponent
   @ViewChild(PrototypePreviewComponent) protoPanel!: PrototypePreviewComponent
+  @ViewChild(QuizModalComponent) quizModal!: QuizModalComponent
 
   projectId   = ''
   projectName = signal('')
@@ -37,12 +38,15 @@ export class WorkspaceComponent implements OnInit, AfterViewInit {
   meetingActive = signal(false)
   meetingTime   = signal('00:00')
   appFullscreen = signal(false)
-  inputMode     = signal<'chat' | 'classic'>('chat')
   relatedPages  = signal<{ id: number; name: string; pageType: string; tokens?: any }[]>([])
   selectedContext = signal('')
   scopeModuleId  = signal<number | null>(null)
   scopePageId    = signal<number | null>(null)
   scopeFeatureId = signal<number | null>(null)
+
+  detailsModule  = signal<any>(null)
+  detailsFeature = signal<any>(null)
+  moduleFeatures = signal<any[]>([])
 
   activeModule: ModuleNode | null = null
   private versionCounter = 0
@@ -97,36 +101,17 @@ export class WorkspaceComponent implements OnInit, AfterViewInit {
 
   private _initData: any = null
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     if (this._initData && this.modulesPanel) {
       this.modulesPanel.loadFromInit(
         this._initData.modules, this._initData.features,
         this._initData.pages, this._initData.pageFeatures
       )
     }
+    await this.applyUrlState()
   }
 
-  onRequirementSaved({ tokens, cleanPrompt, moduleName }: RequirementSaved): void {
-    this.tokens.set(tokens)
-    this.cleanPrompt.set(cleanPrompt)
-    this.source.set('requirement')
-    this.saveVersion(moduleName ?? cleanPrompt.slice(0, 60), tokens, 'requirement', cleanPrompt, '')
-  }
-
-  async onRegenerate({ title, description, feedback }: { title: string; description: string; feedback: string }): Promise<void> {
-    this.loading.set(true)
-    try {
-      const res = await this.prototype.regenerate(title, description, feedback)
-      this.tokens.set(res.tokens)
-      this.cleanPrompt.set(res.cleanPrompt)
-      this.source.set('regenerated')
-      await this.saveVersion(`[Regen] ${title}`, res.tokens, 'openai', title, description)
-    } finally {
-      this.loading.set(false)
-    }
-  }
-
-  async onModuleSelected(node: ModuleNode) {
+async onModuleSelected(node: ModuleNode) {
     this.activeModule = node
     this.source.set(`module: ${node.name}`)
     this.selectedContext.set(node.name)
@@ -134,13 +119,20 @@ export class WorkspaceComponent implements OnInit, AfterViewInit {
     this.scopePageId.set(null)
     this.scopeFeatureId.set(null)
 
+    // Set details data and switch to Details tab
+    this.detailsModule.set({ name: node.name, id: node.id })
+    this.detailsFeature.set(null)
+    // Fetch all features for this module (sorted by FCS ascending)
+    const feats = await this.api.get<any[]>('/features', { moduleId: String(node.id) })
+    this.moduleFeatures.set(feats.sort((a, b) => (a.confidence_score?.overall ?? 0) - (b.confidence_score?.overall ?? 0)))
+    this.protoPanel?.setTab('details', false)
+    this.syncUrl()
+
     const allFeatureIds = this.collectFeatureIds(node)
     if (allFeatureIds.length) {
       await this.showRelatedPages(allFeatureIds)
-    } else if (node.tokens) {
+    } else {
       this.relatedPages.set([])
-      this.tokens.set(node.tokens)
-      this.cleanPrompt.set(node.cleanPrompt ?? '')
     }
   }
 
@@ -207,6 +199,28 @@ export class WorkspaceComponent implements OnInit, AfterViewInit {
   }
 
   goToProjects() { this.router.navigate(['/projects']) }
+  goToConfidence() { this.router.navigate(['/projects', this.projectId, 'confidence']) }
+
+  async onDetailsFeatureClicked(featureId: number) {
+    const full = await this.api.get<any>(`/features/${featureId}`)
+    this.detailsFeature.set(full)
+    this.detailsModule.set(null)
+  }
+
+  startQuiz(featureId: number, featureName: string, currentFcs: number) {
+    this.quizModal?.start(featureId, featureName, currentFcs)
+  }
+
+  onQuizScoreUpdated(newScore: any) {
+    const feat = this.detailsFeature()
+    if (feat) this.detailsFeature.set({ ...feat, confidence_score: newScore })
+  }
+
+  onQuizClosed() {
+    // Refresh feature data
+    const feat = this.detailsFeature()
+    if (feat?.id) this.onDetailsFeatureClicked(feat.id)
+  }
 
   onDesignSaved() {
     this.protoPanel?.reloadDesignSystem()
@@ -242,14 +256,13 @@ export class WorkspaceComponent implements OnInit, AfterViewInit {
     this.scopeModuleId.set(null)
     this.scopePageId.set(null)
     const full = await this.api.get<any>(`/features/${feat.id}`)
-    if (this.chatPanel) {
-      this.chatPanel.showDoc({
-        id: feat.id, kind: 'feature', name: feat.name,
-        rawDescription: full.raw_description, aiDescription: full.ai_description, status: full.status,
-        pmStatus: full.pm_status, summary: full.summary, confidenceScore: full.confidence_score,
-        testCases: full.test_cases, useCases: full.use_cases,
-      })
-    }
+
+    // Set details data and switch to Details tab
+    this.detailsFeature.set(full)
+    this.detailsModule.set(null)
+    this.protoPanel?.setTab('details', false)
+    this.syncUrl()
+
     await this.showRelatedPages([feat.id])
   }
 
@@ -259,14 +272,69 @@ export class WorkspaceComponent implements OnInit, AfterViewInit {
     this.scopePageId.set(page.id)
     this.scopeModuleId.set(null)
     this.scopeFeatureId.set(null)
+    this.detailsModule.set(null)
+    this.detailsFeature.set(null)
     const full = await this.api.get<any>(`/pages/${page.id}`)
     if (full.tokens) this.tokens.set(full.tokens)
-    if (this.chatPanel) {
-      this.chatPanel.showDoc({
-        id: page.id, kind: 'page', name: page.name,
-        rawDescription: full.raw_description, aiDescription: full.ai_description, status: full.status,
-        pmStatus: full.pm_status, summary: full.summary,
-      })
+    this.protoPanel?.setTab('prototype', false)
+    this.syncUrl()
+  }
+
+  onTabChanged(tab: string) {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    })
+  }
+
+  private syncUrl() {
+    const qp: any = {
+      moduleId: this.scopeModuleId() ?? null,
+      featureId: this.scopeFeatureId() ?? null,
+      pageId: this.scopePageId() ?? null,
+    }
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: qp,
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    })
+  }
+
+  private async applyUrlState() {
+    const qp = this.route.snapshot.queryParamMap
+    const moduleId = qp.get('moduleId')
+    const featureId = qp.get('featureId')
+    const pageId = qp.get('pageId')
+    const tab = qp.get('tab') as any
+
+    if (pageId && this.modulesPanel) {
+      const pageNode = this.modulesPanel.findPageById(Number(pageId))
+      if (pageNode) await this.onPageSelected(pageNode)
+    } else if (featureId && this.modulesPanel) {
+      const featNode = this.modulesPanel.findFeatureById(Number(featureId))
+      if (featNode) await this.onFeatureSelected(featNode)
+    } else if (moduleId && this.modulesPanel) {
+      const modNode = this.modulesPanel.findModuleById(Number(moduleId))
+      if (modNode) await this.onModuleSelected(modNode)
+    }
+    if (tab) this.protoPanel?.setTab(tab, false)
+  }
+
+  @HostListener('window:message', ['$event'])
+  async onWindowMessage(ev: MessageEvent) {
+    const d = ev.data
+    if (!d || d.type !== 'prototype-nav' || !d.targetType) return
+    const allPages = await this.api.get<any[]>('/pages', { projectId: this.projectId })
+    const target = allPages.find(p => p.page_type === d.targetType && p.tokens)
+    if (!target) return
+    const node = this.modulesPanel?.findPageById(target.id)
+    if (node) {
+      await this.onPageSelected(node)
+      this.protoPanel?.setTab('prototype', false)
+      this.syncUrl()
     }
   }
 
@@ -284,21 +352,4 @@ export class WorkspaceComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private async saveVersion(label: string, tokens: UITokens, source: string, rawTitle = '', rawDescription = '') {
-    this.versionCounter++
-    const time  = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    const entry: VersionEntry = {
-      id: this.versionCounter, label, time, tokens,
-      cleanPrompt: this.cleanPrompt(), source, rawTitle, rawDescription,
-    }
-    this.versions.update(v => [entry, ...v].slice(0, 50))
-    const res = await this.api.post<{ id: number }>('/history', {
-      label, rawTitle, rawDescription,
-      cleanPrompt: this.cleanPrompt(),
-      tokens, source,
-      projectId: this.projectId,
-      moduleId:  this.activeModule?.id ?? null,
-    })
-    this.versions.update(v => v.map(ver => ver.id === entry.id ? { ...ver, dbId: res.id } : ver))
-  }
 }

@@ -104,7 +104,7 @@ app.get('/invite/:token', async (c) => {
 app.get('/me', requireAuth, async (c) => {
   const userId = c.get('userId')
   const result = await query(
-    `SELECT id, name, email, mobile, country_code, created_at FROM users WHERE id = $1`,
+    `SELECT id, name, email, mobile, country_code, api_keys, created_at FROM users WHERE id = $1`,
     [userId]
   )
   if (!result.rows.length) return c.json({ error: 'not found' }, 404)

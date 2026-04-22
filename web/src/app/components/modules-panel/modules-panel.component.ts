@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, signal } from '@angular/core'
 import { NgTemplateOutlet } from '@angular/common'
+import { FormsModule } from '@angular/forms'
 import { ApiService }       from '../../services/api.service'
 import { ModuleStructureInputComponent } from '../module-structure-input/module-structure-input.component'
 import type { VersionEntry } from '../../models/ui-tokens.model'
@@ -7,6 +8,7 @@ import type { VersionEntry } from '../../models/ui-tokens.model'
 export interface FeatureNode {
   id: number; name: string; status: string; moduleName?: string; moduleId?: number
   rawDescription?: string; aiDescription?: string
+  confidenceScore?: any; summary?: string
 }
 
 export interface PageNode {
@@ -25,7 +27,7 @@ export interface ModuleNode {
 @Component({
   selector: 'app-modules-panel',
   standalone: true,
-  imports: [NgTemplateOutlet, ModuleStructureInputComponent],
+  imports: [NgTemplateOutlet, ModuleStructureInputComponent, FormsModule],
   templateUrl: './modules-panel.component.html',
 })
 export class ModulesPanelComponent implements OnInit, OnChanges {
@@ -153,6 +155,132 @@ export class ModulesPanelComponent implements OnInit, OnChanges {
 
   refresh() { this.fetchTree(); this.fetchPages() }
 
+  async deleteFeature(feat: FeatureNode, ev: Event) {
+    ev.stopPropagation()
+    if (!confirm(`Delete feature "${feat.name}"? This removes its documentation and any page links. This cannot be undone.`)) return
+    try {
+      await this.api.delete(`/features/${feat.id}`)
+      if (this.selectedFeatureId() === feat.id) this.selectedFeatureId.set(null)
+      this.refresh()
+    } catch {
+      alert('Delete failed — please try again.')
+    }
+  }
+
+  async deletePage(page: PageNode, ev: Event) {
+    ev.stopPropagation()
+    if (!confirm(`Delete page "${page.name}"? This removes its prototype and feature links. This cannot be undone.`)) return
+    try {
+      await this.api.delete(`/pages/${page.id}`)
+      if (this.selectedPageId() === page.id) this.selectedPageId.set(null)
+      this.refresh()
+    } catch {
+      alert('Delete failed — please try again.')
+    }
+  }
+
+  async deleteModule(node: ModuleNode, ev: Event) {
+    ev.stopPropagation()
+    const childCount = (node.children?.length || 0) + (node.features?.length || 0)
+    const warn = childCount > 0
+      ? `Delete module "${node.name}" and ALL its ${childCount} child(ren)? This removes nested sub-modules and features too. Cannot be undone.`
+      : `Delete module "${node.name}"? Cannot be undone.`
+    if (!confirm(warn)) return
+    try {
+      await this.api.delete(`/modules/${node.id}`)
+      if (this.selectedId() === node.id) this.selectedId.set(null)
+      this.refresh()
+    } catch {
+      alert('Delete failed — please try again.')
+    }
+  }
+
+  findModuleById(id: number): ModuleNode | null {
+    const walk = (nodes: ModuleNode[]): ModuleNode | null => {
+      for (const n of nodes) {
+        if (n.id === id) return n
+        const c = walk(n.children || [])
+        if (c) return c
+      }
+      return null
+    }
+    return walk(this.tree())
+  }
+
+  findFeatureById(id: number): FeatureNode | null {
+    const walk = (nodes: ModuleNode[]): FeatureNode | null => {
+      for (const n of nodes) {
+        const f = (n.features || []).find(x => x.id === id)
+        if (f) return f
+        const c = walk(n.children || [])
+        if (c) return c
+      }
+      return null
+    }
+    return walk(this.tree())
+  }
+
+  findPageById(id: number): PageNode | null {
+    return this.pages().find(p => p.id === id) || null
+  }
+
+  // Node creation
+  creatingNode = signal(false)
+  newNodeName = ''
+  newNodeParentId: number | null = null
+  newNodeType: 'module' | 'page' | 'feature' = 'module'
+
+  startCreateNode(type: 'module' | 'page' | 'feature', parentId: number | null = null) {
+    this.newNodeType = type
+    this.newNodeParentId = parentId
+    this.newNodeName = ''
+    this.creatingNode.set(true)
+  }
+
+  async confirmCreateNode() {
+    if (!this.newNodeName.trim()) { this.creatingNode.set(false); return }
+    if (this.newNodeType === 'module') {
+      await this.api.post('/modules', { name: this.newNodeName, projectId: this.projectId, parentId: this.newNodeParentId })
+    } else if (this.newNodeType === 'page') {
+      await this.api.post('/pages', { name: this.newNodeName, projectId: this.projectId, pageType: 'form' })
+    } else if (this.newNodeType === 'feature') {
+      if (!this.newNodeParentId) return
+      await this.api.post('/features', { name: this.newNodeName, projectId: this.projectId, moduleId: this.newNodeParentId })
+    }
+    this.creatingNode.set(false)
+    this.refresh()
+  }
+
+  cancelCreateNode() { this.creatingNode.set(false) }
+
+  onCreateKeydown(e: KeyboardEvent) {
+    if (e.key === 'Enter') this.confirmCreateNode()
+    if (e.key === 'Escape') this.cancelCreateNode()
+  }
+
+  fcsScore(feat: FeatureNode): number {
+    return Math.round((feat.confidenceScore?.overall ?? 0) * 100)
+  }
+
+  fcsColor(score: number): string {
+    if (score >= 80) return 'text-green-600 bg-green-50'
+    if (score >= 50) return 'text-amber-600 bg-amber-50'
+    return 'text-red-600 bg-red-50'
+  }
+
+  fcsDotColor(val: number): string {
+    if (val >= 0.8) return 'bg-green-400'
+    if (val >= 0.5) return 'bg-amber-400'
+    return 'bg-red-400'
+  }
+
+  moduleRedFlagCount(node: ModuleNode): number {
+    let count = 0
+    for (const f of node.features) { if (this.fcsScore(f) < 50) count++ }
+    for (const child of node.children) { count += this.moduleRedFlagCount(child) }
+    return count
+  }
+
   get approvedCount() { return this.approvedVersions.filter(v => v.approved).length }
 
   private treeToText(nodes: ModuleNode[], prefix = ''): string {
@@ -174,6 +302,7 @@ export class ModulesPanelComponent implements OnInit, OnChanges {
       features: allFeatures.filter(f => f.module_id === n.id).map(f => ({
         id: f.id, name: f.name, status: f.status,
         rawDescription: f.raw_description, aiDescription: f.ai_description,
+        confidenceScore: f.confidence_score, summary: f.summary,
       })),
       children: this.mapNodes(n.children ?? [], allFeatures),
       versions: this.approvedVersions.filter(v =>

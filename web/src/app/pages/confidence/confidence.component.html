@@ -1,0 +1,97 @@
+<div class="min-h-screen bg-gray-50 font-sans">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-200 px-8 py-4 flex items-center gap-4 shrink-0">
+    <button (click)="back()" class="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <div>
+      <h1 class="text-sm font-bold text-gray-900">Project Confidence</h1>
+      <p class="text-xs text-gray-400">{{ projectName() }}</p>
+    </div>
+    <div class="flex-1"></div>
+    <div class="flex items-center gap-2">
+      <span class="text-2xl font-bold" [class]="scoreColor(projectScore())">{{ projectScore() }}%</span>
+      <span class="text-xs text-gray-400">across {{ features().length }} features</span>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="flex items-center justify-center h-64">
+      <div class="w-6 h-6 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  } @else {
+
+    <div class="max-w-6xl mx-auto px-8 py-6 space-y-8">
+
+      <!-- Analysis Cards -->
+      <div class="grid grid-cols-4 gap-4">
+        <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+          <p class="text-xs text-gray-400 mb-1">Features at 100%</p>
+          <p class="text-2xl font-bold text-green-600">{{ stats().at100 }}</p>
+          <p class="text-[10px] text-gray-400 mt-1">Fully confident</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+          <p class="text-xs text-gray-400 mb-1">Features below 50%</p>
+          <p class="text-2xl font-bold text-red-600">{{ stats().below50 }}</p>
+          <p class="text-[10px] text-gray-400 mt-1">Critical gaps</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+          <p class="text-xs text-gray-400 mb-1">Open Questions</p>
+          <p class="text-2xl font-bold text-amber-600">{{ stats().openQuestions }}</p>
+          <p class="text-[10px] text-gray-400 mt-1">Need answers</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+          <p class="text-xs text-gray-400 mb-1">Most Improved</p>
+          <p class="text-sm font-bold text-gray-800 truncate">{{ stats().improved }}</p>
+          <p class="text-[10px] text-gray-400 mt-1">Highest momentum</p>
+        </div>
+      </div>
+
+      <!-- Module Breakdown -->
+      <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
+        <h2 class="text-sm font-semibold text-gray-900 mb-4">Module Breakdown</h2>
+        <div class="space-y-3">
+          @for (mod of modules(); track mod.name) {
+            <div class="flex items-center gap-4 cursor-pointer hover:bg-gray-50 rounded-lg p-2 -mx-2 transition" (click)="back()">
+              <span class="text-xs font-medium text-gray-700 w-32 truncate">{{ mod.name }}</span>
+              <div class="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full rounded-full transition-all" [class]="scoreBg(mod.score)" [style.width]="mod.score + '%'"></div>
+              </div>
+              <span class="text-xs font-semibold w-10 text-right" [class]="scoreColor(mod.score)">{{ mod.score }}%</span>
+              <span class="text-[10px] text-gray-400">{{ mod.featureCount }}f</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Feature List -->
+      <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
+        <h2 class="text-sm font-semibold text-gray-900 mb-4">All Features — sorted by confidence (lowest first)</h2>
+        <div class="space-y-1">
+          @for (feat of features(); track feat.id) {
+            <div class="flex items-center gap-3 py-2.5 px-3 rounded-lg hover:bg-gray-50 transition border-b border-gray-50">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-800 truncate">{{ feat.name }}</p>
+                <p class="text-[10px] text-gray-400">{{ feat.module_name }} › {{ feat.module_path }}</p>
+              </div>
+              <!-- 5-axis mini bars -->
+              <div class="flex gap-0.5 shrink-0">
+                @for (axis of ['documentation', 'elicitationDepth', 'assumptionRisk', 'stability', 'prototypeValidation']; track axis) {
+                  <div class="w-1.5 h-4 bg-gray-100 rounded-full overflow-hidden flex flex-col-reverse">
+                    <div class="rounded-full" [class]="scoreBg(Math.round((feat.confidence_score?.[axis] ?? 0) * 100))"
+                         [style.height]="Math.round((feat.confidence_score?.[axis] ?? 0) * 100) + '%'"></div>
+                  </div>
+                }
+              </div>
+              <span class="text-xs font-bold w-10 text-right" [class]="scoreColor(fcsPercent(feat))">{{ fcsPercent(feat) }}%</span>
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+  }
+</div>

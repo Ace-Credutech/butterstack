@@ -2,6 +2,7 @@
 <div class="flex items-center justify-between px-4 py-2 bg-white border-b border-gray-100 shrink-0">
   <div class="flex items-center gap-1">
     @for (tab of [
+      { id: 'details', label: 'Details', icon: 'info' },
       { id: 'prototype', label: 'Prototype', icon: 'screen' },
       { id: 'brd', label: 'BRD', icon: 'doc' },
       { id: 'excel', label: 'Excel', icon: 'table' },
@@ -57,7 +58,7 @@
         <svg class="w-3 h-3" [class.animate-spin]="reprocessing()" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182"/>
         </svg>
-        {{ reprocessing() ? 'Regenerating...' : 'Reprocess' }}
+        {{ reprocessing() ? (reprocessStep() || 'Regenerating...') : 'Reprocess' }}
       </button>
     }
 
@@ -92,6 +93,176 @@
   </div>
 </div>
 
+<!-- ═══ DETAILS TAB ═══ -->
+@if (activeTab() === 'details') {
+  <div class="flex-1 overflow-auto min-h-0 bg-gray-50 p-6">
+    @if (detailsFeature) {
+      <!-- Feature Detail View -->
+      <div class="max-w-3xl mx-auto">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-gray-900">{{ detailsFeature.name }}</h2>
+            <p class="text-xs text-gray-400">{{ detailsFeature.module_name }} › {{ detailsFeature.module_path }}</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="relative group">
+              <button (click)="quizRequested.emit({ featureId: detailsFeature.id, featureName: detailsFeature.name, currentFcs: detailsFcsScore(detailsFeature) })"
+                class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"/></svg>
+                Answer
+              </button>
+              <div class="pointer-events-none absolute top-full right-0 mt-2 w-60 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                <div class="bg-gray-900 text-white text-[11px] rounded-lg px-3 py-2 shadow-lg text-left leading-snug">
+                  Answer a few quick clarifying questions to raise this feature's confidence score (FCS).
+                </div>
+              </div>
+            </div>
+            <span class="text-xl font-bold" [class]="detailsFcsColor(detailsFcsScore(detailsFeature))">{{ detailsFcsScore(detailsFeature) }}%</span>
+            <span class="text-[10px] text-gray-400">FCS</span>
+          </div>
+        </div>
+
+        <!-- 5-axis bars -->
+        <div class="mb-6 bg-white rounded-xl border border-gray-100 p-4">
+          <div class="grid grid-cols-5 gap-3">
+            @for (axis of [
+              { key: 'documentation', label: 'Documentation', short: 'D', desc: 'How complete and clear the written requirement documentation is.' },
+              { key: 'elicitationDepth', label: 'Elicitation', short: 'E', desc: 'How deeply the requirement was explored via clarifying questions.' },
+              { key: 'assumptionRisk', label: 'Assumptions', short: 'A', desc: 'How few unvalidated assumptions remain — higher score means lower risk.' },
+              { key: 'stability', label: 'Stability', short: 'S', desc: 'How stable the requirement is — fewer recent changes means higher score.' },
+              { key: 'prototypeValidation', label: 'Validation', short: 'V', desc: 'How much the requirement has been validated via prototypes & user feedback.' }
+            ]; track axis.key) {
+              <div class="text-center cursor-help group relative">
+                <div class="h-16 w-full bg-gray-100 rounded-lg overflow-hidden flex flex-col-reverse mb-1">
+                  <div class="w-full rounded-lg" [class]="detailsBarColor(Math.round((detailsFeature.confidence_score?.[axis.key] ?? 0) * 100))"
+                       [style.height]="Math.round((detailsFeature.confidence_score?.[axis.key] ?? 0) * 100) + '%'"></div>
+                </div>
+                <div class="flex items-center justify-center gap-1">
+                  <span class="text-[10px] text-gray-600 font-semibold">{{ axis.short }}</span>
+                  <span class="text-[10px] text-gray-400">{{ Math.round((detailsFeature.confidence_score?.[axis.key] ?? 0) * 100) }}%</span>
+                </div>
+                <div class="text-[9px] text-gray-400 mt-0.5 truncate">{{ axis.label }}</div>
+
+                <!-- Custom hover tooltip -->
+                <div class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                  <div class="bg-gray-900 text-white text-[11px] rounded-lg px-3 py-2 shadow-lg text-left leading-snug">
+                    <p class="font-semibold mb-0.5">{{ axis.short }} — {{ axis.label }}</p>
+                    <p class="text-gray-300">{{ axis.desc }}</p>
+                  </div>
+                  <div class="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-900"></div>
+                </div>
+              </div>
+            }
+          </div>
+          <!-- Single concise hint -->
+          <p class="text-[10px] text-gray-400 mt-3 pt-3 border-t border-gray-100 text-center">
+            <span class="font-semibold text-gray-500">DEASV</span> — 5 axes that make up the Feature Confidence Score. Hover any bar for details.
+          </p>
+        </div>
+
+        <!-- Summary -->
+        @if (detailsFeature.summary) {
+          <p class="text-sm text-gray-600 italic mb-4">{{ detailsFeature.summary }}</p>
+        }
+
+        <!-- BRD Sections — inline editable -->
+        @if (detailsFeature.ai_description) {
+          <div class="space-y-4">
+            @for (section of detailsSections(detailsFeature.ai_description); track section.title) {
+              <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+                <h3 class="text-xs font-semibold text-green-700 uppercase tracking-wider mb-2">{{ section.title }}</h3>
+                <div class="text-sm text-gray-700 leading-relaxed" [innerHTML]="section.content"></div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="bg-white rounded-xl border border-gray-100 p-8 text-center">
+            <p class="text-sm text-gray-400">Documentation generating... check back in a few seconds</p>
+          </div>
+        }
+
+        <!-- Test Cases + Use Cases -->
+        @if (detailsFeature.test_cases) {
+          <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm mt-4">
+            <h3 class="text-xs font-semibold text-amber-700 uppercase tracking-wider mb-2">Test Cases</h3>
+            <div class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{{ detailsFeature.test_cases }}</div>
+          </div>
+        }
+        @if (detailsFeature.use_cases) {
+          <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm mt-4">
+            <h3 class="text-xs font-semibold text-purple-700 uppercase tracking-wider mb-2">Use Cases</h3>
+            <div class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{{ detailsFeature.use_cases }}</div>
+          </div>
+        }
+      </div>
+
+    } @else if (detailsModule) {
+      <!-- Module Overview View -->
+      <div class="max-w-3xl mx-auto">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-gray-900">{{ detailsModule.name }}</h2>
+            <p class="text-xs text-gray-400">Module Overview</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl font-bold" [class]="detailsFcsColor(moduleAvgScore())">{{ moduleAvgScore() }}%</span>
+            <span class="text-[10px] text-gray-400">avg FCS</span>
+          </div>
+        </div>
+
+        <!-- Confidence summary bar -->
+        <div class="bg-white rounded-xl border border-gray-100 p-4 mb-6 shadow-sm">
+          <div class="flex items-center gap-3">
+            <span class="text-xs text-gray-500">Aggregate confidence</span>
+            <div class="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full rounded-full transition-all" [class]="detailsBarColor(moduleAvgScore())" [style.width]="moduleAvgScore() + '%'"></div>
+            </div>
+            <span class="text-xs font-semibold" [class]="detailsFcsColor(moduleAvgScore()).split(' ')[0]">{{ moduleAvgScore() }}%</span>
+          </div>
+        </div>
+
+        <!-- Feature list sorted by ascending FCS -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
+          <div class="px-5 py-3 border-b border-gray-100">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Features — sorted by lowest confidence</h3>
+          </div>
+          @for (feat of moduleFeatures; track feat.id) {
+            <div (click)="featureClicked.emit(feat.id)"
+              class="flex items-center gap-3 px-5 py-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-800">{{ feat.name }}</p>
+                <p class="text-[10px] text-gray-400">{{ feat.summary || 'No summary' }}</p>
+              </div>
+              <div class="w-20 h-2 bg-gray-100 rounded-full overflow-hidden shrink-0">
+                <div class="h-full rounded-full" [class]="detailsBarColor(detailsFcsScore(feat))" [style.width]="detailsFcsScore(feat) + '%'"></div>
+              </div>
+              <span class="text-xs font-bold w-10 text-right shrink-0" [class]="detailsFcsColor(detailsFcsScore(feat))">{{ detailsFcsScore(feat) }}%</span>
+              <button (click)="$event.stopPropagation(); quizRequested.emit({ featureId: feat.id, featureName: feat.name, currentFcs: detailsFcsScore(feat) })"
+                title="Answer a few quick clarifying questions to raise this feature's confidence score (FCS)"
+                class="px-2 py-1 text-[10px] text-green-600 hover:bg-green-50 rounded transition font-medium shrink-0">Answer</button>
+            </div>
+          }
+          @if (!moduleFeatures.length) {
+            <div class="px-5 py-8 text-center text-xs text-gray-400">No features in this module yet</div>
+          }
+        </div>
+      </div>
+
+    } @else {
+      <!-- No selection -->
+      <div class="flex flex-col items-center justify-center h-96 text-center">
+        <div class="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
+          <svg class="w-7 h-7 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+          </svg>
+        </div>
+        <p class="text-sm font-semibold text-gray-500">Select a module or feature</p>
+        <p class="text-xs text-gray-400 mt-1">Click an item in the left panel to see details</p>
+      </div>
+    }
+  </div>
+}
+
 <!-- ═══ PROTOTYPE TAB ═══ -->
 @if (activeTab() === 'prototype') {
   @if (relatedPages.length > 1) {
@@ -125,7 +296,7 @@
           <p class="text-xs text-gray-400">Generating...</p>
         </div>
       } @else if (safeHtml) {
-        <div class="w-full" [innerHTML]="safeHtml"></div>
+        <iframe [src]="safeHtml" class="w-full border-0" style="min-height: 600px; height: 100%"></iframe>
       } @else {
         <div class="flex flex-col items-center justify-center h-96 text-center p-8">
           <div class="w-14 h-14 rounded-2xl bg-green-50 border border-green-100 flex items-center justify-center mb-4">

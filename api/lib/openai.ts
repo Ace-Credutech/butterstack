@@ -21,6 +21,8 @@ const SYSTEM_PROMPT = `You are a UI token extractor. Given a product requirement
 
 IMPORTANT:
 - Use EXACT field names/labels from the user's requirements. If user says "Captcha label should be Confirm You are Human", the field name MUST be "Confirm You are Human", NOT "Captcha".
+- Do NOT substitute standard defaults for what the user said. If user said "username", the field must be {"name":"Username","type":"text"}, NOT {"name":"Email","type":"email"}. If user said "mobile number", it's {"name":"Mobile Number","type":"text"}, NOT "Phone". If user said "Login" as button text, the action is "Login", NOT "Sign In" or "Submit".
+- For login/auth pages specifically: ONLY use Email if the user explicitly said email. Otherwise use whatever identifier the user mentioned (username, employee id, mobile, etc).
 - Pay close attention to any label, placeholder, or text customizations mentioned in the requirements.
 - Stats should have realistic, consistent values (e.g., Active Users should be less than Total Users).
 - Return only valid JSON. No explanation.`
@@ -62,23 +64,25 @@ export type TokenResult = {
   durationMs:   number
 }
 
-export async function extractTokens(cleanPrompt: string): Promise<TokenResult> {
+export async function extractTokens(cleanPrompt: string, opts: { bypassCache?: boolean } = {}): Promise<TokenResult> {
   const promptHash = sha256(cleanPrompt.toLowerCase().trim())
 
-  // 1. Exact cache hit
-  const cached = await query(
-    `SELECT tokens FROM token_cache WHERE prompt_hash = $1 AND invalidated = FALSE`,
-    [promptHash]
-  )
-  if (cached.rows.length) {
-    await query(`UPDATE token_cache SET hit_count = hit_count + 1, last_hit_at = NOW() WHERE prompt_hash = $1`, [promptHash])
-    return { tokens: cached.rows[0].tokens, fromCache: true, source: 'cache', promptSent: cleanPrompt, responseRaw: '', tokensIn: 0, tokensOut: 0, model: 'cache', durationMs: 0 }
-  }
+  if (!opts.bypassCache) {
+    // 1. Exact cache hit
+    const cached = await query(
+      `SELECT tokens FROM token_cache WHERE prompt_hash = $1 AND invalidated = FALSE`,
+      [promptHash]
+    )
+    if (cached.rows.length) {
+      await query(`UPDATE token_cache SET hit_count = hit_count + 1, last_hit_at = NOW() WHERE prompt_hash = $1`, [promptHash])
+      return { tokens: cached.rows[0].tokens, fromCache: true, source: 'cache', promptSent: cleanPrompt, responseRaw: '', tokensIn: 0, tokensOut: 0, model: 'cache', durationMs: 0 }
+    }
 
-  // 2. Fuzzy cache hit (similar prompt already cached)
-  const fuzzy = await fuzzyLookup(cleanPrompt)
-  if (fuzzy) {
-    return { tokens: fuzzy.tokens, fromCache: true, source: 'fuzzy', fuzzyScore: fuzzy.similarity, promptSent: cleanPrompt, responseRaw: '', tokensIn: 0, tokensOut: 0, model: 'cache', durationMs: 0 }
+    // 2. Fuzzy cache hit (similar prompt already cached)
+    const fuzzy = await fuzzyLookup(cleanPrompt)
+    if (fuzzy) {
+      return { tokens: fuzzy.tokens, fromCache: true, source: 'fuzzy', fuzzyScore: fuzzy.similarity, promptSent: cleanPrompt, responseRaw: '', tokensIn: 0, tokensOut: 0, model: 'cache', durationMs: 0 }
+    }
   }
 
   // 3. Direct OpenAI call (no batch delay)

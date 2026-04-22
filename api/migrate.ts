@@ -462,4 +462,24 @@ await query(`CREATE INDEX IF NOT EXISTS idx_token_usage_project ON token_usage (
 await query(`CREATE INDEX IF NOT EXISTS idx_token_usage_user    ON token_usage (user_id)`)
 console.log('✓ token_usage ready')
 
+// ── Reprocess Jobs (status tracking for async AI regeneration) ───────────
+await query(`
+  CREATE TABLE IF NOT EXISTS reprocess_jobs (
+    id           SERIAL PRIMARY KEY,
+    project_id   VARCHAR(64),
+    entity_type  VARCHAR(20)  NOT NULL,
+    entity_id    INTEGER      NOT NULL,
+    user_id      INTEGER      REFERENCES users(id) ON DELETE SET NULL,
+    status       VARCHAR(20)  NOT NULL DEFAULT 'pending',
+    step         TEXT,
+    error        TEXT,
+    created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    started_at   TIMESTAMPTZ,
+    finished_at  TIMESTAMPTZ
+  )
+`)
+await query(`CREATE INDEX IF NOT EXISTS idx_reprocess_jobs_entity ON reprocess_jobs (entity_type, entity_id, created_at DESC)`)
+await query(`CREATE INDEX IF NOT EXISTS idx_reprocess_jobs_status ON reprocess_jobs (status, created_at DESC)`)
+console.log('✓ reprocess_jobs ready')
+
 process.exit(0)

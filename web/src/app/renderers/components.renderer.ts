@@ -139,39 +139,44 @@ export function renderDataTable(columns: string[], rowCount: number, ds: DesignS
     </div>`
 }
 
-export function renderStatCard(label: string, value: string, trend?: string, ds?: DesignSystem): string {
+export function renderStatCard(label: string, value: string, trend?: string, ds?: DesignSystem, labelPath?: string, valuePath?: string): string {
   const border = ds ? dsBorderAccent(ds) : 'border-gray-100'
   const trendColor = ds ? dsColorName(ds) : 'green'
   const trendHtml = trend ? `<span class="text-xs ${trend.startsWith('+') ? `text-${trendColor}-600` : 'text-red-500'} font-medium">${trend}</span>` : ''
+  const lp = labelPath ? ` data-tp="${labelPath}"` : ''
+  const vp = valuePath ? ` data-tp="${valuePath}"` : ''
   return `
     <div class="bg-white rounded-xl border ${border} p-5 shadow-sm">
       <div class="flex items-center justify-between mb-1">
-        <p class="text-xs text-gray-400 font-medium">${label}</p>
+        <p class="text-xs text-gray-400 font-medium"${lp}>${label}</p>
         ${trendHtml}
       </div>
-      <p class="text-2xl font-bold text-gray-900">${value}</p>
+      <p class="text-2xl font-bold text-gray-900"${vp}>${value}</p>
     </div>`
 }
 
-export function renderFormField(name: string, type: string, placeholder?: string, ds?: DesignSystem): string {
+export function renderFormField(name: string, type: string, placeholder?: string, ds?: DesignSystem, path?: string): string {
   const br = ds?.borderRadius || 'rounded-lg'
   const ph = placeholder || `Enter ${name.toLowerCase()}...`
+  const tp = path ? ` data-tp="${path}"` : ''
+  const lbl = `<label class="block text-xs font-medium text-gray-600 mb-1.5"${tp}>${name}</label>`
 
-  if (type === 'textarea') return `<div><label class="block text-xs font-medium text-gray-600 mb-1.5">${name}</label><textarea placeholder="${ph}" rows="3" class="w-full px-3.5 py-2.5 text-sm border border-gray-200 ${br} focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 resize-none transition"></textarea></div>`
-  if (type === 'select') return `<div><label class="block text-xs font-medium text-gray-600 mb-1.5">${name}</label><select class="w-full px-3.5 py-2.5 text-sm border border-gray-200 ${br} focus:outline-none bg-white text-gray-700"><option>Select ${name.toLowerCase()}...</option><option>Option 1</option><option>Option 2</option><option>Option 3</option></select></div>`
-  if (type === 'date') return `<div><label class="block text-xs font-medium text-gray-600 mb-1.5">${name}</label><input type="date" value="2026-04-21" class="w-full px-3.5 py-2.5 text-sm border border-gray-200 ${br} focus:outline-none focus:border-green-500 text-gray-700"/></div>`
-  if (type === 'checkbox') return `<div class="flex items-center gap-2"><input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"/><label class="text-sm text-gray-700">${name}</label></div>`
-  if (type === 'file') return `<div><label class="block text-xs font-medium text-gray-600 mb-1.5">${name}</label><div class="border-2 border-dashed border-gray-200 ${br} p-6 text-center hover:border-green-400 transition cursor-pointer"><svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg><p class="text-xs text-gray-400">Click to upload or drag and drop</p></div></div>`
-  if (type === 'password') return `<div><label class="block text-xs font-medium text-gray-600 mb-1.5">${name}</label><div class="relative"><input type="password" value="password123" class="w-full px-3.5 py-2.5 pr-10 text-sm border border-gray-200 ${br} focus:outline-none"/><button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0Z"/></svg></button></div></div>`
+  if (type === 'textarea') return `<div>${lbl}<textarea placeholder="${ph}" rows="3" class="w-full px-3.5 py-2.5 text-sm border border-gray-200 ${br} focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 resize-none transition"></textarea></div>`
+  if (type === 'select') return `<div>${lbl}<select class="w-full px-3.5 py-2.5 text-sm border border-gray-200 ${br} focus:outline-none bg-white text-gray-700"><option>Select ${name.toLowerCase()}...</option><option>Option 1</option><option>Option 2</option><option>Option 3</option></select></div>`
+  if (type === 'date') return `<div>${lbl}<input type="date" value="2026-04-21" class="w-full px-3.5 py-2.5 text-sm border border-gray-200 ${br} focus:outline-none focus:border-green-500 text-gray-700"/></div>`
+  if (type === 'checkbox') return `<div class="flex items-center gap-2"><input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"/><label class="text-sm text-gray-700"${tp}>${name}</label></div>`
+  if (type === 'file') return `<div>${lbl}<div class="border-2 border-dashed border-gray-200 ${br} p-6 text-center hover:border-green-400 transition cursor-pointer"><svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg><p class="text-xs text-gray-400">Click to upload or drag and drop</p></div></div>`
+  if (type === 'password') return `<div>${lbl}<div class="relative"><input type="password" value="password123" class="w-full px-3.5 py-2.5 pr-10 text-sm border border-gray-200 ${br} focus:outline-none"/><button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0Z"/></svg></button></div></div>`
 
-  return `<div><label class="block text-xs font-medium text-gray-600 mb-1.5">${name}</label><input type="${type}" placeholder="${ph}" class="w-full px-3.5 py-2.5 text-sm border border-gray-200 ${br} focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition"/></div>`
+  return `<div>${lbl}<input type="${type}" placeholder="${ph}" class="w-full px-3.5 py-2.5 text-sm border border-gray-200 ${br} focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition"/></div>`
 }
 
-export function renderSectionCard(title: string, content: string, ds?: DesignSystem): string {
+export function renderSectionCard(title: string, content: string, ds?: DesignSystem, path?: string): string {
   const border = ds ? dsBorderAccent(ds) : 'border-gray-100'
+  const tp = path ? ` data-tp="${path}"` : ''
   return `
     <div class="bg-white rounded-xl border ${border} p-5 shadow-sm">
-      <h3 class="text-sm font-semibold text-gray-800 mb-3">${title}</h3>
+      <h3 class="text-sm font-semibold text-gray-800 mb-3"${tp}>${title}</h3>
       <div class="text-sm text-gray-600 leading-relaxed">${content}</div>
     </div>`
 }

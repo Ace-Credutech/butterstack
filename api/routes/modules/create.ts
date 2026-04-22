@@ -45,6 +45,38 @@ app.get('/tree', async (c) => {
   return c.json(buildTree(result.rows))
 })
 
+// Rename (name + slug). Children's path column is left as-is for now since it's denormalized display only.
+app.patch('/:id', async (c) => {
+  const { name } = await c.req.json<{ name?: string }>()
+  if (!name?.trim()) return c.json({ error: 'name required' }, 400)
+  const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+  await query(
+    `UPDATE modules SET name = $1, slug = $2, updated_at = NOW() WHERE id = $3`,
+    [name.trim(), slug, c.req.param('id')]
+  )
+  return c.json({ ok: true })
+})
+
+// Delete module and cascade to children (via parent_id FK) + features under it.
+app.delete('/:id', async (c) => {
+  const id = c.req.param('id')
+  // Collect all descendant module ids (recursive)
+  const descRes = await query(
+    `WITH RECURSIVE sub AS (
+       SELECT id FROM modules WHERE id = $1
+       UNION ALL
+       SELECT m.id FROM modules m JOIN sub s ON m.parent_id = s.id
+     ) SELECT id FROM sub`,
+    [id]
+  )
+  const ids = descRes.rows.map((r: any) => r.id)
+  if (ids.length) {
+    await query(`DELETE FROM features WHERE module_id = ANY($1::int[])`, [ids])
+    await query(`DELETE FROM modules WHERE id = ANY($1::int[])`, [ids])
+  }
+  return c.json({ ok: true })
+})
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 async function resolveParentContext(parentId: number | null, slug: string): Promise<{ depth: number; path: string }> {

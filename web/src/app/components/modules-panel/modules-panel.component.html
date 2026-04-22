@@ -72,29 +72,6 @@
     <ng-container *ngTemplateOutlet="moduleNode; context: { node: node }"></ng-container>
   }
 
-  <!-- Pages section (under tree) -->
-  @if (pages().length) {
-    <div class="mt-2 pt-2 border-t border-gray-100 mx-1">
-      <div class="px-2 py-1 text-[9px] font-semibold text-gray-400 uppercase tracking-wider">Pages</div>
-      @for (page of pages(); track page.id) {
-        <div
-          class="flex items-center gap-2 py-1.5 px-3 cursor-pointer transition rounded group"
-          [class]="selectedPageId() === page.id ? 'bg-green-50' : 'hover:bg-gray-50'"
-          (click)="selectPage(page)">
-          <svg class="w-3.5 h-3.5 shrink-0" [class]="selectedPageId() === page.id ? 'text-green-500' : 'text-gray-400'"
-               fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
-          </svg>
-          <span class="text-xs font-medium truncate flex-1" [class]="selectedPageId() === page.id ? 'text-green-700' : 'text-gray-700'">{{ page.name }}</span>
-          <!-- Hover: prototype icon -->
-          <svg class="w-3 h-3 text-gray-300 opacity-0 group-hover:opacity-100 transition shrink-0" title="View prototype" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25A2.25 2.25 0 0 1 5.25 3h13.5A2.25 2.25 0 0 1 21 5.25Z"/>
-          </svg>
-          <span class="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">{{ page.pageType }}</span>
-        </div>
-      }
-    </div>
-  }
 </div>
 
 <!-- Recursive module node template -->
@@ -119,17 +96,32 @@
       fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
     </svg>
-    <!-- Name -->
-    <span
-      (click)="selectModule(node)"
-      class="text-xs font-medium truncate flex-1"
-      [class]="selectedId() === node.id ? 'text-green-700' : node.tokens ? 'text-gray-700' : 'text-gray-500'">
-      {{ node.name }}
-    </span>
+    <!-- Name (double-click to rename) -->
+    @if (renamingModuleId() === node.id) {
+      <input type="text" [(ngModel)]="renameText" autofocus
+        (click)="$event.stopPropagation()"
+        (keydown)="onRenameKeydown($event, 'module', node.id)"
+        (blur)="cancelRename()"
+        class="flex-1 px-1 py-0.5 text-xs bg-white border border-green-300 rounded focus:outline-none focus:border-green-500"/>
+    } @else {
+      <span
+        (click)="selectModule(node)"
+        (dblclick)="startRename('module', node.id, node.name)"
+        class="text-xs font-medium truncate flex-1 select-none"
+        [class]="selectedId() === node.id ? 'text-green-700' : node.tokens ? 'text-gray-700' : 'text-gray-500'"
+        title="Double-click to rename">
+        {{ node.name }}
+      </span>
+    }
     <!-- Hover: add child -->
     <button (click)="$event.stopPropagation(); startCreateNode('module', node.id)"
       class="w-4 h-4 rounded flex items-center justify-center text-gray-300 hover:text-green-600 hover:bg-green-50 opacity-0 group-hover/mod:opacity-100 transition shrink-0" title="Add sub-module or feature">
       <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+    </button>
+    <!-- Hover: delete module -->
+    <button (click)="deleteModule(node, $event)"
+      class="w-4 h-4 rounded flex items-center justify-center text-gray-300 hover:text-red-600 hover:bg-red-50 opacity-0 group-hover/mod:opacity-100 transition shrink-0" title="Delete module">
+      <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M6 18L18 6"/></svg>
     </button>
     @if (moduleRedFlagCount(node) > 0) {
       <span class="text-[9px] px-1.5 py-0.5 bg-red-50 text-red-500 rounded-full font-medium shrink-0" title="Features below 50% confidence">{{ moduleRedFlagCount(node) }}</span>
@@ -143,14 +135,26 @@
     @for (feat of node.features; track feat.id) {
       <div
         (click)="selectFeature(feat)"
-        class="flex items-center gap-1.5 py-1 cursor-pointer transition rounded mx-1"
+        class="flex items-center gap-1.5 py-1 cursor-pointer transition rounded mx-1 group/feat"
         [class]="selectedFeatureId() === feat.id ? 'bg-green-50' : 'hover:bg-gray-50'"
         [style.padding-left]="(node.depth * 12 + 32) + 'px'">
         <svg class="w-3 h-3 shrink-0" [class]="selectedFeatureId() === feat.id ? 'text-green-500' : 'text-gray-300'"
              fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
         </svg>
-        <span class="text-[11px] truncate flex-1" [class]="selectedFeatureId() === feat.id ? 'text-green-700' : 'text-gray-500'">{{ feat.name }}</span>
+        @if (renamingFeatureId() === feat.id) {
+          <input type="text" [(ngModel)]="renameText" autofocus
+            (click)="$event.stopPropagation()"
+            (keydown)="onRenameKeydown($event, 'feature', feat.id)"
+            (blur)="cancelRename()"
+            class="flex-1 px-1 py-0.5 text-[11px] bg-white border border-green-300 rounded focus:outline-none focus:border-green-500"/>
+        } @else {
+          <span
+            (dblclick)="$event.stopPropagation(); startRename('feature', feat.id, feat.name)"
+            class="text-[11px] truncate flex-1 select-none"
+            [class]="selectedFeatureId() === feat.id ? 'text-green-700' : 'text-gray-500'"
+            title="Double-click to rename">{{ feat.name }}</span>
+        }
         <!-- FCS score + 3 dots -->
         @if (feat.confidenceScore) {
           <div class="flex items-center gap-1 shrink-0">
@@ -160,6 +164,10 @@
             <span class="text-[9px] font-medium px-1 py-0.5 rounded" [class]="fcsColor(fcsScore(feat))">{{ fcsScore(feat) }}</span>
           </div>
         }
+        <button (click)="deleteFeature(feat, $event)"
+          class="w-4 h-4 rounded flex items-center justify-center text-gray-300 hover:text-red-600 hover:bg-red-50 opacity-0 group-hover/feat:opacity-100 transition shrink-0" title="Delete feature">
+          <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M6 18L18 6"/></svg>
+        </button>
       </div>
     }
     <!-- Approved versions -->

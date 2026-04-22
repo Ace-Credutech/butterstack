@@ -98,7 +98,8 @@
       (pageClicked)="selectRelatedPage($event)"
       (featureClicked)="onDetailsFeatureClicked($event)"
       (quizRequested)="startQuiz($event.featureId, $event.featureName, $event.currentFcs)"
-      (tabChanged)="onTabChanged($event)"/>
+      (tabChanged)="onTabChanged($event)"
+      (entityRenamed)="onEntityRenamed()"/>
 
     <!-- Right: Conversations only -->
     <app-elicitation-chat

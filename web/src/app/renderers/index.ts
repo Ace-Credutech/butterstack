@@ -3,9 +3,12 @@
 
 import type { UITokens } from '../models/ui-tokens.model'
 import { renderDynamic } from './dynamic.renderer'
-import { renderEmptyState } from './shared.renderer'
 import { DEFAULT_DESIGN, type DesignSystem, type PrototypeContext } from './components.renderer'
 import { prototypeScripts } from './prototype-scripts'
+
+function renderEmptyState(intent?: string): string {
+  return `<div class="min-h-screen bg-gray-50 flex items-center justify-center p-8"><p class="text-sm text-gray-400">${intent || 'Nothing to preview yet.'}</p></div>`
+}
 
 export function renderTokens(tokens: UITokens, ds?: DesignSystem, ctx?: PrototypeContext): string {
   const design = ds || DEFAULT_DESIGN

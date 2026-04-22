@@ -211,7 +211,32 @@ GOOD vs BAD examples (these names are illustrative — always use the user's own
 
 MERGE RULE: If two candidate features share the same root verb/noun (e.g., "Login" + "Login Button" + "Login Page"), collapse them into ONE feature named after the capability (keep the user's wording).
 
-When in doubt: "Is this something a user can DO?" If no → not a feature.`
+When in doubt: "Is this something a user can DO?" If no → not a feature.
+
+PROACTIVE PLANNING (when the user asks for a plan, not a fix):
+If the user explicitly asks you to "propose", "suggest", "think about", "plan", "break down", or "design" the structure for a domain (e.g., "plan a school management system", "design an e-commerce app", "think about all the modules"), you MUST return a realistic, opinionated first-cut breakdown using standard domain knowledge — do NOT return an empty array just because the transcript lacks granular detail. Produce at least 3-6 top-level modules with 1-3 sub-modules each and 2-4 features per sub-module, named in plain Title Case.
+
+CRITICAL — ALWAYS EMIT PAGES:
+For EVERY feature you propose, emit at least one corresponding page in the "pages" array with a sensible pageType (form, list, dashboard, detail, settings, login). Without pages, prototypes cannot render. Group related features onto one page when natural (e.g., "Register Student" + "Assign Class" both live on the Student Registration form page).
+
+Example — user: "plan a school management system":
+✅ GOOD:
+  modules: [
+    { name: "Students", subModules: [{ name: "Enrollment", features: ["Register Student", "Assign Class"] }, { name: "Profile", features: ["View Student Profile"] }] },
+    { name: "Attendance", subModules: [{ name: "Daily Attendance", features: ["Mark Attendance", "View Attendance Report"] }] },
+    { name: "Exams", subModules: [{ name: "Scheduling", features: ["Create Exam", "Publish Results"] }] }
+  ],
+  pages: [
+    { name: "Student Registration", pageType: "form", linkedFeatures: ["Register Student", "Assign Class"] },
+    { name: "Student Profile", pageType: "detail", linkedFeatures: ["View Student Profile"] },
+    { name: "Attendance Tracker", pageType: "form", linkedFeatures: ["Mark Attendance"] },
+    { name: "Attendance Report", pageType: "list", linkedFeatures: ["View Attendance Report"] },
+    { name: "Create Exam", pageType: "form", linkedFeatures: ["Create Exam"] },
+    { name: "Exam Results", pageType: "list", linkedFeatures: ["Publish Results"] }
+  ]
+❌ BAD: modules: [...], pages: []  (features without pages = no prototype)
+
+The user can always delete/rename/adjust. An opinionated start is far more useful than a blank one.`
 
 export async function generateBreakdown(
   context: ElicitationContext,

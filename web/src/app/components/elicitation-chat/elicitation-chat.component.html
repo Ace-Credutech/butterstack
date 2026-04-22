@@ -131,30 +131,57 @@
                     @if (parsed.intro) {
                       <div class="whitespace-pre-wrap mb-2">{{ parsed.intro }}</div>
                     }
-                    <div class="space-y-1.5">
-                      @for (b of parsed.bullets; track $index; let bi = $index) {
-                        <label class="flex items-start gap-2 px-2 py-1.5 bg-white rounded-md cursor-pointer hover:bg-green-50 transition border"
-                          [class]="isBulletSelected(msgIdx, bi) ? 'border-green-500 bg-green-50' : 'border-gray-200'">
-                          <input type="checkbox" class="mt-0.5 w-3.5 h-3.5 rounded border-gray-300 text-green-600 shrink-0"
-                            [checked]="isBulletSelected(msgIdx, bi)"
-                            (change)="toggleBullet(msgIdx, bi)"/>
-                          <span class="text-xs leading-snug" [class]="isBulletSelected(msgIdx, bi) ? 'text-green-800 font-medium' : 'text-gray-700'">{{ b }}</span>
-                        </label>
+                    @if (bulletsAreQuestions(parsed.bullets)) {
+                      <!-- Q & A format: each question gets an inline answer input -->
+                      <div class="space-y-2.5">
+                        @for (b of parsed.bullets; track $index; let bi = $index) {
+                          <div class="bg-white rounded-md border border-gray-200 px-2.5 py-2">
+                            <div class="text-xs text-gray-700 leading-snug mb-1.5 font-medium">{{ b }}</div>
+                            <input type="text"
+                              [value]="getAnswer(msgIdx, bi)"
+                              (input)="setAnswer(msgIdx, bi, $any($event.target).value)"
+                              (keydown.enter)="sendAnswers(msgIdx, parsed.bullets)"
+                              placeholder="Type your answer..."
+                              class="w-full text-xs px-2 py-1.5 border border-gray-200 rounded focus:outline-none focus:border-green-500"/>
+                          </div>
+                        }
+                      </div>
+                      @if (parsed.outro) {
+                        <div class="whitespace-pre-wrap mt-2">{{ parsed.outro }}</div>
                       }
-                    </div>
-                    @if (parsed.outro) {
-                      <div class="whitespace-pre-wrap mt-2">{{ parsed.outro }}</div>
-                    }
-                    <div class="flex items-center gap-2 mt-2 flex-wrap">
-                      @if ((bulletSelected()[msgIdx]?.size ?? 0) > 0) {
-                        <button (click)="includeSelectedBullets(msgIdx, parsed.bullets)" class="px-2.5 py-1 bg-green-600 text-white text-[11px] font-medium rounded-md hover:bg-green-700 transition">
-                          Include {{ bulletSelected()[msgIdx]?.size ?? 0 }} selected
+                      <div class="flex items-center gap-2 mt-2">
+                        <button (click)="sendAnswers(msgIdx, parsed.bullets)"
+                          [disabled]="!hasAnyAnswer(msgIdx)"
+                          class="px-2.5 py-1 bg-green-600 text-white text-[11px] font-medium rounded-md hover:bg-green-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed">
+                          Send answers
                         </button>
+                      </div>
+                    } @else {
+                      <div class="space-y-1.5">
+                        @for (b of parsed.bullets; track $index; let bi = $index) {
+                          <label class="flex items-start gap-2 px-2 py-1.5 bg-white rounded-md cursor-pointer hover:bg-green-50 transition border"
+                            [class]="isBulletSelected(msgIdx, bi) ? 'border-green-500 bg-green-50' : 'border-gray-200'">
+                            <input type="checkbox" class="mt-0.5 w-3.5 h-3.5 rounded border-gray-300 text-green-600 shrink-0"
+                              [checked]="isBulletSelected(msgIdx, bi)"
+                              (change)="toggleBullet(msgIdx, bi)"/>
+                            <span class="text-xs leading-snug" [class]="isBulletSelected(msgIdx, bi) ? 'text-green-800 font-medium' : 'text-gray-700'">{{ b }}</span>
+                          </label>
+                        }
+                      </div>
+                      @if (parsed.outro) {
+                        <div class="whitespace-pre-wrap mt-2">{{ parsed.outro }}</div>
                       }
-                      <button (click)="includeAllBullets(msgIdx, parsed.bullets)" class="px-2.5 py-1 bg-white border border-gray-200 text-gray-600 text-[11px] font-medium rounded-md hover:bg-gray-50 transition">
-                        Include all
-                      </button>
-                    </div>
+                      <div class="flex items-center gap-2 mt-2 flex-wrap">
+                        @if ((bulletSelected()[msgIdx]?.size ?? 0) > 0) {
+                          <button (click)="includeSelectedBullets(msgIdx, parsed.bullets)" class="px-2.5 py-1 bg-green-600 text-white text-[11px] font-medium rounded-md hover:bg-green-700 transition">
+                            Include {{ bulletSelected()[msgIdx]?.size ?? 0 }} selected
+                          </button>
+                        }
+                        <button (click)="includeAllBullets(msgIdx, parsed.bullets)" class="px-2.5 py-1 bg-white border border-gray-200 text-gray-600 text-[11px] font-medium rounded-md hover:bg-gray-50 transition">
+                          Include all
+                        </button>
+                      </div>
+                    }
                   </div>
                 } @else {
                   <div class="bg-gray-100 text-gray-800 px-3.5 py-2 rounded-2xl rounded-bl-sm text-sm leading-relaxed whitespace-pre-wrap">{{ msg.content }}</div>

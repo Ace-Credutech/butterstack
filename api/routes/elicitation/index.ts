@@ -276,6 +276,16 @@ app.post('/sessions/:id/complete', async (c) => {
     }
   }
 
+  // Safety net: if AI produced features but no pages, auto-seed one form page per feature
+  // so prototypes can render. User can delete/rename later.
+  if (breakdown.pages.length === 0 && Object.keys(featureIdMap).length > 0) {
+    breakdown.pages = Object.keys(featureIdMap).map(feat => ({
+      name: feat,
+      pageType: 'form',
+      linkedFeatures: [feat],
+    }))
+  }
+
   for (const page of breakdown.pages) {
     const pageSlug = page.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
     const pageResult = await query(

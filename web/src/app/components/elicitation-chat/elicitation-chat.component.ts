@@ -161,6 +161,43 @@ export class ElicitationChatComponent implements OnInit, AfterViewChecked {
 
   // ── Bullet extraction & selection (for assistant messages that list proposals) ──
   bulletSelected = signal<Record<number, Set<number>>>({})
+  questionAnswers = signal<Record<number, Record<number, string>>>({})
+
+  bulletsAreQuestions(bullets: string[]): boolean {
+    if (!bullets.length) return false
+    const q = bullets.filter(b => /\?\s*$/.test(b.trim())).length
+    return q / bullets.length >= 0.6
+  }
+
+  getAnswer(msgIdx: number, qIdx: number): string {
+    return this.questionAnswers()[msgIdx]?.[qIdx] ?? ''
+  }
+
+  setAnswer(msgIdx: number, qIdx: number, value: string) {
+    const current = { ...this.questionAnswers() }
+    current[msgIdx] = { ...(current[msgIdx] || {}), [qIdx]: value }
+    this.questionAnswers.set(current)
+  }
+
+  hasAnyAnswer(msgIdx: number): boolean {
+    const map = this.questionAnswers()[msgIdx]
+    if (!map) return false
+    return Object.values(map).some(v => v.trim().length > 0)
+  }
+
+  sendAnswers(msgIdx: number, bullets: string[]) {
+    const map = this.questionAnswers()[msgIdx] || {}
+    const parts: string[] = []
+    bullets.forEach((q, i) => {
+      const a = (map[i] || '').trim()
+      if (a) parts.push(`Q: ${q}\nA: ${a}`)
+    })
+    if (!parts.length) return
+    const current = { ...this.questionAnswers() }
+    delete current[msgIdx]
+    this.questionAnswers.set(current)
+    this.send(parts.join('\n\n'))
+  }
 
   parseBullets(content: string): { intro: string; bullets: string[]; outro: string } {
     if (!content) return { intro: '', bullets: [], outro: '' }
@@ -256,7 +293,7 @@ export class ElicitationChatComponent implements OnInit, AfterViewChecked {
       if (updatedNames.length) {
         parts.push(`Updating: ${updatedNames.join(', ')} — docs + prototype regenerating in background (10-20s)`)
       }
-      if (!parts.length) parts.push('Breakdown had nothing new — if you expected changes, try rephrasing more specifically.')
+      if (!parts.length) parts.push("I couldn't propose a structure from that. Try giving it more detail — e.g., the domain (school, healthcare, e-commerce), key user roles, or specific flows you want built.")
       const summary = parts.join(' · ')
 
       // Insert a live-updating status message if a background job is running

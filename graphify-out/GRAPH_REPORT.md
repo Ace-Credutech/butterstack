@@ -1,11 +1,11 @@
 # Graph Report - .  (2026-04-22)
 
 ## Corpus Check
-- 82 files · ~81,672 words
+- 82 files · ~82,175 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 534 nodes · 648 edges · 71 communities detected
+- 539 nodes · 654 edges · 71 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -83,7 +83,7 @@
 - [[_COMMUNITY_Community 70|Community 70]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `ElicitationChatComponent` - 60 edges
+1. `ElicitationChatComponent` - 65 edges
 2. `PrototypePreviewComponent` - 39 edges
 3. `ModulesPanelComponent` - 38 edges
 4. `WorkspaceComponent` - 28 edges
@@ -136,12 +136,12 @@ Cohesion: 0.1
 Nodes (1): WorkspaceComponent
 
 ### Community 5 - "Community 5"
-Cohesion: 0.12
-Nodes (9): ensureLoaded(), learnFromStreamline(), learnFromTokens(), lookup(), schedulFlush(), translatePhrase(), upsertEntry(), callAI() (+1 more)
+Cohesion: 0.13
+Nodes (17): callAI(), extractTokens(), renderCardsGrid(), renderComponent(), renderDataTable(), renderElements(), renderEmptyState(), renderForm() (+9 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.14
-Nodes (13): aiChat(), getClients(), getUserKeys(), buildContextSummary(), formatHistory(), generateBreakdown(), generateDocumentation(), generateNextQuestion() (+5 more)
+Cohesion: 0.13
+Nodes (11): ensureLoaded(), learnFromStreamline(), learnFromTokens(), lookup(), schedulFlush(), translatePhrase(), upsertEntry(), cleanPunctuation() (+3 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.18
@@ -153,15 +153,15 @@ Nodes (2): ModuleStructureInputComponent, uid()
 
 ### Community 9 - "Community 9"
 Cohesion: 0.24
-Nodes (15): renderCardsGrid(), renderComponent(), renderDataTable(), renderElements(), renderEmptyState(), renderForm(), renderHeader(), renderHero() (+7 more)
-
-### Community 10 - "Community 10"
-Cohesion: 0.24
 Nodes (13): inferLayout(), inferSectionRole(), normalizeSection(), renderAuxLinks(), renderBody(), renderDynamic(), renderFormBlock(), renderHeaderBar() (+5 more)
 
-### Community 11 - "Community 11"
+### Community 10 - "Community 10"
 Cohesion: 0.18
 Nodes (1): DesignSettingsComponent
+
+### Community 11 - "Community 11"
+Cohesion: 0.24
+Nodes (9): aiChat(), getClients(), getUserKeys(), buildContextSummary(), formatHistory(), generateBreakdown(), generateDocumentation(), generateNextQuestion() (+1 more)
 
 ### Community 12 - "Community 12"
 Cohesion: 0.24
@@ -483,4 +483,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Community 4` be split into smaller, more focused modules?**
   _Cohesion score 0.1 - nodes in this community are weakly interconnected._
 - **Should `Community 5` be split into smaller, more focused modules?**
-  _Cohesion score 0.12 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.13 - nodes in this community are weakly interconnected._

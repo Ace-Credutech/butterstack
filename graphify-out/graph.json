@@ -347,7 +347,7 @@
       "source_file": "web/src/app/renderers/dynamic.renderer.ts",
       "source_location": "L1",
       "id": "web_src_app_renderers_dynamic_renderer_ts",
-      "community": 10
+      "community": 9
     },
     {
       "label": "renderDynamic()",
@@ -355,7 +355,7 @@
       "source_file": "web/src/app/renderers/dynamic.renderer.ts",
       "source_location": "L12",
       "id": "dynamic_renderer_renderdynamic",
-      "community": 10
+      "community": 9
     },
     {
       "label": "inferLayout()",
@@ -363,7 +363,7 @@
       "source_file": "web/src/app/renderers/dynamic.renderer.ts",
       "source_location": "L26",
       "id": "dynamic_renderer_inferlayout",
-      "community": 10
+      "community": 9
     },
     {
       "label": "renderBody()",
@@ -371,7 +371,7 @@
       "source_file": "web/src/app/renderers/dynamic.renderer.ts",
       "source_location": "L40",
       "id": "dynamic_renderer_renderbody",
-      "community": 10
+      "community": 9
     },
     {
       "label": "normalizeSection()",
@@ -379,7 +379,7 @@
       "source_file": "web/src/app/renderers/dynamic.renderer.ts",
       "source_location": "L93",
       "id": "dynamic_renderer_normalizesection",
-      "community": 10
+      "community": 9
     },
     {
       "label": "inferSectionRole()",
@@ -387,7 +387,7 @@
       "source_file": "web/src/app/renderers/dynamic.renderer.ts",
       "source_location": "L98",
       "id": "dynamic_renderer_infersectionrole",
-      "community": 10
+      "community": 9
     },
     {
       "label": "normalizeTokens()",
@@ -395,7 +395,7 @@
       "source_file": "web/src/app/renderers/dynamic.renderer.ts",
       "source_location": "L111",
       "id": "dynamic_renderer_normalizetokens",
-      "community": 10
+      "community": 9
     },
     {
       "label": "ui()",
@@ -403,7 +403,7 @@
       "source_file": "web/src/app/renderers/dynamic.renderer.ts",
       "source_location": "L131",
       "id": "dynamic_renderer_ui",
-      "community": 10
+      "community": 9
     },
     {
       "label": "renderAuxLinks()",
@@ -411,7 +411,7 @@
       "source_file": "web/src/app/renderers/dynamic.renderer.ts",
       "source_location": "L135",
       "id": "dynamic_renderer_renderauxlinks",
-      "community": 10
+      "community": 9
     },
     {
       "label": "renderHeaderBar()",
@@ -419,7 +419,7 @@
       "source_file": "web/src/app/renderers/dynamic.renderer.ts",
       "source_location": "L159",
       "id": "dynamic_renderer_renderheaderbar",
-      "community": 10
+      "community": 9
     },
     {
       "label": "renderToolbar()",
@@ -427,7 +427,7 @@
       "source_file": "web/src/app/renderers/dynamic.renderer.ts",
       "source_location": "L171",
       "id": "dynamic_renderer_rendertoolbar",
-      "community": 10
+      "community": 9
     },
     {
       "label": "renderFormBlock()",
@@ -435,7 +435,7 @@
       "source_file": "web/src/app/renderers/dynamic.renderer.ts",
       "source_location": "L188",
       "id": "dynamic_renderer_renderformblock",
-      "community": 10
+      "community": 9
     },
     {
       "label": "wrapCentered()",
@@ -443,7 +443,7 @@
       "source_file": "web/src/app/renderers/dynamic.renderer.ts",
       "source_location": "L238",
       "id": "dynamic_renderer_wrapcentered",
-      "community": 10
+      "community": 9
     },
     {
       "label": "wrapSidebar()",
@@ -451,7 +451,7 @@
       "source_file": "web/src/app/renderers/dynamic.renderer.ts",
       "source_location": "L261",
       "id": "dynamic_renderer_wrapsidebar",
-      "community": 10
+      "community": 9
     },
     {
       "label": "wrapFullPage()",
@@ -459,7 +459,7 @@
       "source_file": "web/src/app/renderers/dynamic.renderer.ts",
       "source_location": "L290",
       "id": "dynamic_renderer_wrapfullpage",
-      "community": 10
+      "community": 9
     },
     {
       "label": "index.ts",
@@ -683,7 +683,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L1",
       "id": "web_src_app_components_design_settings_design_settings_component_ts",
-      "community": 11
+      "community": 10
     },
     {
       "label": "DesignSettingsComponent",
@@ -691,7 +691,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L29",
       "id": "design_settings_component_designsettingscomponent",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".constructor()",
@@ -699,7 +699,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L69",
       "id": "design_settings_component_designsettingscomponent_constructor",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".ngOnInit()",
@@ -707,7 +707,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L71",
       "id": "design_settings_component_designsettingscomponent_ngoninit",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".toggle()",
@@ -715,7 +715,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L73",
       "id": "design_settings_component_designsettingscomponent_toggle",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".load()",
@@ -723,7 +723,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L78",
       "id": "design_settings_component_designsettingscomponent_load",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".selectPreset()",
@@ -731,7 +731,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L86",
       "id": "design_settings_component_designsettingscomponent_selectpreset",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".setRadius()",
@@ -739,7 +739,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L90",
       "id": "design_settings_component_designsettingscomponent_setradius",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".setFont()",
@@ -747,7 +747,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L91",
       "id": "design_settings_component_designsettingscomponent_setfont",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".isActivePreset()",
@@ -755,7 +755,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L93",
       "id": "design_settings_component_designsettingscomponent_isactivepreset",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".save()",
@@ -763,7 +763,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L95",
       "id": "design_settings_component_designsettingscomponent_save",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".presetBgClass()",
@@ -771,7 +771,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L103",
       "id": "design_settings_component_designsettingscomponent_presetbgclass",
-      "community": 11
+      "community": 10
     },
     {
       "label": ".onEsc()",
@@ -779,7 +779,7 @@
       "source_file": "web/src/app/components/design-settings/design-settings.component.ts",
       "source_location": "L106",
       "id": "design_settings_component_designsettingscomponent_onesc",
-      "community": 11
+      "community": 10
     },
     {
       "label": "quiz-modal.component.ts",
@@ -1318,10 +1318,50 @@
       "community": 0
     },
     {
+      "label": ".bulletsAreQuestions()",
+      "file_type": "code",
+      "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
+      "source_location": "L166",
+      "id": "elicitation_chat_component_elicitationchatcomponent_bulletsarequestions",
+      "community": 0
+    },
+    {
+      "label": ".getAnswer()",
+      "file_type": "code",
+      "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
+      "source_location": "L172",
+      "id": "elicitation_chat_component_elicitationchatcomponent_getanswer",
+      "community": 0
+    },
+    {
+      "label": ".setAnswer()",
+      "file_type": "code",
+      "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
+      "source_location": "L176",
+      "id": "elicitation_chat_component_elicitationchatcomponent_setanswer",
+      "community": 0
+    },
+    {
+      "label": ".hasAnyAnswer()",
+      "file_type": "code",
+      "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
+      "source_location": "L182",
+      "id": "elicitation_chat_component_elicitationchatcomponent_hasanyanswer",
+      "community": 0
+    },
+    {
+      "label": ".sendAnswers()",
+      "file_type": "code",
+      "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
+      "source_location": "L188",
+      "id": "elicitation_chat_component_elicitationchatcomponent_sendanswers",
+      "community": 0
+    },
+    {
       "label": ".parseBullets()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L165",
+      "source_location": "L202",
       "id": "elicitation_chat_component_elicitationchatcomponent_parsebullets",
       "community": 0
     },
@@ -1329,7 +1369,7 @@
       "label": ".isBulletSelected()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L193",
+      "source_location": "L230",
       "id": "elicitation_chat_component_elicitationchatcomponent_isbulletselected",
       "community": 0
     },
@@ -1337,7 +1377,7 @@
       "label": ".toggleBullet()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L197",
+      "source_location": "L234",
       "id": "elicitation_chat_component_elicitationchatcomponent_togglebullet",
       "community": 0
     },
@@ -1345,7 +1385,7 @@
       "label": ".includeSelectedBullets()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L205",
+      "source_location": "L242",
       "id": "elicitation_chat_component_elicitationchatcomponent_includeselectedbullets",
       "community": 0
     },
@@ -1353,7 +1393,7 @@
       "label": ".includeAllBullets()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L215",
+      "source_location": "L252",
       "id": "elicitation_chat_component_elicitationchatcomponent_includeallbullets",
       "community": 0
     },
@@ -1361,7 +1401,7 @@
       "label": ".toggleMultiOption()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L228",
+      "source_location": "L265",
       "id": "elicitation_chat_component_elicitationchatcomponent_togglemultioption",
       "community": 0
     },
@@ -1369,7 +1409,7 @@
       "label": ".submitMulti()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L232",
+      "source_location": "L269",
       "id": "elicitation_chat_component_elicitationchatcomponent_submitmulti",
       "community": 0
     },
@@ -1377,7 +1417,7 @@
       "label": ".confirmBreakdown()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L239",
+      "source_location": "L276",
       "id": "elicitation_chat_component_elicitationchatcomponent_confirmbreakdown",
       "community": 0
     },
@@ -1385,7 +1425,7 @@
       "label": ".pollJob()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L281",
+      "source_location": "L318",
       "id": "elicitation_chat_component_elicitationchatcomponent_polljob",
       "community": 0
     },
@@ -1393,7 +1433,7 @@
       "label": ".adjustBreakdown()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L308",
+      "source_location": "L345",
       "id": "elicitation_chat_component_elicitationchatcomponent_adjustbreakdown",
       "community": 0
     },
@@ -1401,7 +1441,7 @@
       "label": ".cancelAdjust()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L309",
+      "source_location": "L346",
       "id": "elicitation_chat_component_elicitationchatcomponent_canceladjust",
       "community": 0
     },
@@ -1409,7 +1449,7 @@
       "label": ".renameModule()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L311",
+      "source_location": "L348",
       "id": "elicitation_chat_component_elicitationchatcomponent_renamemodule",
       "community": 0
     },
@@ -1417,7 +1457,7 @@
       "label": ".renameSub()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L319",
+      "source_location": "L356",
       "id": "elicitation_chat_component_elicitationchatcomponent_renamesub",
       "community": 0
     },
@@ -1425,7 +1465,7 @@
       "label": ".renameFeature()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L327",
+      "source_location": "L364",
       "id": "elicitation_chat_component_elicitationchatcomponent_renamefeature",
       "community": 0
     },
@@ -1433,7 +1473,7 @@
       "label": ".removeFeature()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L335",
+      "source_location": "L372",
       "id": "elicitation_chat_component_elicitationchatcomponent_removefeature",
       "community": 0
     },
@@ -1441,7 +1481,7 @@
       "label": ".addFeature()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L343",
+      "source_location": "L380",
       "id": "elicitation_chat_component_elicitationchatcomponent_addfeature",
       "community": 0
     },
@@ -1449,7 +1489,7 @@
       "label": ".removeSub()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L353",
+      "source_location": "L390",
       "id": "elicitation_chat_component_elicitationchatcomponent_removesub",
       "community": 0
     },
@@ -1457,7 +1497,7 @@
       "label": ".removeModule()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L361",
+      "source_location": "L398",
       "id": "elicitation_chat_component_elicitationchatcomponent_removemodule",
       "community": 0
     },
@@ -1465,7 +1505,7 @@
       "label": ".saveBreakdown()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L370",
+      "source_location": "L407",
       "id": "elicitation_chat_component_elicitationchatcomponent_savebreakdown",
       "community": 0
     },
@@ -1473,7 +1513,7 @@
       "label": ".isLastBreakdown()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L381",
+      "source_location": "L418",
       "id": "elicitation_chat_component_elicitationchatcomponent_islastbreakdown",
       "community": 0
     },
@@ -1481,7 +1521,7 @@
       "label": ".onKeyDown()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L389",
+      "source_location": "L426",
       "id": "elicitation_chat_component_elicitationchatcomponent_onkeydown",
       "community": 0
     },
@@ -1489,7 +1529,7 @@
       "label": ".onPaste()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L393",
+      "source_location": "L430",
       "id": "elicitation_chat_component_elicitationchatcomponent_onpaste",
       "community": 0
     },
@@ -1497,7 +1537,7 @@
       "label": ".onDragOver()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L406",
+      "source_location": "L443",
       "id": "elicitation_chat_component_elicitationchatcomponent_ondragover",
       "community": 0
     },
@@ -1505,7 +1545,7 @@
       "label": ".onDragLeave()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L407",
+      "source_location": "L444",
       "id": "elicitation_chat_component_elicitationchatcomponent_ondragleave",
       "community": 0
     },
@@ -1513,7 +1553,7 @@
       "label": ".onDrop()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L409",
+      "source_location": "L446",
       "id": "elicitation_chat_component_elicitationchatcomponent_ondrop",
       "community": 0
     },
@@ -1521,7 +1561,7 @@
       "label": ".addImage()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L419",
+      "source_location": "L456",
       "id": "elicitation_chat_component_elicitationchatcomponent_addimage",
       "community": 0
     },
@@ -1529,7 +1569,7 @@
       "label": ".removeImage()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L428",
+      "source_location": "L465",
       "id": "elicitation_chat_component_elicitationchatcomponent_removeimage",
       "community": 0
     },
@@ -1537,7 +1577,7 @@
       "label": ".showDoc()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L434",
+      "source_location": "L471",
       "id": "elicitation_chat_component_elicitationchatcomponent_showdoc",
       "community": 0
     },
@@ -1545,7 +1585,7 @@
       "label": ".loadFeedback()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L445",
+      "source_location": "L482",
       "id": "elicitation_chat_component_elicitationchatcomponent_loadfeedback",
       "community": 0
     },
@@ -1553,7 +1593,7 @@
       "label": ".hasVagueLanguage()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L455",
+      "source_location": "L492",
       "id": "elicitation_chat_component_elicitationchatcomponent_hasvaguelanguage",
       "community": 0
     },
@@ -1561,7 +1601,7 @@
       "label": ".updatePmStatus()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L462",
+      "source_location": "L499",
       "id": "elicitation_chat_component_elicitationchatcomponent_updatepmstatus",
       "community": 0
     },
@@ -1569,7 +1609,7 @@
       "label": ".pmStatusLabel()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L470",
+      "source_location": "L507",
       "id": "elicitation_chat_component_elicitationchatcomponent_pmstatuslabel",
       "community": 0
     },
@@ -1577,7 +1617,7 @@
       "label": ".pmStatusColor()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L474",
+      "source_location": "L511",
       "id": "elicitation_chat_component_elicitationchatcomponent_pmstatuscolor",
       "community": 0
     },
@@ -1585,7 +1625,7 @@
       "label": ".submitFeedback()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L478",
+      "source_location": "L515",
       "id": "elicitation_chat_component_elicitationchatcomponent_submitfeedback",
       "community": 0
     },
@@ -1593,7 +1633,7 @@
       "label": ".loadComments()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L485",
+      "source_location": "L522",
       "id": "elicitation_chat_component_elicitationchatcomponent_loadcomments",
       "community": 0
     },
@@ -1601,7 +1641,7 @@
       "label": ".addComment()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L493",
+      "source_location": "L530",
       "id": "elicitation_chat_component_elicitationchatcomponent_addcomment",
       "community": 0
     },
@@ -1609,7 +1649,7 @@
       "label": ".resolveComment()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L503",
+      "source_location": "L540",
       "id": "elicitation_chat_component_elicitationchatcomponent_resolvecomment",
       "community": 0
     },
@@ -1617,7 +1657,7 @@
       "label": ".deleteComment()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L508",
+      "source_location": "L545",
       "id": "elicitation_chat_component_elicitationchatcomponent_deletecomment",
       "community": 0
     },
@@ -1625,7 +1665,7 @@
       "label": ".commentTimeAgo()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L513",
+      "source_location": "L550",
       "id": "elicitation_chat_component_elicitationchatcomponent_commenttimeago",
       "community": 0
     },
@@ -1633,7 +1673,7 @@
       "label": ".getConfidenceValue()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L523",
+      "source_location": "L560",
       "id": "elicitation_chat_component_elicitationchatcomponent_getconfidencevalue",
       "community": 0
     },
@@ -1641,7 +1681,7 @@
       "label": ".confidenceColor()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L528",
+      "source_location": "L565",
       "id": "elicitation_chat_component_elicitationchatcomponent_confidencecolor",
       "community": 0
     },
@@ -1649,7 +1689,7 @@
       "label": ".confidencePercent()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L534",
+      "source_location": "L571",
       "id": "elicitation_chat_component_elicitationchatcomponent_confidencepercent",
       "community": 0
     },
@@ -1657,7 +1697,7 @@
       "label": ".startEditDoc()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L538",
+      "source_location": "L575",
       "id": "elicitation_chat_component_elicitationchatcomponent_starteditdoc",
       "community": 0
     },
@@ -1665,7 +1705,7 @@
       "label": ".cancelEditDoc()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L546",
+      "source_location": "L583",
       "id": "elicitation_chat_component_elicitationchatcomponent_canceleditdoc",
       "community": 0
     },
@@ -1673,7 +1713,7 @@
       "label": ".saveDoc()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L548",
+      "source_location": "L585",
       "id": "elicitation_chat_component_elicitationchatcomponent_savedoc",
       "community": 0
     },
@@ -1681,7 +1721,7 @@
       "label": ".onDocFieldBlur()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L564",
+      "source_location": "L601",
       "id": "elicitation_chat_component_elicitationchatcomponent_ondocfieldblur",
       "community": 0
     },
@@ -1689,7 +1729,7 @@
       "label": ".backFromDoc()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L569",
+      "source_location": "L606",
       "id": "elicitation_chat_component_elicitationchatcomponent_backfromdoc",
       "community": 0
     },
@@ -1697,7 +1737,7 @@
       "label": ".parseDocSections()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L574",
+      "source_location": "L611",
       "id": "elicitation_chat_component_elicitationchatcomponent_parsedocsections",
       "community": 0
     },
@@ -1705,7 +1745,7 @@
       "label": ".sessionInitials()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L591",
+      "source_location": "L628",
       "id": "elicitation_chat_component_elicitationchatcomponent_sessioninitials",
       "community": 0
     },
@@ -1713,7 +1753,7 @@
       "label": ".sessionTimeAgo()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L595",
+      "source_location": "L632",
       "id": "elicitation_chat_component_elicitationchatcomponent_sessiontimeago",
       "community": 0
     },
@@ -1721,7 +1761,7 @@
       "label": ".ngAfterViewChecked()",
       "file_type": "code",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L605",
+      "source_location": "L642",
       "id": "elicitation_chat_component_elicitationchatcomponent_ngafterviewchecked",
       "community": 0
     },
@@ -3187,7 +3227,7 @@
       "source_file": "api/lib/ai-client.ts",
       "source_location": "L1",
       "id": "api_lib_ai_client_ts",
-      "community": 6
+      "community": 11
     },
     {
       "label": "getUserKeys()",
@@ -3195,7 +3235,7 @@
       "source_file": "api/lib/ai-client.ts",
       "source_location": "L41",
       "id": "ai_client_getuserkeys",
-      "community": 6
+      "community": 11
     },
     {
       "label": "getClients()",
@@ -3203,7 +3243,7 @@
       "source_file": "api/lib/ai-client.ts",
       "source_location": "L51",
       "id": "ai_client_getclients",
-      "community": 6
+      "community": 11
     },
     {
       "label": "aiChat()",
@@ -3211,7 +3251,7 @@
       "source_file": "api/lib/ai-client.ts",
       "source_location": "L73",
       "id": "ai_client_aichat",
-      "community": 6
+      "community": 11
     },
     {
       "label": "excel-generator.ts",
@@ -3259,7 +3299,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L1",
       "id": "api_lib_dictionary_ts",
-      "community": 5
+      "community": 6
     },
     {
       "label": "ensureLoaded()",
@@ -3267,7 +3307,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L26",
       "id": "dictionary_ensureloaded",
-      "community": 5
+      "community": 6
     },
     {
       "label": "lookup()",
@@ -3275,7 +3315,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L42",
       "id": "dictionary_lookup",
-      "community": 5
+      "community": 6
     },
     {
       "label": "translatePhrase()",
@@ -3283,7 +3323,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L49",
       "id": "dictionary_translatephrase",
-      "community": 5
+      "community": 6
     },
     {
       "label": "learnFromStreamline()",
@@ -3291,7 +3331,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L71",
       "id": "dictionary_learnfromstreamline",
-      "community": 5
+      "community": 6
     },
     {
       "label": "learnFromTokens()",
@@ -3299,7 +3339,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L91",
       "id": "dictionary_learnfromtokens",
-      "community": 5
+      "community": 6
     },
     {
       "label": "upsertEntry()",
@@ -3307,7 +3347,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L117",
       "id": "dictionary_upsertentry",
-      "community": 5
+      "community": 6
     },
     {
       "label": "schedulFlush()",
@@ -3315,7 +3355,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L136",
       "id": "dictionary_schedulflush",
-      "community": 5
+      "community": 6
     },
     {
       "label": "flushToDB()",
@@ -3323,7 +3363,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L141",
       "id": "dictionary_flushtodb",
-      "community": 5
+      "community": 6
     },
     {
       "label": "dictionaryStats()",
@@ -3331,7 +3371,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L164",
       "id": "dictionary_dictionarystats",
-      "community": 5
+      "community": 6
     },
     {
       "label": "mindmap-generator.ts",
@@ -3419,7 +3459,7 @@
       "source_file": "api/lib/elicitation.ts",
       "source_location": "L1",
       "id": "api_lib_elicitation_ts",
-      "community": 6
+      "community": 11
     },
     {
       "label": "generateNextQuestion()",
@@ -3427,7 +3467,7 @@
       "source_file": "api/lib/elicitation.ts",
       "source_location": "L105",
       "id": "elicitation_generatenextquestion",
-      "community": 6
+      "community": 11
     },
     {
       "label": "shouldPropose()",
@@ -3435,55 +3475,55 @@
       "source_file": "api/lib/elicitation.ts",
       "source_location": "L134",
       "id": "elicitation_shouldpropose",
-      "community": 6
+      "community": 11
     },
     {
       "label": "generateBreakdown()",
       "file_type": "code",
       "source_file": "api/lib/elicitation.ts",
-      "source_location": "L216",
+      "source_location": "L241",
       "id": "elicitation_generatebreakdown",
-      "community": 6
+      "community": 11
     },
     {
       "label": "sanitizeBreakdown()",
       "file_type": "code",
       "source_file": "api/lib/elicitation.ts",
-      "source_location": "L252",
+      "source_location": "L277",
       "id": "elicitation_sanitizebreakdown",
-      "community": 6
+      "community": 11
     },
     {
       "label": "updateContext()",
       "file_type": "code",
       "source_file": "api/lib/elicitation.ts",
-      "source_location": "L299",
+      "source_location": "L324",
       "id": "elicitation_updatecontext",
-      "community": 6
+      "community": 11
     },
     {
       "label": "generateDocumentation()",
       "file_type": "code",
       "source_file": "api/lib/elicitation.ts",
-      "source_location": "L404",
+      "source_location": "L429",
       "id": "elicitation_generatedocumentation",
-      "community": 6
+      "community": 11
     },
     {
       "label": "buildContextSummary()",
       "file_type": "code",
       "source_file": "api/lib/elicitation.ts",
-      "source_location": "L437",
+      "source_location": "L462",
       "id": "elicitation_buildcontextsummary",
-      "community": 6
+      "community": 11
     },
     {
       "label": "formatHistory()",
       "file_type": "code",
       "source_file": "api/lib/elicitation.ts",
-      "source_location": "L455",
+      "source_location": "L480",
       "id": "elicitation_formathistory",
-      "community": 6
+      "community": 11
     },
     {
       "label": "brd-generator.ts",
@@ -3587,7 +3627,7 @@
       "source_file": "api/lib/hash.ts",
       "source_location": "L1",
       "id": "api_lib_hash_ts",
-      "community": 5
+      "community": 6
     },
     {
       "label": "sha256()",
@@ -3595,7 +3635,7 @@
       "source_file": "api/lib/hash.ts",
       "source_location": "L1",
       "id": "hash_sha256",
-      "community": 5
+      "community": 6
     },
     {
       "label": "logger.ts",
@@ -3635,7 +3675,7 @@
       "source_file": "api/lib/batch.ts",
       "source_location": "L1",
       "id": "api_lib_batch_ts",
-      "community": 5
+      "community": 6
     },
     {
       "label": "queueTokenExtraction()",
@@ -3643,7 +3683,7 @@
       "source_file": "api/lib/batch.ts",
       "source_location": "L22",
       "id": "batch_queuetokenextraction",
-      "community": 5
+      "community": 6
     },
     {
       "label": "flush()",
@@ -3651,7 +3691,7 @@
       "source_file": "api/lib/batch.ts",
       "source_location": "L30",
       "id": "batch_flush",
-      "community": 5
+      "community": 6
     },
     {
       "label": "renderer.ts",
@@ -3659,7 +3699,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L1",
       "id": "api_lib_renderer_ts",
-      "community": 9
+      "community": 5
     },
     {
       "label": "renderSidebar()",
@@ -3667,7 +3707,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L32",
       "id": "renderer_rendersidebar",
-      "community": 9
+      "community": 5
     },
     {
       "label": "renderHeader()",
@@ -3675,7 +3715,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L46",
       "id": "renderer_renderheader",
-      "community": 9
+      "community": 5
     },
     {
       "label": "renderPageTitle()",
@@ -3683,7 +3723,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L62",
       "id": "renderer_renderpagetitle",
-      "community": 9
+      "community": 5
     },
     {
       "label": "renderStatsGrid()",
@@ -3691,7 +3731,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L70",
       "id": "renderer_renderstatsgrid",
-      "community": 9
+      "community": 5
     },
     {
       "label": "renderDataTable()",
@@ -3699,7 +3739,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L81",
       "id": "renderer_renderdatatable",
-      "community": 9
+      "community": 5
     },
     {
       "label": "renderForm()",
@@ -3707,7 +3747,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L104",
       "id": "renderer_renderform",
-      "community": 9
+      "community": 5
     },
     {
       "label": "renderCardsGrid()",
@@ -3715,7 +3755,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L143",
       "id": "renderer_rendercardsgrid",
-      "community": 9
+      "community": 5
     },
     {
       "label": "renderLogin()",
@@ -3723,7 +3763,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L156",
       "id": "renderer_renderlogin",
-      "community": 9
+      "community": 5
     },
     {
       "label": "renderHero()",
@@ -3731,7 +3771,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L189",
       "id": "renderer_renderhero",
-      "community": 9
+      "community": 5
     },
     {
       "label": "renderTabs()",
@@ -3739,7 +3779,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L198",
       "id": "renderer_rendertabs",
-      "community": 9
+      "community": 5
     },
     {
       "label": "renderEmptyState()",
@@ -3747,7 +3787,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L207",
       "id": "renderer_renderemptystate",
-      "community": 9
+      "community": 5
     },
     {
       "label": "renderComponent()",
@@ -3755,7 +3795,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L222",
       "id": "renderer_rendercomponent",
-      "community": 9
+      "community": 5
     },
     {
       "label": "tokensToComponents()",
@@ -3763,7 +3803,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L244",
       "id": "renderer_tokenstocomponents",
-      "community": 9
+      "community": 5
     },
     {
       "label": "renderTokens()",
@@ -3771,7 +3811,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L276",
       "id": "renderer_rendertokens",
-      "community": 9
+      "community": 5
     },
     {
       "label": "renderElements()",
@@ -3779,7 +3819,7 @@
       "source_file": "api/lib/renderer.ts",
       "source_location": "L283",
       "id": "renderer_renderelements",
-      "community": 9
+      "community": 5
     },
     {
       "label": "fuzzy.ts",
@@ -3857,7 +3897,7 @@
       "label": "setStep()",
       "file_type": "code",
       "source_file": "api/routes/elicitation/index.ts",
-      "source_location": "L308",
+      "source_location": "L318",
       "id": "index_setstep",
       "community": 16
     },
@@ -3985,7 +4025,7 @@
       "label": "bgWork()",
       "file_type": "code",
       "source_file": "api/routes/elicitation/index.ts",
-      "source_location": "L312",
+      "source_location": "L322",
       "id": "index_bgwork",
       "community": 16
     },
@@ -6603,7 +6643,67 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L165",
+      "source_location": "L166",
+      "weight": 1.0,
+      "_src": "elicitation_chat_component_elicitationchatcomponent",
+      "_tgt": "elicitation_chat_component_elicitationchatcomponent_bulletsarequestions",
+      "source": "elicitation_chat_component_elicitationchatcomponent",
+      "target": "elicitation_chat_component_elicitationchatcomponent_bulletsarequestions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
+      "source_location": "L172",
+      "weight": 1.0,
+      "_src": "elicitation_chat_component_elicitationchatcomponent",
+      "_tgt": "elicitation_chat_component_elicitationchatcomponent_getanswer",
+      "source": "elicitation_chat_component_elicitationchatcomponent",
+      "target": "elicitation_chat_component_elicitationchatcomponent_getanswer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
+      "source_location": "L176",
+      "weight": 1.0,
+      "_src": "elicitation_chat_component_elicitationchatcomponent",
+      "_tgt": "elicitation_chat_component_elicitationchatcomponent_setanswer",
+      "source": "elicitation_chat_component_elicitationchatcomponent",
+      "target": "elicitation_chat_component_elicitationchatcomponent_setanswer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
+      "source_location": "L182",
+      "weight": 1.0,
+      "_src": "elicitation_chat_component_elicitationchatcomponent",
+      "_tgt": "elicitation_chat_component_elicitationchatcomponent_hasanyanswer",
+      "source": "elicitation_chat_component_elicitationchatcomponent",
+      "target": "elicitation_chat_component_elicitationchatcomponent_hasanyanswer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
+      "source_location": "L188",
+      "weight": 1.0,
+      "_src": "elicitation_chat_component_elicitationchatcomponent",
+      "_tgt": "elicitation_chat_component_elicitationchatcomponent_sendanswers",
+      "source": "elicitation_chat_component_elicitationchatcomponent",
+      "target": "elicitation_chat_component_elicitationchatcomponent_sendanswers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
+      "source_location": "L202",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_parsebullets",
@@ -6615,7 +6715,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L193",
+      "source_location": "L230",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_isbulletselected",
@@ -6627,7 +6727,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L197",
+      "source_location": "L234",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_togglebullet",
@@ -6639,7 +6739,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L205",
+      "source_location": "L242",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_includeselectedbullets",
@@ -6651,7 +6751,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L215",
+      "source_location": "L252",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_includeallbullets",
@@ -6663,7 +6763,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L228",
+      "source_location": "L265",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_togglemultioption",
@@ -6675,7 +6775,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L232",
+      "source_location": "L269",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_submitmulti",
@@ -6687,7 +6787,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L239",
+      "source_location": "L276",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_confirmbreakdown",
@@ -6699,7 +6799,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L281",
+      "source_location": "L318",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_polljob",
@@ -6711,7 +6811,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L308",
+      "source_location": "L345",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_adjustbreakdown",
@@ -6723,7 +6823,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L309",
+      "source_location": "L346",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_canceladjust",
@@ -6735,7 +6835,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L311",
+      "source_location": "L348",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_renamemodule",
@@ -6747,7 +6847,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L319",
+      "source_location": "L356",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_renamesub",
@@ -6759,7 +6859,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L327",
+      "source_location": "L364",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_renamefeature",
@@ -6771,7 +6871,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L335",
+      "source_location": "L372",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_removefeature",
@@ -6783,7 +6883,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L343",
+      "source_location": "L380",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_addfeature",
@@ -6795,7 +6895,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L353",
+      "source_location": "L390",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_removesub",
@@ -6807,7 +6907,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L361",
+      "source_location": "L398",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_removemodule",
@@ -6819,7 +6919,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L370",
+      "source_location": "L407",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_savebreakdown",
@@ -6831,7 +6931,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L381",
+      "source_location": "L418",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_islastbreakdown",
@@ -6843,7 +6943,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L389",
+      "source_location": "L426",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_onkeydown",
@@ -6855,7 +6955,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L393",
+      "source_location": "L430",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_onpaste",
@@ -6867,7 +6967,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L406",
+      "source_location": "L443",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_ondragover",
@@ -6879,7 +6979,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L407",
+      "source_location": "L444",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_ondragleave",
@@ -6891,7 +6991,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L409",
+      "source_location": "L446",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_ondrop",
@@ -6903,7 +7003,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L419",
+      "source_location": "L456",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_addimage",
@@ -6915,7 +7015,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L428",
+      "source_location": "L465",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_removeimage",
@@ -6927,7 +7027,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L434",
+      "source_location": "L471",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_showdoc",
@@ -6939,7 +7039,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L445",
+      "source_location": "L482",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_loadfeedback",
@@ -6951,7 +7051,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L455",
+      "source_location": "L492",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_hasvaguelanguage",
@@ -6963,7 +7063,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L462",
+      "source_location": "L499",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_updatepmstatus",
@@ -6975,7 +7075,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L470",
+      "source_location": "L507",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_pmstatuslabel",
@@ -6987,7 +7087,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L474",
+      "source_location": "L511",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_pmstatuscolor",
@@ -6999,7 +7099,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L478",
+      "source_location": "L515",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_submitfeedback",
@@ -7011,7 +7111,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L485",
+      "source_location": "L522",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_loadcomments",
@@ -7023,7 +7123,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L493",
+      "source_location": "L530",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_addcomment",
@@ -7035,7 +7135,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L503",
+      "source_location": "L540",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_resolvecomment",
@@ -7047,7 +7147,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L508",
+      "source_location": "L545",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_deletecomment",
@@ -7059,7 +7159,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L513",
+      "source_location": "L550",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_commenttimeago",
@@ -7071,7 +7171,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L523",
+      "source_location": "L560",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_getconfidencevalue",
@@ -7083,7 +7183,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L528",
+      "source_location": "L565",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_confidencecolor",
@@ -7095,7 +7195,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L534",
+      "source_location": "L571",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_confidencepercent",
@@ -7107,7 +7207,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L538",
+      "source_location": "L575",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_starteditdoc",
@@ -7119,7 +7219,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L546",
+      "source_location": "L583",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_canceleditdoc",
@@ -7131,7 +7231,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L548",
+      "source_location": "L585",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_savedoc",
@@ -7143,7 +7243,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L564",
+      "source_location": "L601",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_ondocfieldblur",
@@ -7155,7 +7255,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L569",
+      "source_location": "L606",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_backfromdoc",
@@ -7167,7 +7267,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L574",
+      "source_location": "L611",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_parsedocsections",
@@ -7179,7 +7279,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L591",
+      "source_location": "L628",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_sessioninitials",
@@ -7191,7 +7291,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L595",
+      "source_location": "L632",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_sessiontimeago",
@@ -7203,7 +7303,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L605",
+      "source_location": "L642",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_ngafterviewchecked",
@@ -7251,7 +7351,19 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L212",
+      "source_location": "L199",
+      "weight": 1.0,
+      "_src": "elicitation_chat_component_elicitationchatcomponent_sendanswers",
+      "_tgt": "elicitation_chat_component_elicitationchatcomponent_send",
+      "source": "elicitation_chat_component_elicitationchatcomponent_send",
+      "target": "elicitation_chat_component_elicitationchatcomponent_sendanswers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
+      "source_location": "L249",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent_includeselectedbullets",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_send",
@@ -7263,7 +7375,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L236",
+      "source_location": "L273",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent_submitmulti",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_send",
@@ -7275,7 +7387,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L390",
+      "source_location": "L427",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent_onkeydown",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_send",
@@ -7287,7 +7399,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L270",
+      "source_location": "L307",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent_confirmbreakdown",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_polljob",
@@ -7299,7 +7411,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L400",
+      "source_location": "L437",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent_onpaste",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_addimage",
@@ -7311,7 +7423,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L415",
+      "source_location": "L452",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent_ondrop",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_addimage",
@@ -7323,7 +7435,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L441",
+      "source_location": "L478",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent_showdoc",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_loadcomments",
@@ -7335,7 +7447,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L442",
+      "source_location": "L479",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent_showdoc",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_loadfeedback",
@@ -7347,7 +7459,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L499",
+      "source_location": "L536",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent_addcomment",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_loadcomments",
@@ -7359,7 +7471,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L505",
+      "source_location": "L542",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent_resolvecomment",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_loadcomments",
@@ -7371,7 +7483,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "web/src/app/components/elicitation-chat/elicitation-chat.component.ts",
-      "source_location": "L510",
+      "source_location": "L547",
       "weight": 1.0,
       "_src": "elicitation_chat_component_elicitationchatcomponent_deletecomment",
       "_tgt": "elicitation_chat_component_elicitationchatcomponent_loadcomments",
@@ -10887,7 +10999,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/lib/elicitation.ts",
-      "source_location": "L216",
+      "source_location": "L241",
       "weight": 1.0,
       "_src": "api_lib_elicitation_ts",
       "_tgt": "elicitation_generatebreakdown",
@@ -10899,7 +11011,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/lib/elicitation.ts",
-      "source_location": "L252",
+      "source_location": "L277",
       "weight": 1.0,
       "_src": "api_lib_elicitation_ts",
       "_tgt": "elicitation_sanitizebreakdown",
@@ -10911,7 +11023,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/lib/elicitation.ts",
-      "source_location": "L299",
+      "source_location": "L324",
       "weight": 1.0,
       "_src": "api_lib_elicitation_ts",
       "_tgt": "elicitation_updatecontext",
@@ -10923,7 +11035,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/lib/elicitation.ts",
-      "source_location": "L404",
+      "source_location": "L429",
       "weight": 1.0,
       "_src": "api_lib_elicitation_ts",
       "_tgt": "elicitation_generatedocumentation",
@@ -10935,7 +11047,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/lib/elicitation.ts",
-      "source_location": "L437",
+      "source_location": "L462",
       "weight": 1.0,
       "_src": "api_lib_elicitation_ts",
       "_tgt": "elicitation_buildcontextsummary",
@@ -10947,7 +11059,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/lib/elicitation.ts",
-      "source_location": "L455",
+      "source_location": "L480",
       "weight": 1.0,
       "_src": "api_lib_elicitation_ts",
       "_tgt": "elicitation_formathistory",
@@ -10983,7 +11095,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "api/lib/elicitation.ts",
-      "source_location": "L223",
+      "source_location": "L248",
       "weight": 1.0,
       "_src": "elicitation_generatebreakdown",
       "_tgt": "elicitation_buildcontextsummary",
@@ -10995,7 +11107,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "api/lib/elicitation.ts",
-      "source_location": "L244",
+      "source_location": "L269",
       "weight": 1.0,
       "_src": "elicitation_generatebreakdown",
       "_tgt": "elicitation_sanitizebreakdown",
@@ -11007,7 +11119,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "api/lib/elicitation.ts",
-      "source_location": "L415",
+      "source_location": "L440",
       "weight": 1.0,
       "_src": "elicitation_generatedocumentation",
       "_tgt": "elicitation_buildcontextsummary",
@@ -11811,7 +11923,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/routes/elicitation/index.ts",
-      "source_location": "L308",
+      "source_location": "L318",
       "weight": 1.0,
       "_src": "api_routes_elicitation_index_ts",
       "_tgt": "index_setstep",
@@ -11823,7 +11935,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "api/routes/elicitation/index.ts",
-      "source_location": "L347",
+      "source_location": "L357",
       "weight": 1.0,
       "_src": "index_bgwork",
       "_tgt": "index_setstep",
@@ -11979,7 +12091,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/routes/elicitation/index.ts",
-      "source_location": "L312",
+      "source_location": "L322",
       "weight": 1.0,
       "_src": "api_routes_elicitation_index_ts",
       "_tgt": "index_bgwork",
@@ -11991,7 +12103,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "api/routes/elicitation/index.ts",
-      "source_location": "L442",
+      "source_location": "L452",
       "weight": 1.0,
       "_src": "index_bgwork",
       "_tgt": "index_extractsection",

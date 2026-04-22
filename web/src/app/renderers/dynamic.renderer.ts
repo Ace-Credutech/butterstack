@@ -159,12 +159,12 @@ function renderAuxLinks(items: { label: string; role: SectionRole; idx: number }
 function renderHeaderBar(t: UITokens, ds: DesignSystem): string {
   const actions = (t.actions || [])
   const actionBtns = actions.map((a, i) =>
-    `<button class="${i === 0 ? `${ds.primaryColor} ${ds.primaryHover} text-white` : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'} text-sm font-medium px-4 py-2 ${ds.borderRadius} transition" data-tp="actions[${i}]">${a}</button>`
+    `<button class="${i === 0 ? `${ds.primaryColor} ${ds.primaryHover} text-white` : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'} text-sm font-medium px-4 py-2 ${ds.borderRadius} transition whitespace-nowrap" data-tp="actions[${i}]">${a}</button>`
   ).join('')
   return `
-    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-      ${t.intent ? `<h1 class="text-2xl font-bold text-gray-900" data-tp="intent">${t.intent}</h1>` : '<div></div>'}
-      ${actionBtns ? `<div class="flex items-center gap-2">${actionBtns}</div>` : ''}
+    <div class="flex items-start justify-between mb-6 flex-wrap gap-3">
+      ${t.intent ? `<h1 class="text-2xl font-bold text-gray-900 min-w-0 break-words" data-tp="intent">${t.intent}</h1>` : '<div></div>'}
+      ${actionBtns ? `<div class="flex items-center gap-2 flex-wrap shrink-0">${actionBtns}</div>` : ''}
     </div>`
 }
 

@@ -2,7 +2,7 @@
 // No page-type switch, no hardcoded field/link/button defaults. Everything is driven by what the
 // extractor produced. Missing tokens simply don't render their block.
 
-import type { UITokens } from '../models/ui-tokens.model'
+import type { UITokens, SectionRole, UISection } from '../models/ui-tokens.model'
 import {
   DEFAULT_DESIGN, type DesignSystem, type PrototypeContext,
   renderAvatar, renderFormField, renderSectionCard, renderStatCard, renderDataTable,
@@ -47,7 +47,7 @@ function renderBody(t: UITokens, ds: DesignSystem, ctx: PrototypeContext | undef
 
   // Stats grid
   if ((t.stats || []).length) {
-    const statsHtml = t.stats.map(s => renderStatCard(s.label, String(s.value), undefined, ds)).join('')
+    const statsHtml = t.stats.map((s, i) => renderStatCard(s.label, String(s.value), undefined, ds, `stats[${i}].label`, `stats[${i}].value`)).join('')
     blocks.push(`<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">${statsHtml}</div>`)
   }
 
@@ -62,30 +62,108 @@ function renderBody(t: UITokens, ds: DesignSystem, ctx: PrototypeContext | undef
   }
 
   // Tabular / list entity
-  if (!(t.fields || []).length && t.entity && (t.search || t.filters || t.sections?.some(s => /list|table|users|items|records/i.test(s)))) {
+  if (!(t.fields || []).length && t.entity && (t.search || t.filters || t.sections?.some(s => /list|table|users|items|records/i.test(typeof s === 'string' ? s : s.label)))) {
     blocks.push(renderDataTable(['Name', 'Email', 'Role', 'Status'], 6, ds, t.entity))
   }
 
-  // Named sections (each rendered as a card)
-  for (const section of t.sections || []) {
-    if (/recent|activity|feed|timeline/i.test(section)) {
-      blocks.push(renderSectionCard(section, renderActivityList(ds), ds))
-    } else {
-      blocks.push(renderSectionCard(section, `<p class="text-sm text-gray-400">No items yet.</p>`, ds))
+  // Sections — role-driven routing (role is inferred once at normalize time, then persisted).
+  // Labels can be freely edited without flipping rendering behavior.
+  const auxSectionLinks: { label: string; role: SectionRole; idx: number }[] = []
+  ;(t.sections || []).forEach((section, i) => {
+    const { label, role } = normalizeSection(section)
+    if (role === 'chrome') return
+    if (role === 'signup' || role === 'forgot' || role === 'terms' || role === 'link') {
+      auxSectionLinks.push({ label, role, idx: i })
+      return
     }
+    if (role === 'activity') {
+      blocks.push(renderSectionCard(label, renderActivityList(ds), ds, `sections[${i}].label`))
+    } else {
+      blocks.push(renderSectionCard(label, `<p class="text-sm text-gray-400">No items yet.</p>`, ds, `sections[${i}].label`))
+    }
+  })
+  if (auxSectionLinks.length) {
+    blocks.push(renderAuxLinks(auxSectionLinks, ds, t))
   }
 
   return blocks.join('\n')
 }
 
+// Accepts either a bare string (legacy) or { label, role }. Falls back to regex inference if role missing.
+export function normalizeSection(s: string | UISection): { label: string; role: SectionRole } {
+  if (typeof s === 'string') return { label: s.trim(), role: inferSectionRole(s) }
+  return { label: (s.label || '').trim(), role: s.role || inferSectionRole(s.label || '') }
+}
+
+export function inferSectionRole(label: string): SectionRole {
+  const s = label.trim()
+  if (!s) return 'content'
+  if (/\b(footer|header|sidebar|navbar|navigation|help|about|contact)\b/i.test(s)) return 'chrome'
+  if (/\b(register|registration|sign[- ]?up|create\s*account)\b/i.test(s)) return 'signup'
+  if (/\b(forgot|reset(\s*(your\s*)?password)?|password\s*reset)\b/i.test(s)) return 'forgot'
+  if (/\b(terms|t&c|privacy|legal|conditions|disclaimer)\b/i.test(s)) return 'terms'
+  if (/\b(recent|activity|feed|timeline)\b/i.test(s)) return 'activity'
+  return 'content'
+}
+
+// Called once when tokens first load so roles are persisted.
+// Returns { tokens, changed } — if changed, caller should PATCH back to DB.
+export function normalizeTokens(t: UITokens): { tokens: UITokens; changed: boolean } {
+  let changed = false
+  const sections: UISection[] = (t.sections || []).map(s => {
+    if (typeof s === 'string') { changed = true; return { label: s.trim(), role: inferSectionRole(s) } }
+    if (!s.role) { changed = true; return { label: s.label, role: inferSectionRole(s.label) } }
+    return s
+  })
+  return { tokens: { ...t, sections }, changed }
+}
+
+const DEFAULT_UI_TEXT = {
+  signupPrompt: "Don't have an account?",
+  termsPrefix: 'By continuing, you agree to our',
+  termsSuffix: '.',
+  forgotPrefix: '',
+  noItems: 'No items yet.',
+  searchPlaceholderPrefix: 'Search',
+  filtersLabel: 'Filters',
+  passwordValue: 'password123',
+}
+function ui(t: UITokens, key: keyof typeof DEFAULT_UI_TEXT): string {
+  return (t.uiText && t.uiText[key]) || DEFAULT_UI_TEXT[key]
+}
+
+function renderAuxLinks(items: { label: string; role: SectionRole; idx: number }[], ds: DesignSystem, t: UITokens): string {
+  const forgot = items.find(i => i.role === 'forgot')
+  const signup = items.find(i => i.role === 'signup')
+  const terms  = items.find(i => i.role === 'terms')
+  const rest   = items.filter(i => i.role === 'link')
+  const tp = (idx: number) => ` data-tp="sections[${idx}].label"`
+
+  const inner: string[] = []
+  if (signup) {
+    inner.push(`<p class="text-center text-sm text-gray-500"><span data-tp="uiText.signupPrompt">${ui(t, 'signupPrompt')}</span> <a href="#" class="${ds.primaryText} font-medium hover:underline"${tp(signup.idx)}>${signup.label}</a></p>`)
+  }
+  if (forgot) {
+    inner.push(`<p class="text-center text-sm"><a href="#" class="${ds.primaryText} hover:underline"${tp(forgot.idx)}>${forgot.label}</a></p>`)
+  }
+  if (rest.length) {
+    inner.push(`<p class="text-center text-sm text-gray-500">${rest.map(l => `<a href="#" class="${ds.primaryText} hover:underline mx-2"${tp(l.idx)}>${l.label}</a>`).join('')}</p>`)
+  }
+  if (terms) {
+    inner.push(`<p class="text-center text-xs text-gray-400 leading-relaxed"><span data-tp="uiText.termsPrefix">${ui(t, 'termsPrefix')}</span> <a href="#" class="underline underline-offset-2 hover:${ds.primaryText}"${tp(terms.idx)}>${terms.label}</a><span data-tp="uiText.termsSuffix">${ui(t, 'termsSuffix')}</span></p>`)
+  }
+  if (!inner.length) return ''
+  return `<div class="mt-6 pt-5 border-t border-gray-100 space-y-4">${inner.join('')}</div>`
+}
+
 function renderHeaderBar(t: UITokens, ds: DesignSystem): string {
   const actions = (t.actions || [])
   const actionBtns = actions.map((a, i) =>
-    `<button class="${i === 0 ? `${ds.primaryColor} ${ds.primaryHover} text-white` : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'} text-sm font-medium px-4 py-2 ${ds.borderRadius} transition">${a}</button>`
+    `<button class="${i === 0 ? `${ds.primaryColor} ${ds.primaryHover} text-white` : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'} text-sm font-medium px-4 py-2 ${ds.borderRadius} transition" data-tp="actions[${i}]">${a}</button>`
   ).join('')
   return `
     <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-      ${t.intent ? `<h1 class="text-2xl font-bold text-gray-900">${t.intent}</h1>` : '<div></div>'}
+      ${t.intent ? `<h1 class="text-2xl font-bold text-gray-900" data-tp="intent">${t.intent}</h1>` : '<div></div>'}
       ${actionBtns ? `<div class="flex items-center gap-2">${actionBtns}</div>` : ''}
     </div>`
 }
@@ -120,13 +198,24 @@ function renderFormBlock(t: UITokens, ds: DesignSystem, layout: string): string 
     ...actions.filter(a => /forgot/i.test(a)),
   ]
 
-  const inputsHtml = inputFields.map(f => renderFormField(f.name, f.type, undefined, ds)).join('')
-  const checkboxesHtml = checkboxFields.map(f =>
-    `<label class="flex items-center gap-2 text-sm text-gray-600"><input type="checkbox" class="w-4 h-4 rounded border-gray-300 ${dsCheckboxColor(ds)}"/>${f.name}</label>`
-  ).join('')
+  const inputsHtml = inputFields.map(f => {
+    const origIdx = fields.indexOf(f)
+    return renderFormField(f.name, f.type, undefined, ds, `fields[${origIdx}].name`)
+  }).join('')
+  const checkboxesHtml = checkboxFields.map(f => {
+    const origIdx = fields.indexOf(f)
+    return `<label class="flex items-center gap-2 text-sm text-gray-600"><input type="checkbox" class="w-4 h-4 rounded border-gray-300 ${dsCheckboxColor(ds)}"/><span data-tp="fields[${origIdx}].name">${f.name}</span></label>`
+  }).join('')
 
   const forgotLink = secondaryLinks.find(l => /forgot/i.test(l))
   const extraLinks = secondaryLinks.filter(l => !/forgot/i.test(l))
+  const primaryIdx = primaryAction ? actions.indexOf(primaryAction) : -1
+  const forgotIdx = forgotLink ? actions.indexOf(forgotLink) : -1
+  const tpForAction = (label: string) => {
+    const ai = actions.indexOf(label); if (ai >= 0) return ` data-tp="actions[${ai}]"`
+    const ni = nav.indexOf(label);     if (ni >= 0) return ` data-tp="navigation[${ni}]"`
+    return ''
+  }
 
   const body = `
     <div class="space-y-4">
@@ -134,12 +223,12 @@ function renderFormBlock(t: UITokens, ds: DesignSystem, layout: string): string 
       ${checkboxesHtml || forgotLink ? `
         <div class="flex items-center justify-between flex-wrap gap-2">
           <div class="space-y-2">${checkboxesHtml}</div>
-          ${forgotLink ? `<a href="#" class="text-sm ${ds.primaryText} hover:underline">${forgotLink}</a>` : ''}
+          ${forgotLink ? `<a href="#" class="text-sm ${ds.primaryText} hover:underline"${forgotIdx >= 0 ? ` data-tp="actions[${forgotIdx}]"` : ''}>${forgotLink}</a>` : ''}
         </div>
       ` : ''}
-      ${primaryAction ? `<button class="w-full ${ds.primaryColor} ${ds.primaryHover} text-white text-sm font-semibold py-2.5 ${ds.borderRadius} transition">${primaryAction}</button>` : ''}
+      ${primaryAction ? `<button class="w-full ${ds.primaryColor} ${ds.primaryHover} text-white text-sm font-semibold py-2.5 ${ds.borderRadius} transition"${primaryIdx >= 0 ? ` data-tp="actions[${primaryIdx}]"` : ''}>${primaryAction}</button>` : ''}
     </div>
-    ${extraLinks.length ? `<p class="text-center text-sm text-gray-400 mt-6">${extraLinks.map(l => `<a href="#" class="${ds.primaryText} font-medium hover:underline mx-2">${l}</a>`).join('·')}</p>` : ''}`
+    ${extraLinks.length ? `<p class="text-center text-sm text-gray-400 mt-6">${extraLinks.map(l => `<a href="#" class="${ds.primaryText} font-medium hover:underline mx-2"${tpForAction(l)}>${l}</a>`).join('·')}</p>` : ''}`
 
   if (layout === 'centered') return body
   return `<div class="bg-white rounded-2xl border ${dsBorderAccent(ds)} shadow-sm p-6 max-w-2xl">${body}</div>`
@@ -159,10 +248,10 @@ function wrapCentered(t: UITokens, ds: DesignSystem, inner: string): string {
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
               </svg>
             </div>
-            <span class="font-bold text-gray-800 text-lg">${t.entity}</span>
+            <span class="font-bold text-gray-800 text-lg" data-tp="entity">${t.entity}</span>
           </div>` : ''}
         <div class="bg-white rounded-2xl border ${borderAccent} shadow-sm p-8">
-          ${t.intent ? `<h1 class="text-xl font-bold text-gray-900 mb-1">${t.intent}</h1>` : ''}
+          ${t.intent ? `<h1 class="text-xl font-bold text-gray-900 mb-5" data-tp="intent">${t.intent}</h1>` : ''}
           ${inner}
         </div>
       </div>
@@ -179,15 +268,15 @@ function wrapSidebar(t: UITokens, ds: DesignSystem, ctx: PrototypeContext | unde
           <div class="w-7 h-7 ${ds.primaryColor} ${ds.borderRadius} flex items-center justify-center">
             <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
           </div>
-          <span class="font-bold text-gray-800 text-sm">${t.entity || 'App'}</span>
+          <span class="font-bold text-gray-800 text-sm" data-tp="entity">${t.entity || 'App'}</span>
         </div>
         <nav class="space-y-1">
-          ${navItems.map((n, i) => `<a href="#" class="flex items-center gap-2 px-3 py-2 text-sm ${i === 0 ? `${ds.primaryLight} ${ds.primaryText} font-semibold` : 'text-gray-600 hover:bg-gray-50'} ${ds.borderRadius}">${n}</a>`).join('')}
+          ${navItems.map((n, i) => `<a href="#" class="flex items-center gap-2 px-3 py-2 text-sm ${i === 0 ? `${ds.primaryLight} ${ds.primaryText} font-semibold` : 'text-gray-600 hover:bg-gray-50'} ${ds.borderRadius}" data-tp="navigation[${i}]">${n}</a>`).join('')}
         </nav>
       </aside>
       <main class="flex-1 min-w-0">
         <div class="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-          <span class="text-xs text-gray-400">${t.intent || ''}</span>
+          <span class="text-xs text-gray-400" data-tp="intent">${t.intent || ''}</span>
           <div class="flex items-center gap-3">
             ${user ? `<span class="text-xs text-gray-600">${user.name}</span>` : ''}
             ${renderAvatar(user?.name || 'User', ds, 8)}

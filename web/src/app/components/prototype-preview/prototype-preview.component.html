@@ -101,7 +101,15 @@
       <div class="max-w-3xl mx-auto">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h2 class="text-lg font-bold text-gray-900">{{ detailsFeature.name }}</h2>
+            @if (renamingDetailsFeature()) {
+              <input type="text" [(ngModel)]="detailsRenameText" autofocus
+                (keydown)="onDetailsRenameKeydown($event)"
+                (blur)="cancelDetailsRename()"
+                class="text-lg font-bold text-gray-900 bg-white border border-green-300 rounded px-1 py-0.5 focus:outline-none focus:border-green-500"/>
+            } @else {
+              <h2 class="text-lg font-bold text-gray-900 cursor-text select-none" title="Double-click to rename"
+                  (dblclick)="startDetailsRename()">{{ detailsFeature.name }}</h2>
+            }
             <p class="text-xs text-gray-400">{{ detailsFeature.module_name }} › {{ detailsFeature.module_path }}</p>
           </div>
           <div class="flex items-center gap-3">
@@ -201,7 +209,15 @@
       <div class="max-w-3xl mx-auto">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h2 class="text-lg font-bold text-gray-900">{{ detailsModule.name }}</h2>
+            @if (renamingDetailsModule()) {
+              <input type="text" [(ngModel)]="detailsRenameText" autofocus
+                (keydown)="onDetailsRenameKeydown($event)"
+                (blur)="cancelDetailsRename()"
+                class="text-lg font-bold text-gray-900 bg-white border border-green-300 rounded px-1 py-0.5 focus:outline-none focus:border-green-500"/>
+            } @else {
+              <h2 class="text-lg font-bold text-gray-900 cursor-text select-none" title="Double-click to rename"
+                  (dblclick)="startDetailsRename()">{{ detailsModule.name }}</h2>
+            }
             <p class="text-xs text-gray-400">Module Overview</p>
           </div>
           <div class="flex items-center gap-2">

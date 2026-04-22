@@ -102,6 +102,12 @@ export class WorkspaceComponent implements OnInit, AfterViewInit {
   private _initData: any = null
 
   async ngAfterViewInit() {
+    // ngOnInit is async — its Promise.all may not have resolved yet when Angular fires ngAfterViewInit.
+    // Wait for initData before trying to resolve the URL scope.
+    const deadline = Date.now() + 5000
+    while (!this._initData && Date.now() < deadline) {
+      await new Promise(r => setTimeout(r, 30))
+    }
     if (this._initData && this.modulesPanel) {
       this.modulesPanel.loadFromInit(
         this._initData.modules, this._initData.features,
@@ -125,7 +131,6 @@ async onModuleSelected(node: ModuleNode) {
     // Fetch all features for this module (sorted by FCS ascending)
     const feats = await this.api.get<any[]>('/features', { moduleId: String(node.id) })
     this.moduleFeatures.set(feats.sort((a, b) => (a.confidence_score?.overall ?? 0) - (b.confidence_score?.overall ?? 0)))
-    this.protoPanel?.setTab('details', false)
     this.syncUrl()
 
     const allFeatureIds = this.collectFeatureIds(node)
@@ -226,6 +231,10 @@ async onModuleSelected(node: ModuleNode) {
     this.protoPanel?.reloadDesignSystem()
   }
 
+  onEntityRenamed() {
+    this.modulesPanel?.refresh()
+  }
+
   onSessionCompleted(_created: { modules: number; features: number; pages: number }) {
     this.modulesPanel?.refresh()
   }
@@ -260,7 +269,6 @@ async onModuleSelected(node: ModuleNode) {
     // Set details data and switch to Details tab
     this.detailsFeature.set(full)
     this.detailsModule.set(null)
-    this.protoPanel?.setTab('details', false)
     this.syncUrl()
 
     await this.showRelatedPages([feat.id])
@@ -276,7 +284,6 @@ async onModuleSelected(node: ModuleNode) {
     this.detailsFeature.set(null)
     const full = await this.api.get<any>(`/pages/${page.id}`)
     if (full.tokens) this.tokens.set(full.tokens)
-    this.protoPanel?.setTab('prototype', false)
     this.syncUrl()
   }
 

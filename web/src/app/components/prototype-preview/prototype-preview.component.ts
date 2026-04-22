@@ -1,8 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectorRef, ElementRef, signal } from '@angular/core'
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectorRef, ElementRef, HostListener, signal } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { DomSanitizer, SafeHtml }  from '@angular/platform-browser'
 import type { UITokens }           from '../../models/ui-tokens.model'
 import { renderTokens }            from '../../renderers/index'
+import { normalizeTokens }         from '../../renderers/dynamic.renderer'
 import { ApiService }              from '../../services/api.service'
 import { type DesignSystem, type PrototypeContext, DEFAULT_DESIGN } from '../../renderers/components.renderer'
 import { environment }             from '../../../environments/environment'
@@ -34,6 +35,40 @@ export class PrototypePreviewComponent implements OnChanges {
   @Output() quizRequested = new EventEmitter<{ featureId: number; featureName: string; currentFcs: number }>()
   @Output() fieldEdited = new EventEmitter<{ entityType: string; entityId: number; field: string; value: string }>()
   @Output() tabChanged = new EventEmitter<CenterTab>()
+  @Output() entityRenamed = new EventEmitter<{ type: 'feature' | 'module'; id: number; name: string }>()
+
+  // Details inline rename
+  renamingDetailsFeature = signal(false)
+  renamingDetailsModule  = signal(false)
+  detailsRenameText = ''
+
+  startDetailsRename() {
+    if (this.detailsFeature) { this.detailsRenameText = this.detailsFeature.name; this.renamingDetailsFeature.set(true) }
+    else if (this.detailsModule) { this.detailsRenameText = this.detailsModule.name; this.renamingDetailsModule.set(true) }
+  }
+  cancelDetailsRename() { this.renamingDetailsFeature.set(false); this.renamingDetailsModule.set(false); this.detailsRenameText = '' }
+  async confirmDetailsRename() {
+    const name = this.detailsRenameText.trim()
+    if (!name) { this.cancelDetailsRename(); return }
+    if (this.renamingDetailsFeature() && this.detailsFeature) {
+      try {
+        await this.api.patch(`/features/${this.detailsFeature.id}`, { name })
+        this.detailsFeature = { ...this.detailsFeature, name }
+        this.entityRenamed.emit({ type: 'feature', id: this.detailsFeature.id, name })
+      } catch { alert('Rename failed.') }
+    } else if (this.renamingDetailsModule() && this.detailsModule) {
+      try {
+        await this.api.patch(`/modules/${this.detailsModule.id}`, { name })
+        this.detailsModule = { ...this.detailsModule, name }
+        this.entityRenamed.emit({ type: 'module', id: this.detailsModule.id, name })
+      } catch { alert('Rename failed.') }
+    }
+    this.cancelDetailsRename()
+  }
+  onDetailsRenameKeydown(e: KeyboardEvent) {
+    if (e.key === 'Enter') { e.preventDefault(); this.confirmDetailsRename() }
+    if (e.key === 'Escape') { e.preventDefault(); this.cancelDetailsRename() }
+  }
 
   Math = Math
   activeTab       = signal<CenterTab>('prototype')
@@ -73,6 +108,9 @@ export class PrototypePreviewComponent implements OnChanges {
     if (changes['projectId'] && this.projectId) {
       this.dsLoaded = false
     }
+    if (changes['scopeFeatureId'] || changes['scopePageId'] || changes['projectId']) {
+      this.editingPageId = null
+    }
     if (changes['tokens'] && this.tokens) {
       if (!this.dsLoaded && this.projectId) {
         try {
@@ -80,6 +118,13 @@ export class PrototypePreviewComponent implements OnChanges {
           this.protoContext = await this.api.get<PrototypeContext>(`/projects/${this.projectId}/prototype-context`)
         } catch {}
         this.dsLoaded = true
+      }
+      // Normalize: infer + persist section roles on first load so rendering becomes text-independent.
+      const norm = normalizeTokens(this.tokens)
+      if (norm.changed) {
+        this.tokens = norm.tokens
+        const pid = await this.resolveEditingPageId()
+        if (pid) this.api.patch(`/pages/${pid}`, { tokens: this.tokens }).catch(() => {})
       }
       this.rawHtml  = renderTokens(this.tokens, this.designSystem, this.protoContext)
       const fullHtml = `<!DOCTYPE html><html><head><script src="https://cdn.tailwindcss.com"></script><style>body{margin:0;font-family:'Inter',system-ui,sans-serif}</style></head><body>${this.rawHtml}</body></html>`
@@ -201,6 +246,73 @@ export class PrototypePreviewComponent implements OnChanges {
     const panel = this.el.nativeElement as HTMLElement
     if (!document.fullscreenElement) panel.requestFullscreen()
     else document.exitFullscreen()
+  }
+
+  private editingPageId: number | null = null
+
+  @HostListener('window:message', ['$event'])
+  async onProtoMessage(ev: MessageEvent) {
+    const d: any = ev.data
+    if (!d || d.type !== 'prototype-edit' || typeof d.path !== 'string') return
+    if (!this.tokens) { this.postAck(d.path, false); return }
+
+    const pageId = await this.resolveEditingPageId()
+    if (!pageId) { this.postAck(d.path, false); return }
+
+    const next: any = this.cloneTokens(this.tokens)
+    if (!this.setByPath(next, d.path, d.value)) {
+      this.postAck(d.path, false)
+      return
+    }
+    this.tokens = next
+    try {
+      await this.api.patch(`/pages/${pageId}`, { tokens: next })
+      this.postAck(d.path, true)
+    } catch {
+      this.postAck(d.path, false)
+    }
+  }
+
+  private async resolveEditingPageId(): Promise<number | null> {
+    if (this.scopePageId) return this.scopePageId
+    if (this.editingPageId) return this.editingPageId
+    if (this.scopeFeatureId) {
+      try {
+        const allPages = await this.api.get<any[]>('/pages', { projectId: this.projectId })
+        const linked = (allPages || []).filter((p: any) =>
+          (p.features || []).some((f: any) => f.id === this.scopeFeatureId)
+        )
+        const target = linked.find((p: any) => p.tokens) || linked[0]
+        if (target?.id) { this.editingPageId = target.id; return target.id }
+      } catch {}
+    }
+    return null
+  }
+
+  private postAck(path: string, ok: boolean) {
+    const iframe = this.el.nativeElement.querySelector('iframe') as HTMLIFrameElement | null
+    iframe?.contentWindow?.postMessage({ type: 'prototype-edit-ack', path, ok }, '*')
+  }
+
+  private cloneTokens(t: any): any { return JSON.parse(JSON.stringify(t)) }
+
+  private setByPath(obj: any, path: string, value: any): boolean {
+    // Supports keys like: intent, entity, fields[2].name, actions[0], stats[1].label, uiText.signupPrompt
+    const tokens = path.match(/[^.[\]]+/g) || []
+    if (!tokens.length) return false
+    let cur = obj
+    for (let i = 0; i < tokens.length - 1; i++) {
+      const k: any = /^\d+$/.test(tokens[i]) ? Number(tokens[i]) : tokens[i]
+      if (cur[k] == null) {
+        const nextIsIndex = /^\d+$/.test(tokens[i + 1])
+        cur[k] = nextIsIndex ? [] : {}
+      }
+      cur = cur[k]
+    }
+    const last: any = tokens[tokens.length - 1]
+    const lk: any = /^\d+$/.test(last) ? Number(last) : last
+    cur[lk] = value
+    return true
   }
 
   async reprocessPrototype() {

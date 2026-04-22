@@ -258,6 +258,41 @@ export class ModulesPanelComponent implements OnInit, OnChanges {
     if (e.key === 'Escape') this.cancelCreateNode()
   }
 
+  // Double-click rename
+  renamingModuleId  = signal<number | null>(null)
+  renamingFeatureId = signal<number | null>(null)
+  renameText = ''
+
+  startRename(type: 'module' | 'feature', id: number, currentName: string) {
+    this.renameText = currentName
+    if (type === 'module')  this.renamingModuleId.set(id)
+    if (type === 'feature') this.renamingFeatureId.set(id)
+  }
+
+  cancelRename() {
+    this.renamingModuleId.set(null)
+    this.renamingFeatureId.set(null)
+    this.renameText = ''
+  }
+
+  async confirmRename(type: 'module' | 'feature', id: number) {
+    const name = this.renameText.trim()
+    if (!name) { this.cancelRename(); return }
+    try {
+      await this.api.patch(`/${type === 'module' ? 'modules' : 'features'}/${id}`, { name })
+      this.cancelRename()
+      this.refresh()
+    } catch {
+      alert('Rename failed — please try again.')
+      this.cancelRename()
+    }
+  }
+
+  onRenameKeydown(e: KeyboardEvent, type: 'module' | 'feature', id: number) {
+    if (e.key === 'Enter')  { e.preventDefault(); this.confirmRename(type, id) }
+    if (e.key === 'Escape') { e.preventDefault(); this.cancelRename() }
+  }
+
   fcsScore(feat: FeatureNode): number {
     return Math.round((feat.confidenceScore?.overall ?? 0) * 100)
   }

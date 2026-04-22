@@ -3,19 +3,23 @@ export type Layout   = 'sidebar-main' | 'centered' | 'full-page'
 
 export interface UIField  { name: string; type: string }
 export interface UIStat   { label: string; value: string }
+export type SectionRole   = 'content' | 'activity' | 'signup' | 'forgot' | 'terms' | 'chrome' | 'link'
+export interface UISection { label: string; role?: SectionRole }
 
 export interface UITokens {
   page_type:  PageType
   layout:     Layout
   intent:     string
   navigation: string[]
-  sections:   string[]
+  sections:   Array<string | UISection>
   actions:    string[]
   fields:     UIField[]
   stats:      UIStat[]
   entity:     string
   search:     boolean
   filters:    boolean
+  uiText?:    Record<string, string>
+  placeholders?: Record<string, string>
 }
 
 export interface GenerateResponse {

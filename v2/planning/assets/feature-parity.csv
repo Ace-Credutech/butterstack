@@ -1,0 +1,83 @@
+Area,Capability,v1 Status,v2 Priority,v2 Phase,v2 Owner,v2 Status,Notes / Source of Truth
+Auth,Signup / Login / JWT,Done,P0,0,BE,Not started,jose-based JWT; reuse pattern
+Auth,BYO API keys (OpenAI/Anthropic),Done,P2,6,BE,Not started,encrypted in api_keys table
+Project,Create project,Done,P0,1,BE,Not started,
+Project,List / rename / archive project,Done,P0,1,BE,Not started,
+Project,Workspace init endpoint (single call),Done,P0,1,BE,Not started,one GET returns tree+init data
+Project,Per-project design system (colors/font/radius),Done,P1,5,BE+FE,Not started,project_tokens.design_system
+Project,Per-project prototype context (user/stats),Done,P1,5,BE,Not started,project_tokens.prototype_context
+Project,System Feed (seed from uploaded Excel/doc/text),New in v2,P1,1,BE,Not started,Whiteboard entry point
+Tree,Modules CRUD + recursive tree,Done,P0,1,BE,Not started,self-referential; depth<=3
+Tree,Features CRUD,Done,P0,1,BE,Not started,belongs to module
+Tree,Pages CRUD,Done,P0,1,BE,Not started,belongs to project; page_features link
+Tree,Double-click rename (modules/features),Done,P0,4,FE,Not started,in-place inline input
+Tree,Hover delete with cascade warning,Done,P0,4,FE,Not started,confirms child count
+Tree,Module/feature reorder (drag),Partial,P1,5,FE,Not started,
+Tree,Roles list + Role Capability Matrix,New in v2,P1,1,BE+FE,Not started,Whiteboard sibling panel
+Conversation,Start / list / resume sessions,Done,P0,2,BE,Not started,
+Conversation,Streamliner (multilingual → English),Done,P0,2,BE,Not started,local dict + AI fallback
+Conversation,Glossary capture (user vocabulary),New in v2,P0,2,BE,Not started,First-class in v2 — was leaky in v1
+Conversation,Classifier (message → typed intent),New in v2,P0,2,BE,Not started,missing in v1; fixes many bugs
+Conversation,Proactive Planner (opinionated first-cut),Done,P0,2,BE,Not started,required when user says plan/propose
+Conversation,Clarifying questions (why-probing),Done,P0,2,BE,Not started,~1 in 3 should probe purpose
+Conversation,Expandable chat window (planning mode),New in v2,P1,2,FE,Not started,Whiteboard entry
+Conversation,Q+A cards (bullets ending in ?),Done,P0,2,FE,Not started,
+Conversation,Proposal checkboxes (Include N selected),Done,P0,2,FE,Not started,
+Conversation,Inline breakdown editor (rename/remove/add),Done,P0,2,FE,Not started,edit tree before confirm
+Conversation,Confirm and Create,Done,P0,2,BE+FE,Not started,plan.confirm event
+Conversation,Cross-session summary (typed Decisions),New in v2,P1,3,BE,Not started,was free-text in v1
+Projections,StructuredDoc (typed 15 sections),Improved in v2,P0,3,BE,Not started,was markdown blob in v1
+Projections,Doc: Business Context,Done,P0,3,BE,Not started,Whiteboard branch
+Projections,Doc: Functional Requirements,Done,P0,3,BE,Not started,Whiteboard branch
+Projections,Doc: Test Cases,Done,P0,3,BE,Not started,Whiteboard branch
+Projections,Doc: Use Cases,Done,P0,3,BE,Not started,
+Projections,Doc: Role Actions / Role Access Mapping,Done,P0,3,BE,Not started,Whiteboard branch; pipe-table
+Projections,Doc: Validations / Error Messages / Flow / etc (other 10 sections),Done,P0,3,BE,Not started,
+Projections,Incremental doc update (preserve user-source),New in v2,P0,3,BE,Not started,TextSlot.source=user is untouchable
+Projections,UITokens (typed Blocks with roles),Improved in v2,P0,3,BE,Not started,role stored at capture not render
+Projections,Inter-feature linking,New in v2,P1,3,BE,Not started,Whiteboard node
+Projections,DEASV confidence scoring (computed),Done,P0,6,BE,Not started,
+Projections,Impact analysis (which features affected by change),New in v2,P1,4,BE,Not started,Whiteboard revise-loop
+Projections,Cascade suggester (system proactive),New in v2,P1,4,BE,Not started,Whiteboard: idea deni chahiye
+Prototype,Dynamic renderer (one for all layouts),Done,P0,3,FE,Not started,switch(block.kind)
+Prototype,Layout inference (centered/sidebar/full),Done,P0,3,BE,Not started,decided at plan time in v2
+Prototype,Slot-edit custom element,New in v2,P0,4,FE,Not started,replaces data-tp scraping
+Prototype,Inline text editing (persist to DB),Done,P0,4,FE,Not started,slot.set event
+Prototype,Aux-link bundle (signup/forgot/terms footer),Done,P0,3,FE,Not started,role-routed
+Prototype,Form validation (email/password/required),Done,P1,4,FE,Not started,
+Prototype,Table sorting / search,Done,P1,4,FE,Not started,
+Prototype,Submit → navigate to dashboard (cross-page),Done,P1,4,FE,Not started,
+Prototype,Password show/hide toggle,Done,P2,5,FE,Not started,
+Prototype,Realistic seeded data (no Lorem Ipsum),Done,P1,3,BE,Not started,
+Quiz,5-axis DEASV questions,Done,P1,6,BE,Not started,
+Quiz,Multi-select questions,Done,P1,6,BE+FE,Not started,
+Quiz,Fast-path answer (section append),Done,P0,6,BE,Not started,v1 was 10s; now 57ms
+Quiz,Why-probing questions,Done,P1,6,BE,Not started,~1 in 3
+Exports,BRD HTML,Done,P0,5,BE,Not started,StructuredDoc → HTML
+Exports,Excel (4 sheets),Done,P0,5,BE,Not started,SheetJS
+Exports,Mindmap interactive canvas,Done,P0,5,BE,Not started,Whimsical-style
+Exports,Shareable public link,Done,P1,5,BE,Not started,
+Exports,Always-version-on-export,New in v2,P1,5,BE,Not started,Whiteboard rule
+Jobs,Unified jobs table,Improved in v2,P0,1,BE,Not started,single table for all background work
+Jobs,Live step updates via WebSocket,Improved in v2,P0,1,BE+FE,Not started,was polling in v1
+Jobs,Resume-on-reload (by-entity status),Done,P1,3,BE,Not started,
+Events,Single event intake (POST /events),New in v2,P0,1,BE,Not started,discriminated union
+Events,Event attribution (who did this),New in v2,P1,4,BE,Not started,Whiteboard revise-loop
+Events,Event scope (feature/module/page explicit),New in v2,P0,1,BE,Not started,replaces touchedByUser heuristic
+Events,Append-only log (source of truth),New in v2,P0,1,BE,Not started,replaces regeneration_log
+Collab,Comments on any entity,Partial,P2,5,BE+FE,Not started,Whiteboard: Comment kahi par
+Collab,Resolve / delete comment,Partial,P2,5,BE+FE,Not started,
+Collab,Members / roles / invites,Done,P2,5,BE+FE,Not started,
+Collab,Real-time multi-user edit,New in v2,P3,Later,BE+FE,Not started,
+Versions,History (approved version snapshots),Done,P1,5,BE,Not started,
+Versions,Restore from version,Done,P2,5,FE,Not started,
+Versions,Diff viewer (old vs new tokens),Partial,P2,5,FE,Not started,
+Infra,Zod validation on every route,New in v2,P0,0,BE,Not started,
+Infra,OpenAPI auto-emission,New in v2,P0,0,BE,Not started,
+Infra,Generated FE client from OpenAPI,New in v2,P0,0,FE,Not started,no hand-written signatures
+Infra,Schema.sql (authoritative schema),New in v2,P0,0,BE,Not started,replaces migrate.ts drift
+Infra,Usage tracking per user,Done,P2,6,BE,Not started,usage_events
+Infra,Suggestions engine,Partial,P2,6,BE,Not started,confidence-driven nudges
+Infra,Landing page,Done,P2,0,FE,Not started,
+Infra,Confidence dashboard page,Done,P1,6,FE,Not started,
+Infra,v1→v2 migration script,New in v2,P1,7,BE,Not started,last step before GA

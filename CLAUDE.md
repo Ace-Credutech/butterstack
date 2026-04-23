@@ -6,6 +6,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Intelligent software delivery OS — collapses the full lifecycle (requirements → prototyping → development → QA → versioning) into one platform.
 
+## V2 Engineering Rules (apply to all `v2/` code)
+
+1. **Functional code only.** Every line of a function is a single named, logical step. Orchestrators just compose helpers — they don't contain logic. Example:
+   ```ts
+   function schedule_course_calendar(p1, p2) {
+     const holidays = get_holidays(p1);
+     const leaves   = get_leaves(user, p2);
+     const courses  = get_courses(p1);
+     schedule_course(p1, leaves, holidays, p2);
+   }
+   ```
+2. **BullMQ from Day 1, transport-agnostic.** All producers/workers go through the `QueueClient` interface in `v2/be/src/jobs/queue-client.ts`. Never import `bullmq` outside `v2/be/src/jobs/adapters/`. Designed to swap to RabbitMQ.
+3. **Multi-DB ready from Day 1.** All DB access via `db('primary')` factory in `v2/be/src/db/`. Never `import { PrismaClient }` elsewhere.
+4. **Slow-query logging mandatory.** Any DB query ≥`SLOW_QUERY_MS` (default 500ms) is logged with model/action, redacted params, duration, caller, traceId, userId, projectId.
+5. **Workers organized one-per-file** under `v2/be/src/jobs/workers/<name>.worker.ts`, registered centrally in `queue-registry.ts`.
+
 ## Dev Commands
 
 ```bash

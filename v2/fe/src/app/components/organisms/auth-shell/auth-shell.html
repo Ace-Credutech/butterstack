@@ -1,16 +1,20 @@
 <div class="min-h-screen flex">
   <bs-auth-aside [heading]="aside_heading()" [subline]="aside_subline()" [footline]="aside_footline()" />
 
-  <section class="flex-1 flex flex-col bg-gray-50">
-    <header class="flex items-center justify-between px-8 py-5 lg:justify-end">
-      <div class="lg:hidden"><bs-brand-mark theme="dark" /></div>
-      <a bsGravity [radius]="120" [routerLink]="top_link_path()" class="text-sm text-gray-400 hover:text-gray-600 transition">{{ top_link_label() }}</a>
-    </header>
+  <section class="relative flex-1 flex flex-col bg-gray-50 overflow-hidden">
+    <bs-gravity-backdrop pattern="dots" [radius]="280" />
 
-    <main class="flex-1 flex items-center justify-center px-6">
-      <div class="w-full max-w-sm">
-        <ng-content />
-      </div>
-    </main>
+    <div class="relative z-10 flex-1 flex flex-col">
+      <header class="flex items-center justify-between px-8 py-5 lg:justify-end">
+        <div class="lg:hidden"><bs-brand-mark theme="dark" /></div>
+        <a bsGravity [radius]="120" [routerLink]="top_link_path()" class="text-sm text-gray-400 hover:text-gray-600 transition">{{ top_link_label() }}</a>
+      </header>
+
+      <main class="flex-1 flex items-center justify-center px-6">
+        <div class="w-full max-w-sm">
+          <ng-content />
+        </div>
+      </main>
+    </div>
   </section>
 </div>

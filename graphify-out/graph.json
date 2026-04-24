@@ -6121,7 +6121,7 @@
       "label": "AuthShell",
       "file_type": "code",
       "source_file": "v2/fe/src/app/components/organisms/auth-shell/auth-shell.ts",
-      "source_location": "L12",
+      "source_location": "L13",
       "id": "auth_shell_authshell",
       "community": 127
     },
@@ -17563,7 +17563,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/components/organisms/auth-shell/auth-shell.ts",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "_src": "v2_fe_src_app_components_organisms_auth_shell_auth_shell_ts",
       "_tgt": "auth_shell_authshell",

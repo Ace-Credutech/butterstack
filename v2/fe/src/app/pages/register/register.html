@@ -5,8 +5,8 @@
   top_link_label="Sign in"
   top_link_path="/login"
 >
-  <h1 class="text-2xl font-bold text-gray-900 mb-1">Create account</h1>
-  <p class="text-sm text-gray-400 mb-8">Get started with Butterstack</p>
+  <h1 bsGravity [radius]="180" class="text-2xl font-bold text-gray-900 mb-1">Create account</h1>
+  <p bsGravity [radius]="180" class="text-sm text-gray-400 mb-8">Get started with Butterstack</p>
 
   <bs-error-alert [message]="error()" />
 
@@ -54,6 +54,6 @@
 
   <p class="mt-6 text-center text-sm text-gray-400">
     Already have an account?
-    <a routerLink="/login" class="text-green-600 font-medium hover:underline">Sign in</a>
+    <a bsGravity [radius]="120" routerLink="/login" class="text-green-600 font-medium hover:underline">Sign in</a>
   </p>
 </bs-auth-shell>

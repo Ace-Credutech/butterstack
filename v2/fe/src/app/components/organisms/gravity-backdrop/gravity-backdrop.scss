@@ -1,0 +1,51 @@
+.bs-gravity-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  --mx: 50%;
+  --my: 50%;
+  --radius:    260px;
+  --accent:    rgba(34, 197, 94, 0.22);
+  --base-dot:  rgba(15, 23, 42, 0.06);
+  --cell-size: 26px;
+  transition: background-position 0.2s ease-out;
+}
+
+/* Base dotted pattern */
+.bs-gravity-backdrop[data-pattern='dots'] {
+  background-image:
+    radial-gradient(circle var(--radius) at var(--mx) var(--my), var(--accent), transparent 70%),
+    radial-gradient(circle at 1px 1px, var(--base-dot) 1px, transparent 1.6px);
+  background-size:
+    100% 100%,
+    var(--cell-size) var(--cell-size);
+  background-position:
+    0 0,
+    0 0;
+  background-repeat:
+    no-repeat,
+    repeat;
+}
+
+/* Base grid pattern */
+.bs-gravity-backdrop[data-pattern='grid'] {
+  background-image:
+    radial-gradient(circle var(--radius) at var(--mx) var(--my), var(--accent), transparent 70%),
+    linear-gradient(to right,  var(--base-dot) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--base-dot) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    var(--cell-size) var(--cell-size),
+    var(--cell-size) var(--cell-size);
+  background-repeat:
+    no-repeat,
+    repeat,
+    repeat;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bs-gravity-backdrop {
+    background-image: none;
+  }
+}

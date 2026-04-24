@@ -8,10 +8,11 @@ import { ErrorAlert }      from '../../components/atoms/error-alert/error-alert'
 import { FormField }       from '../../components/molecules/form-field/form-field';
 import { PasswordField }   from '../../components/molecules/password-field/password-field';
 import { AuthShell }       from '../../components/organisms/auth-shell/auth-shell';
+import { GravityDirective } from '../../directives/gravity.directive';
 
 @Component({
   selector:    'bs-login',
-  imports:     [FormsModule, RouterLink, Button, ErrorAlert, FormField, PasswordField, AuthShell],
+  imports:     [FormsModule, RouterLink, Button, ErrorAlert, FormField, PasswordField, AuthShell, GravityDirective],
   templateUrl: './login.html',
 })
 export class Login {

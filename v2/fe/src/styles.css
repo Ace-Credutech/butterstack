@@ -1,3 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+@layer base {
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  a[href] {
+    cursor: pointer;
+  }
+
+  /* Custom-element hosts default to inline — force block so Tailwind layout utilities
+     (space-y, flex children, grid, margins, widths) behave the same as native elements. */
+  bs-button,
+  bs-input,
+  bs-label,
+  bs-spinner,
+  bs-icon,
+  bs-error-alert,
+  bs-brand-mark,
+  bs-form-field,
+  bs-password-field,
+  bs-header,
+  bs-auth-shell,
+  bs-gravity-backdrop {
+    display: block;
+  }
+}

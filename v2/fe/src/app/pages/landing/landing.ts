@@ -2,10 +2,12 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Header } from '../../components/organisms/header/header';
+import { GravityBackdrop } from '../../components/organisms/gravity-backdrop/gravity-backdrop';
+import { GravityDirective } from '../../directives/gravity.directive';
 
 @Component({
   selector:    'bs-landing',
-  imports:     [Header],
+  imports:     [Header, GravityBackdrop, GravityDirective],
   templateUrl: './landing.html',
 })
 export class Landing {

@@ -1,9 +1,10 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { GravityDirective } from '../../../directives/gravity.directive';
 
 @Component({
   selector:    'bs-brand-mark',
-  imports:     [RouterLink],
+  imports:     [RouterLink, GravityDirective],
   templateUrl: './brand-mark.html',
 })
 export class BrandMark {

@@ -1,10 +1,12 @@
 import { Component, input, output } from '@angular/core';
+import { GravityDirective } from '../../../directives/gravity.directive';
 
 type Variant = 'primary' | 'secondary' | 'ghost';
 type Size    = 'sm' | 'md' | 'lg';
 
 @Component({
   selector:    'bs-button',
+  imports:     [GravityDirective],
   templateUrl: './button.html',
 })
 export class Button {

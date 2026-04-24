@@ -5,6 +5,7 @@ import { BrandMark } from '../../atoms/brand-mark/brand-mark';
   selector:    'bs-auth-aside',
   imports:     [BrandMark],
   templateUrl: './auth-aside.html',
+  host: { style: 'display: contents' },
 })
 export class AuthAside {
   readonly heading  = input.required<string>();

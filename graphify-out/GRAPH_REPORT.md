@@ -1,11 +1,11 @@
 # Graph Report - .  (2026-04-24)
 
 ## Corpus Check
-- 241 files · ~140,865 words
+- 241 files · ~141,426 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 971 nodes · 1051 edges · 226 communities detected
+- 981 nodes · 1072 edges · 226 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -276,31 +276,31 @@ Nodes (1): ElicitationChatComponent
 
 ### Community 1 - "Community 1"
 Cohesion: 0.07
-Nodes (12): bgWork(), extractSection(), getPriorSessionSummaries(), getRecentProjectTranscript(), reprocessEntity(), reprocessFeature(), reprocessModule(), reprocessPage() (+4 more)
+Nodes (22): aiChat(), getClients(), getUserKeys(), ensureLoaded(), learnFromStreamline(), learnFromTokens(), lookup(), schedulFlush() (+14 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.07
-Nodes (1): PrototypePreviewComponent
+Nodes (12): bgWork(), extractSection(), getPriorSessionSummaries(), getRecentProjectTranscript(), reprocessEntity(), reprocessFeature(), reprocessModule(), reprocessPage() (+4 more)
 
 ### Community 3 - "Community 3"
+Cohesion: 0.07
+Nodes (1): PrototypePreviewComponent
+
+### Community 4 - "Community 4"
 Cohesion: 0.08
 Nodes (1): ModulesPanelComponent
 
-### Community 4 - "Community 4"
-Cohesion: 0.1
-Nodes (20): aiChat(), getClients(), getUserKeys(), ensureLoaded(), learnFromStreamline(), learnFromTokens(), lookup(), schedulFlush() (+12 more)
-
 ### Community 5 - "Community 5"
-Cohesion: 0.1
-Nodes (17): callAI(), extractTokens(), renderCardsGrid(), renderComponent(), renderDataTable(), renderElements(), renderEmptyState(), renderForm() (+9 more)
-
-### Community 6 - "Community 6"
 Cohesion: 0.1
 Nodes (1): WorkspaceComponent
 
-### Community 7 - "Community 7"
+### Community 6 - "Community 6"
 Cohesion: 0.19
 Nodes (10): apply_press(), clamp01(), dent_translate(), distance(), ease_out(), element_center(), GravityDirective, lerp() (+2 more)
+
+### Community 7 - "Community 7"
+Cohesion: 0.22
+Nodes (7): build_grid(), clamp01(), distance(), ease_out(), GravityBackdrop, lerp(), reduced_motion()
 
 ### Community 8 - "Community 8"
 Cohesion: 0.18
@@ -320,71 +320,71 @@ Nodes (1): HttpService
 
 ### Community 12 - "Community 12"
 Cohesion: 0.24
-Nodes (13): inferLayout(), inferSectionRole(), normalizeSection(), renderAuxLinks(), renderBody(), renderDynamic(), renderFormBlock(), renderHeaderBar() (+5 more)
+Nodes (15): renderCardsGrid(), renderComponent(), renderDataTable(), renderElements(), renderEmptyState(), renderForm(), renderHeader(), renderHero() (+7 more)
 
 ### Community 13 - "Community 13"
+Cohesion: 0.24
+Nodes (13): inferLayout(), inferSectionRole(), normalizeSection(), renderAuxLinks(), renderBody(), renderDynamic(), renderFormBlock(), renderHeaderBar() (+5 more)
+
+### Community 14 - "Community 14"
 Cohesion: 0.21
 Nodes (10): broadcast_to_project(), broadcast_to_user(), extract_session_id(), list_user_project_ids(), load_user_from_session(), on_open(), parse_signed_cookie_value(), project_topic() (+2 more)
 
-### Community 14 - "Community 14"
+### Community 15 - "Community 15"
 Cohesion: 0.18
 Nodes (1): DesignSettingsComponent
 
-### Community 15 - "Community 15"
+### Community 16 - "Community 16"
 Cohesion: 0.24
 Nodes (1): MembersPanelComponent
 
-### Community 16 - "Community 16"
+### Community 17 - "Community 17"
 Cohesion: 0.18
 Nodes (1): RequirementInputComponent
 
-### Community 17 - "Community 17"
+### Community 18 - "Community 18"
 Cohesion: 0.25
 Nodes (1): QuizModalComponent
 
-### Community 18 - "Community 18"
+### Community 19 - "Community 19"
 Cohesion: 0.22
 Nodes (1): ProjectsComponent
 
-### Community 19 - "Community 19"
+### Community 20 - "Community 20"
 Cohesion: 0.51
 Nodes (9): ensure_kc_configured(), fetch_admin_token(), get_admin_token(), kc_create_user(), kc_logout(), kc_password_login(), kc_refresh_token(), post_form() (+1 more)
 
-### Community 20 - "Community 20"
+### Community 21 - "Community 21"
 Cohesion: 0.24
 Nodes (3): check_permissions(), run_handler(), should_open_transaction()
 
-### Community 21 - "Community 21"
+### Community 22 - "Community 22"
 Cohesion: 0.24
 Nodes (1): WsService
 
-### Community 22 - "Community 22"
+### Community 23 - "Community 23"
 Cohesion: 0.25
 Nodes (1): ConfidenceComponent
 
-### Community 23 - "Community 23"
+### Community 24 - "Community 24"
 Cohesion: 0.39
 Nodes (1): ApiService
 
-### Community 24 - "Community 24"
+### Community 25 - "Community 25"
 Cohesion: 0.25
 Nodes (1): ElicitationService
 
-### Community 25 - "Community 25"
+### Community 26 - "Community 26"
 Cohesion: 0.39
 Nodes (6): check_authority(), dispatch_event(), get_event_handler(), register_event_handler(), register_event_handlers(), validate_payload()
 
-### Community 26 - "Community 26"
+### Community 27 - "Community 27"
 Cohesion: 0.46
 Nodes (7): build_envelope(), claim_next_sequence_no(), envelope_matches(), find_existing_by_idempotency(), persist_event(), post_event_function(), shape_idempotent_reply()
 
-### Community 27 - "Community 27"
+### Community 28 - "Community 28"
 Cohesion: 0.48
 Nodes (5): boot(), register_apis(), register_crons(), register_workers(), run_migrations_on_dev()
-
-### Community 28 - "Community 28"
-Cohesion: 0.43
-Nodes (2): GravityBackdrop, set_cursor_vars()
 
 ### Community 29 - "Community 29"
 Cohesion: 0.33
@@ -1456,8 +1456,8 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.07 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.08 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07 - nodes in this community are weakly interconnected._
 - **Should `Community 4` be split into smaller, more focused modules?**
-  _Cohesion score 0.1 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08 - nodes in this community are weakly interconnected._
 - **Should `Community 5` be split into smaller, more focused modules?**
   _Cohesion score 0.1 - nodes in this community are weakly interconnected._

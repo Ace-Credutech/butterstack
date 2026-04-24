@@ -1,0 +1,59 @@
+<bs-auth-shell
+  aside_heading="Start building<br/>something great."
+  aside_subline="Requirements, prototyping, dev, and versioning — all in one place."
+  aside_footline="Join teams shipping faster with Butterstack"
+  top_link_label="Sign in"
+  top_link_path="/login"
+>
+  <h1 class="text-2xl font-bold text-gray-900 mb-1">Create account</h1>
+  <p class="text-sm text-gray-400 mb-8">Get started with Butterstack</p>
+
+  <bs-error-alert [message]="error()" />
+
+  <form (ngSubmit)="submit()" class="space-y-4">
+    <div class="grid grid-cols-2 gap-3">
+      <bs-form-field
+        label="First name"
+        name="first_name"
+        placeholder="Akash"
+        autocomplete="given-name"
+        [(value)]="first_name"
+      />
+      <bs-form-field
+        label="Last name"
+        name="last_name"
+        placeholder="Sadavarte"
+        autocomplete="family-name"
+        [(value)]="last_name"
+      />
+    </div>
+
+    <bs-form-field
+      label="Email"
+      type="email"
+      name="email"
+      placeholder="you@company.com"
+      autocomplete="email"
+      [required]="true"
+      [(value)]="email"
+    />
+
+    <bs-password-field
+      label="Password"
+      placeholder="Min 8 characters"
+      autocomplete="new-password"
+      [minlength]="8"
+      [required]="true"
+      [(value)]="password"
+    />
+
+    <bs-button type="submit" [full]="true" [loading]="loading()" [disabled]="loading()">
+      {{ loading() ? 'Creating account...' : 'Create account' }}
+    </bs-button>
+  </form>
+
+  <p class="mt-6 text-center text-sm text-gray-400">
+    Already have an account?
+    <a routerLink="/login" class="text-green-600 font-medium hover:underline">Sign in</a>
+  </p>
+</bs-auth-shell>

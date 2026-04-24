@@ -1,0 +1,40 @@
+<bs-auth-shell
+  aside_heading="From idea to<br/>shipped product."
+  aside_subline="Collapse the full delivery lifecycle into one intelligent workspace."
+  aside_footline="Built for product teams that ship fast"
+  top_link_label="Create account"
+  top_link_path="/register"
+>
+  <h1 class="text-2xl font-bold text-gray-900 mb-1">Welcome back</h1>
+  <p class="text-sm text-gray-400 mb-8">Sign in to your account</p>
+
+  <bs-error-alert [message]="error()" />
+
+  <form (ngSubmit)="submit()" class="space-y-5">
+    <bs-form-field
+      label="Email"
+      type="email"
+      name="email"
+      placeholder="you@company.com"
+      autocomplete="email"
+      [required]="true"
+      [(value)]="email"
+    />
+
+    <bs-password-field
+      label="Password"
+      autocomplete="current-password"
+      [required]="true"
+      [(value)]="password"
+    />
+
+    <bs-button type="submit" [full]="true" [loading]="loading()" [disabled]="loading()">
+      {{ loading() ? 'Signing in...' : 'Sign in' }}
+    </bs-button>
+  </form>
+
+  <p class="mt-8 text-center text-sm text-gray-400">
+    Don't have an account?
+    <a routerLink="/register" class="text-green-600 font-medium hover:underline">Register</a>
+  </p>
+</bs-auth-shell>

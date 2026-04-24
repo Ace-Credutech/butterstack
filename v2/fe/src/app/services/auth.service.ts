@@ -1,18 +1,26 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
-import { environment } from '../environments/environment';
+import { HttpService } from './http.service';
 
 type User = { id: string; email: string; name: string };
-type LoginResponse = { code: number; message: string; data: { access_token: string; refresh_token: string; expires_in: number; refresh_expires_in: number; token_type: string; user: User } };
+type LoginResponse = {
+  code:    number;
+  message: string;
+  data: {
+    access_token:       string;
+    refresh_token:      string;
+    expires_in:         number;
+    refresh_expires_in: number;
+    token_type:         string;
+    user:               User;
+  };
+};
 
 const LS_KEY = 'bs_auth';
-
 type Stored = { access_token: string; refresh_token: string; user: User };
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly http = inject(HttpClient);
+  private readonly http = inject(HttpService);
 
   readonly access_token  = signal<string | null>(null);
   readonly refresh_token = signal<string | null>(null);
@@ -45,12 +53,12 @@ export class AuthService {
   }
 
   async login(email: string, password: string): Promise<void> {
-    const res = await firstValueFrom(this.http.post<LoginResponse>(`${environment.API_BASE}/auth/login`, { email, password }));
+    const res = await this.http.post<LoginResponse>('/auth/login', { email, password });
     this.apply_token_set(res);
   }
 
   async register(email: string, password: string, first_name?: string, last_name?: string): Promise<void> {
-    const res = await firstValueFrom(this.http.post<LoginResponse>(`${environment.API_BASE}/auth/register`, { email, password, first_name, last_name }));
+    const res = await this.http.post<LoginResponse>('/auth/register', { email, password, first_name, last_name });
     this.apply_token_set(res);
   }
 
@@ -58,7 +66,7 @@ export class AuthService {
     const rt = this.refresh_token();
     if (!rt) return false;
     try {
-      const res = await firstValueFrom(this.http.post<LoginResponse>(`${environment.API_BASE}/auth/refresh`, { refresh_token: rt }));
+      const res = await this.http.post<LoginResponse>('/auth/refresh', { refresh_token: rt });
       this.apply_token_set(res);
       return true;
     } catch { this.clear(); return false; }
@@ -66,7 +74,7 @@ export class AuthService {
 
   async logout(): Promise<void> {
     const rt = this.refresh_token();
-    if (rt) await firstValueFrom(this.http.post(`${environment.API_BASE}/auth/logout`, { refresh_token: rt })).catch(() => {});
+    if (rt) await this.http.post('/auth/logout', { refresh_token: rt }).catch(() => {});
     this.clear();
   }
 

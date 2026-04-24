@@ -1,10 +1,16 @@
 import { Routes } from '@angular/router';
-import { auth_guard } from './auth.guard';
+import { auth_guard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '',             loadComponent: () => import('./landing').then(m => m.Landing) },
-  { path: 'login',        loadComponent: () => import('./login').then(m => m.Login) },
-  { path: 'register',     loadComponent: () => import('./register').then(m => m.Register) },
-  { path: 'app/projects', loadComponent: () => import('./projects').then(m => m.Projects), canActivate: [auth_guard] },
+  {
+    path: '',
+    canActivateChild: [auth_guard],
+    children: [
+      { path: '',             loadComponent: () => import('./pages/landing/landing').then(m => m.Landing)                                           },
+      { path: 'login',        loadComponent: () => import('./pages/login/login').then(m => m.Login),         data: { authenticated: false }         },
+      { path: 'register',     loadComponent: () => import('./pages/register/register').then(m => m.Register), data: { authenticated: false }        },
+      { path: 'app/projects', loadComponent: () => import('./pages/projects/projects').then(m => m.Projects), data: { authenticated: true  }        },
+    ],
+  },
   { path: '**', redirectTo: '' },
 ];

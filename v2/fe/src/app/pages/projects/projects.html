@@ -1,0 +1,13 @@
+<div class="min-h-screen bg-gray-50">
+  <bs-header />
+
+  <section class="max-w-3xl mx-auto p-10 space-y-6">
+    <h1 class="text-3xl font-bold text-gray-900">Projects</h1>
+    <div class="border border-gray-100 rounded-xl p-6 bg-white shadow-sm">
+      <h2 class="text-sm font-semibold text-gray-900 mb-3">Current user (from GlobalService)</h2>
+      @if (!global.loaded()) { <p class="text-gray-400 text-sm">Loading…</p> }
+      @else if (global.current_user()) { <pre class="text-xs bg-gray-50 p-3 rounded-lg border border-gray-100 overflow-x-auto">{{ global.current_user() | json }}</pre> }
+      @else { <p class="text-red-600 text-sm">No user in context.</p> }
+    </div>
+  </section>
+</div>

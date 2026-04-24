@@ -5,8 +5,8 @@
   top_link_label="Create account"
   top_link_path="/register"
 >
-  <h1 bsGravity [radius]="180" class="text-2xl font-bold text-gray-900 mb-1">Welcome back</h1>
-  <p bsGravity [radius]="180" class="text-sm text-gray-400 mb-8">Sign in to your account</p>
+  <h1 class="text-2xl font-bold text-gray-900 mb-1">Welcome back</h1>
+  <p class="text-sm text-gray-400 mb-8">Sign in to your account</p>
 
   <bs-error-alert [message]="error()" />
 
@@ -35,6 +35,6 @@
 
   <p class="mt-8 text-center text-sm text-gray-400">
     Don't have an account?
-    <a bsGravity [radius]="120" routerLink="/register" class="text-green-600 font-medium hover:underline">Register</a>
+    <a routerLink="/register" class="text-green-600 font-medium hover:underline">Register</a>
   </p>
 </bs-auth-shell>

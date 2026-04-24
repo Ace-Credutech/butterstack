@@ -2,12 +2,11 @@ import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BrandMark } from '../../atoms/brand-mark/brand-mark';
 import { AuthAside } from '../auth-aside/auth-aside';
-import { GravityBackdrop } from '../gravity-backdrop/gravity-backdrop';
 import { GravityDirective } from '../../../directives/gravity.directive';
 
 @Component({
   selector:    'bs-auth-shell',
-  imports:     [RouterLink, BrandMark, AuthAside, GravityBackdrop, GravityDirective],
+  imports:     [RouterLink, BrandMark, AuthAside, GravityDirective],
   templateUrl: './auth-shell.html',
 })
 export class AuthShell {

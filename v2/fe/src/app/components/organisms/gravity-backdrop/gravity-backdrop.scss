@@ -1,51 +1,62 @@
-.bs-gravity-backdrop {
+:host {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  --mx: 50%;
-  --my: 50%;
-  --radius:    260px;
-  --accent:    rgba(34, 197, 94, 0.22);
-  --base-dot:  rgba(15, 23, 42, 0.06);
-  --cell-size: 26px;
-  transition: background-position 0.2s ease-out;
+  overflow: hidden;
 }
 
-/* Base dotted pattern */
-.bs-gravity-backdrop[data-pattern='dots'] {
-  background-image:
-    radial-gradient(circle var(--radius) at var(--mx) var(--my), var(--accent), transparent 70%),
-    radial-gradient(circle at 1px 1px, var(--base-dot) 1px, transparent 1.6px);
-  background-size:
-    100% 100%,
-    var(--cell-size) var(--cell-size);
-  background-position:
-    0 0,
-    0 0;
-  background-repeat:
-    no-repeat,
-    repeat;
+.bs-gravity-canvas {
+  position: absolute;
+  inset: 0;
+  width:  100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
 }
 
-/* Base grid pattern */
-.bs-gravity-backdrop[data-pattern='grid'] {
-  background-image:
-    radial-gradient(circle var(--radius) at var(--mx) var(--my), var(--accent), transparent 70%),
-    linear-gradient(to right,  var(--base-dot) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--base-dot) 1px, transparent 1px);
-  background-size:
-    100% 100%,
-    var(--cell-size) var(--cell-size),
-    var(--cell-size) var(--cell-size);
-  background-repeat:
-    no-repeat,
-    repeat,
-    repeat;
+/* Floating blurred green orbs behind the canvas dots — modern SaaS ambient glow. */
+:host::before,
+:host::after {
+  content: '';
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(110px);
+  opacity: 0.28;
+  pointer-events: none;
+  z-index: 1;
+}
+
+:host::before {
+  width: 520px;
+  height: 520px;
+  left: -120px;
+  top: -140px;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.28), transparent 70%);
+  animation: bs-orb-a 18s ease-in-out infinite alternate;
+}
+
+:host::after {
+  width: 640px;
+  height: 640px;
+  right: -180px;
+  bottom: -200px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.22), transparent 70%);
+  animation: bs-orb-b 22s ease-in-out infinite alternate;
+}
+
+@keyframes bs-orb-a {
+  0%   { transform: translate3d(0, 0, 0)        scale(1); }
+  100% { transform: translate3d(60px, 40px, 0)  scale(1.15); }
+}
+
+@keyframes bs-orb-b {
+  0%   { transform: translate3d(0, 0, 0)          scale(1); }
+  100% { transform: translate3d(-80px, -60px, 0)  scale(1.2); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bs-gravity-backdrop {
-    background-image: none;
-  }
+  :host::before,
+  :host::after { animation: none; }
+  .bs-gravity-canvas { display: none; }
 }

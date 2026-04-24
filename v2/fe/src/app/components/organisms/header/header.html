@@ -1,0 +1,21 @@
+<header class="bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between">
+  <a routerLink="/" class="flex items-center gap-2.5">
+    <div class="w-7 h-7 bg-green-600 rounded-lg flex items-center justify-center">
+      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+    </div>
+    <span class="font-bold text-gray-900 tracking-tight">butterstack</span>
+  </a>
+
+  @if (auth.authenticated()) {
+    <div class="flex items-center gap-4">
+      <a routerLink="/app/projects" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">Projects</a>
+      <span class="text-sm text-gray-500">{{ global.current_user()?.name }}</span>
+      <button (click)="logout()" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">Logout</button>
+    </div>
+  } @else {
+    <div class="flex items-center gap-4">
+      <a routerLink="/login"    class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">Sign in</a>
+      <a routerLink="/register" class="text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg px-4 py-2 transition">Get started</a>
+    </div>
+  }
+</header>

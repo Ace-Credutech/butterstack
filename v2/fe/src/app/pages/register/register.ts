@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService }   from '../../services/auth.service';
 import { GlobalService } from '../../services/global.service';
 import { Button }          from '../../components/atoms/button/button';
@@ -19,6 +19,7 @@ export class Register {
   private readonly auth   = inject(AuthService);
   private readonly global = inject(GlobalService);
   private readonly router = inject(Router);
+  private readonly route  = inject(ActivatedRoute);
 
   readonly first_name = signal('');
   readonly last_name  = signal('');
@@ -33,7 +34,8 @@ export class Register {
     try {
       await this.auth.register(this.email(), this.password(), this.first_name() || undefined, this.last_name() || undefined);
       await this.global.fetch_me();
-      this.router.navigateByUrl('/app/projects');
+      const redirect = this.route.snapshot.queryParamMap.get('redirect') ?? '/app/projects';
+      this.router.navigateByUrl(redirect);
     } catch (e: any) {
       this.error.set(e?.error?.error?.message ?? e?.message ?? 'Registration failed');
     } finally {

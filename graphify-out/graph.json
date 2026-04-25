@@ -875,7 +875,7 @@
       "source_file": "web/src/app/components/api-keys-settings/api-keys-settings.component.ts",
       "source_location": "L1",
       "id": "web_src_app_components_api_keys_settings_api_keys_settings_component_ts",
-      "community": 31
+      "community": 32
     },
     {
       "label": "ApiKeysSettingsComponent",
@@ -883,7 +883,7 @@
       "source_file": "web/src/app/components/api-keys-settings/api-keys-settings.component.ts",
       "source_location": "L50",
       "id": "api_keys_settings_component_apikeyssettingscomponent",
-      "community": 31
+      "community": 32
     },
     {
       "label": ".constructor()",
@@ -891,7 +891,7 @@
       "source_file": "web/src/app/components/api-keys-settings/api-keys-settings.component.ts",
       "source_location": "L57",
       "id": "api_keys_settings_component_apikeyssettingscomponent_constructor",
-      "community": 31
+      "community": 32
     },
     {
       "label": ".toggle()",
@@ -899,7 +899,7 @@
       "source_file": "web/src/app/components/api-keys-settings/api-keys-settings.component.ts",
       "source_location": "L59",
       "id": "api_keys_settings_component_apikeyssettingscomponent_toggle",
-      "community": 31
+      "community": 32
     },
     {
       "label": ".save()",
@@ -907,7 +907,7 @@
       "source_file": "web/src/app/components/api-keys-settings/api-keys-settings.component.ts",
       "source_location": "L66",
       "id": "api_keys_settings_component_apikeyssettingscomponent_save",
-      "community": 31
+      "community": 32
     },
     {
       "label": ".onEsc()",
@@ -915,7 +915,7 @@
       "source_file": "web/src/app/components/api-keys-settings/api-keys-settings.component.ts",
       "source_location": "L80",
       "id": "api_keys_settings_component_apikeyssettingscomponent_onesc",
-      "community": 31
+      "community": 32
     },
     {
       "label": "prototype-preview.component.ts",
@@ -1771,7 +1771,7 @@
       "source_file": "web/src/app/components/user-avatar/user-avatar.component.ts",
       "source_location": "L1",
       "id": "web_src_app_components_user_avatar_user_avatar_component_ts",
-      "community": 32
+      "community": 33
     },
     {
       "label": "UserAvatarComponent",
@@ -1779,7 +1779,7 @@
       "source_file": "web/src/app/components/user-avatar/user-avatar.component.ts",
       "source_location": "L32",
       "id": "user_avatar_component_useravatarcomponent",
-      "community": 32
+      "community": 33
     },
     {
       "label": ".constructor()",
@@ -1787,7 +1787,7 @@
       "source_file": "web/src/app/components/user-avatar/user-avatar.component.ts",
       "source_location": "L35",
       "id": "user_avatar_component_useravatarcomponent_constructor",
-      "community": 32
+      "community": 33
     },
     {
       "label": ".initials()",
@@ -1795,7 +1795,7 @@
       "source_file": "web/src/app/components/user-avatar/user-avatar.component.ts",
       "source_location": "L37",
       "id": "user_avatar_component_useravatarcomponent_initials",
-      "community": 32
+      "community": 33
     },
     {
       "label": ".logout()",
@@ -1803,7 +1803,7 @@
       "source_file": "web/src/app/components/user-avatar/user-avatar.component.ts",
       "source_location": "L42",
       "id": "user_avatar_component_useravatarcomponent_logout",
-      "community": 32
+      "community": 33
     },
     {
       "label": ".onClickOutside()",
@@ -1811,7 +1811,7 @@
       "source_file": "web/src/app/components/user-avatar/user-avatar.component.ts",
       "source_location": "L48",
       "id": "user_avatar_component_useravatarcomponent_onclickoutside",
-      "community": 32
+      "community": 33
     },
     {
       "label": "usage-panel.component.ts",
@@ -1819,7 +1819,7 @@
       "source_file": "web/src/app/components/usage-panel/usage-panel.component.ts",
       "source_location": "L1",
       "id": "web_src_app_components_usage_panel_usage_panel_component_ts",
-      "community": 33
+      "community": 34
     },
     {
       "label": "UsagePanelComponent",
@@ -1827,7 +1827,7 @@
       "source_file": "web/src/app/components/usage-panel/usage-panel.component.ts",
       "source_location": "L109",
       "id": "usage_panel_component_usagepanelcomponent",
-      "community": 33
+      "community": 34
     },
     {
       "label": ".constructor()",
@@ -1835,7 +1835,7 @@
       "source_file": "web/src/app/components/usage-panel/usage-panel.component.ts",
       "source_location": "L116",
       "id": "usage_panel_component_usagepanelcomponent_constructor",
-      "community": 33
+      "community": 34
     },
     {
       "label": ".toggle()",
@@ -1843,7 +1843,7 @@
       "source_file": "web/src/app/components/usage-panel/usage-panel.component.ts",
       "source_location": "L118",
       "id": "usage_panel_component_usagepanelcomponent_toggle",
-      "community": 33
+      "community": 34
     },
     {
       "label": ".formatTokens()",
@@ -1851,7 +1851,7 @@
       "source_file": "web/src/app/components/usage-panel/usage-panel.component.ts",
       "source_location": "L129",
       "id": "usage_panel_component_usagepanelcomponent_formattokens",
-      "community": 33
+      "community": 34
     },
     {
       "label": ".onEsc()",
@@ -1859,7 +1859,7 @@
       "source_file": "web/src/app/components/usage-panel/usage-panel.component.ts",
       "source_location": "L137",
       "id": "usage_panel_component_usagepanelcomponent_onesc",
-      "community": 33
+      "community": 34
     },
     {
       "label": "version-timeline.component.ts",
@@ -2363,7 +2363,7 @@
       "source_file": "web/src/app/pages/confidence/confidence.component.ts",
       "source_location": "L1",
       "id": "web_src_app_pages_confidence_confidence_component_ts",
-      "community": 24
+      "community": 26
     },
     {
       "label": "ConfidenceComponent",
@@ -2371,7 +2371,7 @@
       "source_file": "web/src/app/pages/confidence/confidence.component.ts",
       "source_location": "L13",
       "id": "confidence_component_confidencecomponent",
-      "community": 24
+      "community": 26
     },
     {
       "label": ".constructor()",
@@ -2379,7 +2379,7 @@
       "source_file": "web/src/app/pages/confidence/confidence.component.ts",
       "source_location": "L23",
       "id": "confidence_component_confidencecomponent_constructor",
-      "community": 24
+      "community": 26
     },
     {
       "label": ".ngOnInit()",
@@ -2387,7 +2387,7 @@
       "source_file": "web/src/app/pages/confidence/confidence.component.ts",
       "source_location": "L25",
       "id": "confidence_component_confidencecomponent_ngoninit",
-      "community": 24
+      "community": 26
     },
     {
       "label": ".fcsPercent()",
@@ -2395,7 +2395,7 @@
       "source_file": "web/src/app/pages/confidence/confidence.component.ts",
       "source_location": "L63",
       "id": "confidence_component_confidencecomponent_fcspercent",
-      "community": 24
+      "community": 26
     },
     {
       "label": ".scoreColor()",
@@ -2403,7 +2403,7 @@
       "source_file": "web/src/app/pages/confidence/confidence.component.ts",
       "source_location": "L65",
       "id": "confidence_component_confidencecomponent_scorecolor",
-      "community": 24
+      "community": 26
     },
     {
       "label": ".scoreBg()",
@@ -2411,7 +2411,7 @@
       "source_file": "web/src/app/pages/confidence/confidence.component.ts",
       "source_location": "L71",
       "id": "confidence_component_confidencecomponent_scorebg",
-      "community": 24
+      "community": 26
     },
     {
       "label": ".back()",
@@ -2419,7 +2419,7 @@
       "source_file": "web/src/app/pages/confidence/confidence.component.ts",
       "source_location": "L77",
       "id": "confidence_component_confidencecomponent_back",
-      "community": 24
+      "community": 26
     },
     {
       "label": "login.component.ts",
@@ -2819,7 +2819,7 @@
       "source_file": "web/src/app/services/api.service.ts",
       "source_location": "L1",
       "id": "web_src_app_services_api_service_ts",
-      "community": 25
+      "community": 27
     },
     {
       "label": "ApiService",
@@ -2827,7 +2827,7 @@
       "source_file": "web/src/app/services/api.service.ts",
       "source_location": "L7",
       "id": "api_service_apiservice",
-      "community": 25
+      "community": 27
     },
     {
       "label": ".constructor()",
@@ -2835,7 +2835,7 @@
       "source_file": "web/src/app/services/api.service.ts",
       "source_location": "L10",
       "id": "api_service_apiservice_constructor",
-      "community": 25
+      "community": 27
     },
     {
       "label": ".get()",
@@ -2843,7 +2843,7 @@
       "source_file": "web/src/app/services/api.service.ts",
       "source_location": "L12",
       "id": "api_service_apiservice_get",
-      "community": 25
+      "community": 27
     },
     {
       "label": ".post()",
@@ -2851,7 +2851,7 @@
       "source_file": "web/src/app/services/api.service.ts",
       "source_location": "L16",
       "id": "api_service_apiservice_post",
-      "community": 25
+      "community": 27
     },
     {
       "label": ".patch()",
@@ -2859,7 +2859,7 @@
       "source_file": "web/src/app/services/api.service.ts",
       "source_location": "L20",
       "id": "api_service_apiservice_patch",
-      "community": 25
+      "community": 27
     },
     {
       "label": ".delete()",
@@ -2867,7 +2867,7 @@
       "source_file": "web/src/app/services/api.service.ts",
       "source_location": "L24",
       "id": "api_service_apiservice_delete",
-      "community": 25
+      "community": 27
     },
     {
       "label": ".url()",
@@ -2875,7 +2875,7 @@
       "source_file": "web/src/app/services/api.service.ts",
       "source_location": "L28",
       "id": "api_service_apiservice_url",
-      "community": 25
+      "community": 27
     },
     {
       "label": "auth.service.ts",
@@ -2883,23 +2883,23 @@
       "source_file": "web/src/app/services/auth.service.ts",
       "source_location": "L1",
       "id": "web_src_app_services_auth_service_ts",
-      "community": 12
+      "community": 6
     },
     {
       "label": "AuthService",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L22",
+      "source_location": "L23",
       "id": "auth_service_authservice",
-      "community": 12
+      "community": 6
     },
     {
       "label": ".constructor()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L30",
+      "source_location": "L32",
       "id": "auth_service_authservice_constructor",
-      "community": 12
+      "community": 6
     },
     {
       "label": ".token()",
@@ -2907,15 +2907,15 @@
       "source_file": "web/src/app/services/auth.service.ts",
       "source_location": "L33",
       "id": "auth_service_authservice_token",
-      "community": 12
+      "community": 6
     },
     {
       "label": ".register()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L60",
+      "source_location": "L95",
       "id": "auth_service_authservice_register",
-      "community": 12
+      "community": 6
     },
     {
       "label": ".registerWithInvite()",
@@ -2923,23 +2923,23 @@
       "source_file": "web/src/app/services/auth.service.ts",
       "source_location": "L42",
       "id": "auth_service_authservice_registerwithinvite",
-      "community": 12
+      "community": 6
     },
     {
       "label": ".login()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L55",
+      "source_location": "L90",
       "id": "auth_service_authservice_login",
-      "community": 12
+      "community": 6
     },
     {
       "label": ".logout()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L75",
+      "source_location": "L118",
       "id": "auth_service_authservice_logout",
-      "community": 12
+      "community": 6
     },
     {
       "label": ".loadMe()",
@@ -2947,7 +2947,7 @@
       "source_file": "web/src/app/services/auth.service.ts",
       "source_location": "L60",
       "id": "auth_service_authservice_loadme",
-      "community": 12
+      "community": 6
     },
     {
       "label": ".setSession()",
@@ -2955,7 +2955,7 @@
       "source_file": "web/src/app/services/auth.service.ts",
       "source_location": "L73",
       "id": "auth_service_authservice_setsession",
-      "community": 12
+      "community": 6
     },
     {
       "label": "prototype.service.ts",
@@ -2963,7 +2963,7 @@
       "source_file": "web/src/app/services/prototype.service.ts",
       "source_location": "L1",
       "id": "web_src_app_services_prototype_service_ts",
-      "community": 34
+      "community": 35
     },
     {
       "label": "PrototypeService",
@@ -2971,7 +2971,7 @@
       "source_file": "web/src/app/services/prototype.service.ts",
       "source_location": "L6",
       "id": "prototype_service_prototypeservice",
-      "community": 34
+      "community": 35
     },
     {
       "label": ".constructor()",
@@ -2979,7 +2979,7 @@
       "source_file": "web/src/app/services/prototype.service.ts",
       "source_location": "L7",
       "id": "prototype_service_prototypeservice_constructor",
-      "community": 34
+      "community": 35
     },
     {
       "label": ".generate()",
@@ -2987,7 +2987,7 @@
       "source_file": "web/src/app/services/prototype.service.ts",
       "source_location": "L9",
       "id": "prototype_service_prototypeservice_generate",
-      "community": 34
+      "community": 35
     },
     {
       "label": ".regenerate()",
@@ -2995,7 +2995,7 @@
       "source_file": "web/src/app/services/prototype.service.ts",
       "source_location": "L13",
       "id": "prototype_service_prototypeservice_regenerate",
-      "community": 34
+      "community": 35
     },
     {
       "label": ".autoAssign()",
@@ -3003,7 +3003,7 @@
       "source_file": "web/src/app/services/prototype.service.ts",
       "source_location": "L17",
       "id": "prototype_service_prototypeservice_autoassign",
-      "community": 34
+      "community": 35
     },
     {
       "label": "export.service.ts",
@@ -3011,7 +3011,7 @@
       "source_file": "web/src/app/services/export.service.ts",
       "source_location": "L1",
       "id": "web_src_app_services_export_service_ts",
-      "community": 35
+      "community": 36
     },
     {
       "label": "ExportService",
@@ -3019,7 +3019,7 @@
       "source_file": "web/src/app/services/export.service.ts",
       "source_location": "L5",
       "id": "export_service_exportservice",
-      "community": 35
+      "community": 36
     },
     {
       "label": ".headers()",
@@ -3027,7 +3027,7 @@
       "source_file": "web/src/app/services/export.service.ts",
       "source_location": "L8",
       "id": "export_service_exportservice_headers",
-      "community": 35
+      "community": 36
     },
     {
       "label": ".openBrd()",
@@ -3035,7 +3035,7 @@
       "source_file": "web/src/app/services/export.service.ts",
       "source_location": "L13",
       "id": "export_service_exportservice_openbrd",
-      "community": 35
+      "community": 36
     },
     {
       "label": ".openMindmap()",
@@ -3043,7 +3043,7 @@
       "source_file": "web/src/app/services/export.service.ts",
       "source_location": "L20",
       "id": "export_service_exportservice_openmindmap",
-      "community": 35
+      "community": 36
     },
     {
       "label": ".downloadExcel()",
@@ -3051,7 +3051,7 @@
       "source_file": "web/src/app/services/export.service.ts",
       "source_location": "L25",
       "id": "export_service_exportservice_downloadexcel",
-      "community": 35
+      "community": 36
     },
     {
       "label": "elicitation.service.ts",
@@ -3059,7 +3059,7 @@
       "source_file": "web/src/app/services/elicitation.service.ts",
       "source_location": "L1",
       "id": "web_src_app_services_elicitation_service_ts",
-      "community": 26
+      "community": 28
     },
     {
       "label": "ElicitationService",
@@ -3067,7 +3067,7 @@
       "source_file": "web/src/app/services/elicitation.service.ts",
       "source_location": "L32",
       "id": "elicitation_service_elicitationservice",
-      "community": 26
+      "community": 28
     },
     {
       "label": ".constructor()",
@@ -3075,7 +3075,7 @@
       "source_file": "web/src/app/services/elicitation.service.ts",
       "source_location": "L33",
       "id": "elicitation_service_elicitationservice_constructor",
-      "community": 26
+      "community": 28
     },
     {
       "label": ".createSession()",
@@ -3083,7 +3083,7 @@
       "source_file": "web/src/app/services/elicitation.service.ts",
       "source_location": "L35",
       "id": "elicitation_service_elicitationservice_createsession",
-      "community": 26
+      "community": 28
     },
     {
       "label": ".listSessions()",
@@ -3091,7 +3091,7 @@
       "source_file": "web/src/app/services/elicitation.service.ts",
       "source_location": "L39",
       "id": "elicitation_service_elicitationservice_listsessions",
-      "community": 26
+      "community": 28
     },
     {
       "label": ".getSession()",
@@ -3099,7 +3099,7 @@
       "source_file": "web/src/app/services/elicitation.service.ts",
       "source_location": "L43",
       "id": "elicitation_service_elicitationservice_getsession",
-      "community": 26
+      "community": 28
     },
     {
       "label": ".sendMessage()",
@@ -3107,7 +3107,7 @@
       "source_file": "web/src/app/services/elicitation.service.ts",
       "source_location": "L47",
       "id": "elicitation_service_elicitationservice_sendmessage",
-      "community": 26
+      "community": 28
     },
     {
       "label": ".completeSession()",
@@ -3115,7 +3115,7 @@
       "source_file": "web/src/app/services/elicitation.service.ts",
       "source_location": "L51",
       "id": "elicitation_service_elicitationservice_completesession",
-      "community": 26
+      "community": 28
     },
     {
       "label": "auth.guard.ts",
@@ -3387,7 +3387,7 @@
       "source_file": "v2/be/src/index.ts",
       "source_location": "L1",
       "id": "v2_be_src_index_ts",
-      "community": 29
+      "community": 31
     },
     {
       "label": "run_migrations_on_dev()",
@@ -3395,7 +3395,7 @@
       "source_file": "v2/be/src/index.ts",
       "source_location": "L20",
       "id": "index_run_migrations_on_dev",
-      "community": 29
+      "community": 31
     },
     {
       "label": "register_apis()",
@@ -3403,7 +3403,7 @@
       "source_file": "v2/be/src/index.ts",
       "source_location": "L26",
       "id": "index_register_apis",
-      "community": 29
+      "community": 31
     },
     {
       "label": "register_workers()",
@@ -3411,7 +3411,7 @@
       "source_file": "v2/be/src/index.ts",
       "source_location": "L31",
       "id": "index_register_workers",
-      "community": 29
+      "community": 31
     },
     {
       "label": "register_crons()",
@@ -3419,7 +3419,7 @@
       "source_file": "v2/be/src/index.ts",
       "source_location": "L36",
       "id": "index_register_crons",
-      "community": 29
+      "community": 31
     },
     {
       "label": "boot()",
@@ -3427,7 +3427,7 @@
       "source_file": "v2/be/src/index.ts",
       "source_location": "L40",
       "id": "index_boot",
-      "community": 29
+      "community": 31
     },
     {
       "label": "shutdown()",
@@ -3435,7 +3435,7 @@
       "source_file": "v2/be/src/index.ts",
       "source_location": "L78",
       "id": "index_shutdown",
-      "community": 29
+      "community": 31
     },
     {
       "label": "env.ts",
@@ -3987,7 +3987,7 @@
       "source_file": "v2/be/src/apis/events/dispatcher.ts",
       "source_location": "L1",
       "id": "v2_be_src_apis_events_dispatcher_ts",
-      "community": 27
+      "community": 29
     },
     {
       "label": "register_event_handler()",
@@ -3995,7 +3995,7 @@
       "source_file": "v2/be/src/apis/events/dispatcher.ts",
       "source_location": "L7",
       "id": "dispatcher_register_event_handler",
-      "community": 27
+      "community": 29
     },
     {
       "label": "register_event_handlers()",
@@ -4003,7 +4003,7 @@
       "source_file": "v2/be/src/apis/events/dispatcher.ts",
       "source_location": "L12",
       "id": "dispatcher_register_event_handlers",
-      "community": 27
+      "community": 29
     },
     {
       "label": "get_event_handler()",
@@ -4011,7 +4011,7 @@
       "source_file": "v2/be/src/apis/events/dispatcher.ts",
       "source_location": "L16",
       "id": "dispatcher_get_event_handler",
-      "community": 27
+      "community": 29
     },
     {
       "label": "list_registered_types()",
@@ -4019,7 +4019,7 @@
       "source_file": "v2/be/src/apis/events/dispatcher.ts",
       "source_location": "L17",
       "id": "dispatcher_list_registered_types",
-      "community": 27
+      "community": 29
     },
     {
       "label": "validate_payload()",
@@ -4027,7 +4027,7 @@
       "source_file": "v2/be/src/apis/events/dispatcher.ts",
       "source_location": "L19",
       "id": "dispatcher_validate_payload",
-      "community": 27
+      "community": 29
     },
     {
       "label": "check_authority()",
@@ -4035,7 +4035,7 @@
       "source_file": "v2/be/src/apis/events/dispatcher.ts",
       "source_location": "L25",
       "id": "dispatcher_check_authority",
-      "community": 27
+      "community": 29
     },
     {
       "label": "dispatch_event()",
@@ -4043,7 +4043,7 @@
       "source_file": "v2/be/src/apis/events/dispatcher.ts",
       "source_location": "L32",
       "id": "dispatcher_dispatch_event",
-      "community": 27
+      "community": 29
     },
     {
       "label": "post-event.test.ts",
@@ -4059,7 +4059,7 @@
       "source_file": "v2/be/src/apis/events/post-event/post-event.function.ts",
       "source_location": "L1",
       "id": "v2_be_src_apis_events_post_event_post_event_function_ts",
-      "community": 28
+      "community": 30
     },
     {
       "label": "find_existing_by_idempotency()",
@@ -4067,7 +4067,7 @@
       "source_file": "v2/be/src/apis/events/post-event/post-event.function.ts",
       "source_location": "L11",
       "id": "post_event_function_find_existing_by_idempotency",
-      "community": 28
+      "community": 30
     },
     {
       "label": "claim_next_sequence_no()",
@@ -4075,7 +4075,7 @@
       "source_file": "v2/be/src/apis/events/post-event/post-event.function.ts",
       "source_location": "L14",
       "id": "post_event_function_claim_next_sequence_no",
-      "community": 28
+      "community": 30
     },
     {
       "label": "persist_event()",
@@ -4083,7 +4083,7 @@
       "source_file": "v2/be/src/apis/events/post-event/post-event.function.ts",
       "source_location": "L23",
       "id": "post_event_function_persist_event",
-      "community": 28
+      "community": 30
     },
     {
       "label": "build_envelope()",
@@ -4091,7 +4091,7 @@
       "source_file": "v2/be/src/apis/events/post-event/post-event.function.ts",
       "source_location": "L43",
       "id": "post_event_function_build_envelope",
-      "community": 28
+      "community": 30
     },
     {
       "label": "envelope_matches()",
@@ -4099,7 +4099,7 @@
       "source_file": "v2/be/src/apis/events/post-event/post-event.function.ts",
       "source_location": "L54",
       "id": "post_event_function_envelope_matches",
-      "community": 28
+      "community": 30
     },
     {
       "label": "shape_idempotent_reply()",
@@ -4107,7 +4107,7 @@
       "source_file": "v2/be/src/apis/events/post-event/post-event.function.ts",
       "source_location": "L56",
       "id": "post_event_function_shape_idempotent_reply",
-      "community": 28
+      "community": 30
     },
     {
       "label": "post_event_function()",
@@ -4115,7 +4115,7 @@
       "source_file": "v2/be/src/apis/events/post-event/post-event.function.ts",
       "source_location": "L69",
       "id": "post_event_function_post_event_function",
-      "community": 28
+      "community": 30
     },
     {
       "label": "post-event.details.ts",
@@ -4347,7 +4347,7 @@
       "source_file": "v2/be/src/setup/auth-middleware.ts",
       "source_location": "L1",
       "id": "v2_be_src_setup_auth_middleware_ts",
-      "community": 36
+      "community": 37
     },
     {
       "label": "claims_only_user()",
@@ -4355,7 +4355,7 @@
       "source_file": "v2/be/src/setup/auth-middleware.ts",
       "source_location": "L11",
       "id": "auth_middleware_claims_only_user",
-      "community": 36
+      "community": 37
     },
     {
       "label": "attach_source()",
@@ -4363,7 +4363,7 @@
       "source_file": "v2/be/src/setup/auth-middleware.ts",
       "source_location": "L22",
       "id": "auth_middleware_attach_source",
-      "community": 36
+      "community": 37
     },
     {
       "label": "try_bearer()",
@@ -4371,7 +4371,7 @@
       "source_file": "v2/be/src/setup/auth-middleware.ts",
       "source_location": "L24",
       "id": "auth_middleware_try_bearer",
-      "community": 36
+      "community": 37
     },
     {
       "label": "try_session_cookie()",
@@ -4379,7 +4379,7 @@
       "source_file": "v2/be/src/setup/auth-middleware.ts",
       "source_location": "L40",
       "id": "auth_middleware_try_session_cookie",
-      "community": 36
+      "community": 37
     },
     {
       "label": "auth_middleware()",
@@ -4387,7 +4387,7 @@
       "source_file": "v2/be/src/setup/auth-middleware.ts",
       "source_location": "L50",
       "id": "auth_middleware_auth_middleware",
-      "community": 36
+      "community": 37
     },
     {
       "label": "api-call-log.ts",
@@ -4803,7 +4803,7 @@
       "source_file": "v2/be/src/setup/notifier/notifier.ts",
       "source_location": "L1",
       "id": "v2_be_src_setup_notifier_notifier_ts",
-      "community": 37
+      "community": 38
     },
     {
       "label": "send_ws()",
@@ -4811,7 +4811,7 @@
       "source_file": "v2/be/src/setup/notifier/notifier.ts",
       "source_location": "L19",
       "id": "notifier_send_ws",
-      "community": 37
+      "community": 38
     },
     {
       "label": "send_email()",
@@ -4819,7 +4819,7 @@
       "source_file": "v2/be/src/setup/notifier/notifier.ts",
       "source_location": "L26",
       "id": "notifier_send_email",
-      "community": 37
+      "community": 38
     },
     {
       "label": "send_push()",
@@ -4827,7 +4827,7 @@
       "source_file": "v2/be/src/setup/notifier/notifier.ts",
       "source_location": "L31",
       "id": "notifier_send_push",
-      "community": 37
+      "community": 38
     },
     {
       "label": "send_slack()",
@@ -4835,7 +4835,7 @@
       "source_file": "v2/be/src/setup/notifier/notifier.ts",
       "source_location": "L32",
       "id": "notifier_send_slack",
-      "community": 37
+      "community": 38
     },
     {
       "label": "notify()",
@@ -4843,7 +4843,7 @@
       "source_file": "v2/be/src/setup/notifier/notifier.ts",
       "source_location": "L41",
       "id": "notifier_notify",
-      "community": 37
+      "community": 38
     },
     {
       "label": "setup-worker.ts",
@@ -4851,7 +4851,7 @@
       "source_file": "v2/be/src/setup/queue/setup-worker.ts",
       "source_location": "L1",
       "id": "v2_be_src_setup_queue_setup_worker_ts",
-      "community": 38
+      "community": 39
     },
     {
       "label": "setup_worker()",
@@ -4859,7 +4859,7 @@
       "source_file": "v2/be/src/setup/queue/setup-worker.ts",
       "source_location": "L24",
       "id": "setup_worker_setup_worker",
-      "community": 38
+      "community": 39
     },
     {
       "label": "find_handlers_for_queue()",
@@ -4867,7 +4867,7 @@
       "source_file": "v2/be/src/setup/queue/setup-worker.ts",
       "source_location": "L26",
       "id": "setup_worker_find_handlers_for_queue",
-      "community": 38
+      "community": 39
     },
     {
       "label": "handle_job()",
@@ -4875,7 +4875,7 @@
       "source_file": "v2/be/src/setup/queue/setup-worker.ts",
       "source_location": "L28",
       "id": "setup_worker_handle_job",
-      "community": 38
+      "community": 39
     },
     {
       "label": "start_workers()",
@@ -4883,7 +4883,7 @@
       "source_file": "v2/be/src/setup/queue/setup-worker.ts",
       "source_location": "L41",
       "id": "setup_worker_start_workers",
-      "community": 38
+      "community": 39
     },
     {
       "label": "get_worker_registry()",
@@ -4891,7 +4891,7 @@
       "source_file": "v2/be/src/setup/queue/setup-worker.ts",
       "source_location": "L55",
       "id": "setup_worker_get_worker_registry",
-      "community": 38
+      "community": 39
     },
     {
       "label": "internal-api-caller.ts",
@@ -4955,7 +4955,7 @@
       "source_file": "v2/be/src/setup/queue/adapters/bullmq.adapter.ts",
       "source_location": "L1",
       "id": "v2_be_src_setup_queue_adapters_bullmq_adapter_ts",
-      "community": 39
+      "community": 40
     },
     {
       "label": "build_connection()",
@@ -4963,7 +4963,7 @@
       "source_file": "v2/be/src/setup/queue/adapters/bullmq.adapter.ts",
       "source_location": "L7",
       "id": "bullmq_adapter_build_connection",
-      "community": 39
+      "community": 40
     },
     {
       "label": "get_or_build_queue()",
@@ -4971,7 +4971,7 @@
       "source_file": "v2/be/src/setup/queue/adapters/bullmq.adapter.ts",
       "source_location": "L12",
       "id": "bullmq_adapter_get_or_build_queue",
-      "community": 39
+      "community": 40
     },
     {
       "label": "to_record()",
@@ -4979,7 +4979,7 @@
       "source_file": "v2/be/src/setup/queue/adapters/bullmq.adapter.ts",
       "source_location": "L20",
       "id": "bullmq_adapter_to_record",
-      "community": 39
+      "community": 40
     },
     {
       "label": "translate_opts()",
@@ -4987,7 +4987,7 @@
       "source_file": "v2/be/src/setup/queue/adapters/bullmq.adapter.ts",
       "source_location": "L28",
       "id": "bullmq_adapter_translate_opts",
-      "community": 39
+      "community": 40
     },
     {
       "label": "bullmq_adapter()",
@@ -4995,7 +4995,7 @@
       "source_file": "v2/be/src/setup/queue/adapters/bullmq.adapter.ts",
       "source_location": "L35",
       "id": "bullmq_adapter_bullmq_adapter",
-      "community": 39
+      "community": 40
     },
     {
       "label": "setup-swagger.ts",
@@ -5683,7 +5683,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L1",
       "id": "v2_fe_src_app_directives_gravity_directive_ts",
-      "community": 6
+      "community": 7
     },
     {
       "label": "distance()",
@@ -5691,7 +5691,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L9",
       "id": "gravity_directive_distance",
-      "community": 6
+      "community": 7
     },
     {
       "label": "clamp01()",
@@ -5699,7 +5699,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L10",
       "id": "gravity_directive_clamp01",
-      "community": 6
+      "community": 7
     },
     {
       "label": "ease_out()",
@@ -5707,7 +5707,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L11",
       "id": "gravity_directive_ease_out",
-      "community": 6
+      "community": 7
     },
     {
       "label": "lerp()",
@@ -5715,7 +5715,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L12",
       "id": "gravity_directive_lerp",
-      "community": 6
+      "community": 7
     },
     {
       "label": "reduced_motion()",
@@ -5723,7 +5723,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L13",
       "id": "gravity_directive_reduced_motion",
-      "community": 6
+      "community": 7
     },
     {
       "label": "element_center()",
@@ -5731,7 +5731,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L15",
       "id": "gravity_directive_element_center",
-      "community": 6
+      "community": 7
     },
     {
       "label": "proximity()",
@@ -5739,7 +5739,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L20",
       "id": "gravity_directive_proximity",
-      "community": 6
+      "community": 7
     },
     {
       "label": "dent_translate()",
@@ -5747,7 +5747,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L26",
       "id": "gravity_directive_dent_translate",
-      "community": 6
+      "community": 7
     },
     {
       "label": "apply_press()",
@@ -5755,7 +5755,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L31",
       "id": "gravity_directive_apply_press",
-      "community": 6
+      "community": 7
     },
     {
       "label": "GravityDirective",
@@ -5763,7 +5763,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L39",
       "id": "gravity_directive_gravitydirective",
-      "community": 6
+      "community": 7
     },
     {
       "label": ".ngOnInit()",
@@ -5771,7 +5771,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L58",
       "id": "gravity_directive_gravitydirective_ngoninit",
-      "community": 6
+      "community": 7
     },
     {
       "label": ".prepare_host()",
@@ -5779,7 +5779,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L64",
       "id": "gravity_directive_gravitydirective_prepare_host",
-      "community": 6
+      "community": 7
     },
     {
       "label": ".bind_events()",
@@ -5787,7 +5787,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L70",
       "id": "gravity_directive_gravitydirective_bind_events",
-      "community": 6
+      "community": 7
     },
     {
       "label": ".on_pointer_move()",
@@ -5795,7 +5795,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L81",
       "id": "gravity_directive_gravitydirective_on_pointer_move",
-      "community": 6
+      "community": 7
     },
     {
       "label": ".update_target()",
@@ -5803,7 +5803,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L92",
       "id": "gravity_directive_gravitydirective_update_target",
-      "community": 6
+      "community": 7
     },
     {
       "label": ".reset_target()",
@@ -5811,7 +5811,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L98",
       "id": "gravity_directive_gravitydirective_reset_target",
-      "community": 6
+      "community": 7
     },
     {
       "label": ".ensure_loop()",
@@ -5819,7 +5819,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L103",
       "id": "gravity_directive_gravitydirective_ensure_loop",
-      "community": 6
+      "community": 7
     },
     {
       "label": ".step()",
@@ -5827,7 +5827,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L113",
       "id": "gravity_directive_gravitydirective_step",
-      "community": 6
+      "community": 7
     },
     {
       "label": ".settled()",
@@ -5835,7 +5835,7 @@
       "source_file": "v2/fe/src/app/directives/gravity.directive.ts",
       "source_location": "L123",
       "id": "gravity_directive_gravitydirective_settled",
-      "community": 6
+      "community": 7
     },
     {
       "label": "auth.interceptor.ts",
@@ -5843,47 +5843,79 @@
       "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
       "source_location": "L1",
       "id": "v2_fe_src_app_interceptors_auth_interceptor_ts",
-      "community": 40
+      "community": 23
     },
     {
       "label": "read_token()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
-      "source_location": "L10",
+      "source_location": "L11",
       "id": "auth_interceptor_read_token",
-      "community": 40
+      "community": 23
     },
     {
       "label": "is_api_request()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
-      "source_location": "L16",
+      "source_location": "L17",
       "id": "auth_interceptor_is_api_request",
-      "community": 40
+      "community": 23
     },
     {
       "label": "is_public_route()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
-      "source_location": "L17",
+      "source_location": "L18",
       "id": "auth_interceptor_is_public_route",
-      "community": 40
+      "community": 23
     },
     {
-      "label": "on_auth_failure()",
+      "label": "should_intercept()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
       "source_location": "L19",
-      "id": "auth_interceptor_on_auth_failure",
-      "community": 40
+      "id": "auth_interceptor_should_intercept",
+      "community": 23
+    },
+    {
+      "label": "attach_auth()",
+      "file_type": "code",
+      "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
+      "source_location": "L20",
+      "id": "auth_interceptor_attach_auth",
+      "community": 23
+    },
+    {
+      "label": "is_unauthorized()",
+      "file_type": "code",
+      "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
+      "source_location": "L21",
+      "id": "auth_interceptor_is_unauthorized",
+      "community": 23
+    },
+    {
+      "label": "sign_out()",
+      "file_type": "code",
+      "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
+      "source_location": "L23",
+      "id": "auth_interceptor_sign_out",
+      "community": 23
+    },
+    {
+      "label": "retry_with_refresh()",
+      "file_type": "code",
+      "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
+      "source_location": "L28",
+      "id": "auth_interceptor_retry_with_refresh",
+      "community": 23
     },
     {
       "label": "auth_interceptor()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
-      "source_location": "L24",
+      "source_location": "L38",
       "id": "auth_interceptor_auth_interceptor",
-      "community": 40
+      "community": 23
     },
     {
       "label": "form-field.ts",
@@ -6059,7 +6091,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L1",
       "id": "v2_fe_src_app_components_organisms_gravity_backdrop_gravity_backdrop_ts",
-      "community": 8
+      "community": 9
     },
     {
       "label": "distance()",
@@ -6067,7 +6099,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L7",
       "id": "gravity_backdrop_distance",
-      "community": 8
+      "community": 9
     },
     {
       "label": "clamp01()",
@@ -6075,7 +6107,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L8",
       "id": "gravity_backdrop_clamp01",
-      "community": 8
+      "community": 9
     },
     {
       "label": "ease_out()",
@@ -6083,7 +6115,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L9",
       "id": "gravity_backdrop_ease_out",
-      "community": 8
+      "community": 9
     },
     {
       "label": "lerp()",
@@ -6091,7 +6123,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L10",
       "id": "gravity_backdrop_lerp",
-      "community": 8
+      "community": 9
     },
     {
       "label": "reduced_motion()",
@@ -6099,7 +6131,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L11",
       "id": "gravity_backdrop_reduced_motion",
-      "community": 8
+      "community": 9
     },
     {
       "label": "build_grid()",
@@ -6107,7 +6139,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L13",
       "id": "gravity_backdrop_build_grid",
-      "community": 8
+      "community": 9
     },
     {
       "label": "GravityBackdrop",
@@ -6115,7 +6147,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L32",
       "id": "gravity_backdrop_gravitybackdrop",
-      "community": 8
+      "community": 9
     },
     {
       "label": ".ngOnInit()",
@@ -6123,7 +6155,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L58",
       "id": "gravity_backdrop_gravitybackdrop_ngoninit",
-      "community": 8
+      "community": 9
     },
     {
       "label": ".bind_canvas()",
@@ -6131,7 +6163,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L66",
       "id": "gravity_backdrop_gravitybackdrop_bind_canvas",
-      "community": 8
+      "community": 9
     },
     {
       "label": ".bind_resize()",
@@ -6139,7 +6171,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L72",
       "id": "gravity_backdrop_gravitybackdrop_bind_resize",
-      "community": 8
+      "community": 9
     },
     {
       "label": ".bind_pointer()",
@@ -6147,7 +6179,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L79",
       "id": "gravity_backdrop_gravitybackdrop_bind_pointer",
-      "community": 8
+      "community": 9
     },
     {
       "label": ".on_pointer_move()",
@@ -6155,7 +6187,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L90",
       "id": "gravity_backdrop_gravitybackdrop_on_pointer_move",
-      "community": 8
+      "community": 9
     },
     {
       "label": ".resize_canvas()",
@@ -6163,7 +6195,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L97",
       "id": "gravity_backdrop_gravitybackdrop_resize_canvas",
-      "community": 8
+      "community": 9
     },
     {
       "label": ".ensure_loop()",
@@ -6171,7 +6203,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L113",
       "id": "gravity_backdrop_gravitybackdrop_ensure_loop",
-      "community": 8
+      "community": 9
     },
     {
       "label": ".step()",
@@ -6179,7 +6211,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L126",
       "id": "gravity_backdrop_gravitybackdrop_step",
-      "community": 8
+      "community": 9
     },
     {
       "label": ".draw()",
@@ -6187,7 +6219,7 @@
       "source_file": "v2/fe/src/app/components/organisms/gravity-backdrop/gravity-backdrop.ts",
       "source_location": "L154",
       "id": "gravity_backdrop_gravitybackdrop_draw",
-      "community": 8
+      "community": 9
     },
     {
       "label": "auth-shell.ts",
@@ -6305,7 +6337,7 @@
       "label": ".submit()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/pages/register/register.ts",
-      "source_location": "L30",
+      "source_location": "L31",
       "id": "register_register_submit",
       "community": 89
     },
@@ -6339,47 +6371,95 @@
       "source_file": "v2/fe/src/app/services/auth.service.ts",
       "source_location": "L1",
       "id": "v2_fe_src_app_services_auth_service_ts",
-      "community": 12
+      "community": 6
+    },
+    {
+      "label": ".bind_cross_tab_sync()",
+      "file_type": "code",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L37",
+      "id": "auth_service_authservice_bind_cross_tab_sync",
+      "community": 6
+    },
+    {
+      "label": ".on_storage_event()",
+      "file_type": "code",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L42",
+      "id": "auth_service_authservice_on_storage_event",
+      "community": 6
+    },
+    {
+      "label": ".handle_remote_signin()",
+      "file_type": "code",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L48",
+      "id": "auth_service_authservice_handle_remote_signin",
+      "community": 6
+    },
+    {
+      "label": ".is_guest_route()",
+      "file_type": "code",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L55",
+      "id": "auth_service_authservice_is_guest_route",
+      "community": 6
+    },
+    {
+      "label": ".handle_remote_signout()",
+      "file_type": "code",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L60",
+      "id": "auth_service_authservice_handle_remote_signout",
+      "community": 6
     },
     {
       "label": ".hydrate_from_local_storage()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L32",
+      "source_location": "L67",
       "id": "auth_service_authservice_hydrate_from_local_storage",
-      "community": 12
+      "community": 6
     },
     {
       "label": ".persist()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L43",
+      "source_location": "L78",
       "id": "auth_service_authservice_persist",
-      "community": 12
+      "community": 6
     },
     {
       "label": ".apply_token_set()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L48",
+      "source_location": "L83",
       "id": "auth_service_authservice_apply_token_set",
-      "community": 12
+      "community": 6
     },
     {
       "label": ".refresh()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L65",
+      "source_location": "L102",
       "id": "auth_service_authservice_refresh",
-      "community": 12
+      "community": 6
+    },
+    {
+      "label": ".refresh_singleflight()",
+      "file_type": "code",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L112",
+      "id": "auth_service_authservice_refresh_singleflight",
+      "community": 6
     },
     {
       "label": ".clear()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L81",
+      "source_location": "L124",
       "id": "auth_service_authservice_clear",
-      "community": 12
+      "community": 6
     },
     {
       "label": "global.service.ts",
@@ -6387,7 +6467,7 @@
       "source_file": "v2/fe/src/app/services/global.service.ts",
       "source_location": "L1",
       "id": "v2_fe_src_app_services_global_service_ts",
-      "community": 30
+      "community": 25
     },
     {
       "label": "GlobalService",
@@ -6395,47 +6475,63 @@
       "source_file": "v2/fe/src/app/services/global.service.ts",
       "source_location": "L10",
       "id": "global_service_globalservice",
-      "community": 30
+      "community": 25
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "v2/fe/src/app/services/global.service.ts",
+      "source_location": "L19",
+      "id": "global_service_globalservice_constructor",
+      "community": 25
+    },
+    {
+      "label": ".bind_auth_state_sync()",
+      "file_type": "code",
+      "source_file": "v2/fe/src/app/services/global.service.ts",
+      "source_location": "L21",
+      "id": "global_service_globalservice_bind_auth_state_sync",
+      "community": 25
     },
     {
       "label": ".bootstrap()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/global.service.ts",
-      "source_location": "L19",
+      "source_location": "L29",
       "id": "global_service_globalservice_bootstrap",
-      "community": 30
+      "community": 25
     },
     {
       "label": ".fetch_me()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/global.service.ts",
-      "source_location": "L24",
+      "source_location": "L34",
       "id": "global_service_globalservice_fetch_me",
-      "community": 30
+      "community": 25
     },
     {
       "label": ".run_fetch_me()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/global.service.ts",
-      "source_location": "L30",
+      "source_location": "L40",
       "id": "global_service_globalservice_run_fetch_me",
-      "community": 30
+      "community": 25
     },
     {
       "label": ".handle_unauthenticated()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/global.service.ts",
-      "source_location": "L39",
+      "source_location": "L49",
       "id": "global_service_globalservice_handle_unauthenticated",
-      "community": 30
+      "community": 25
     },
     {
       "label": ".clear()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/global.service.ts",
-      "source_location": "L45",
+      "source_location": "L55",
       "id": "global_service_globalservice_clear",
-      "community": 30
+      "community": 25
     },
     {
       "label": "http.service.ts",
@@ -6443,135 +6539,127 @@
       "source_file": "v2/fe/src/app/services/http.service.ts",
       "source_location": "L1",
       "id": "v2_fe_src_app_services_http_service_ts",
-      "community": 9
+      "community": 12
     },
     {
       "label": "HttpService",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L13",
+      "source_location": "L12",
       "id": "http_service_httpservice",
-      "community": 9
+      "community": 12
     },
     {
       "label": ".get_token()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L19",
+      "source_location": "L17",
       "id": "http_service_httpservice_get_token",
-      "community": 9
+      "community": 12
     },
     {
       "label": ".build_url()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L25",
+      "source_location": "L23",
       "id": "http_service_httpservice_build_url",
-      "community": 9
+      "community": 12
     },
     {
       "label": ".to_http_params()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L32",
+      "source_location": "L30",
       "id": "http_service_httpservice_to_http_params",
-      "community": 9
+      "community": 12
     },
     {
       "label": ".prune_empty()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L43",
+      "source_location": "L41",
       "id": "http_service_httpservice_prune_empty",
-      "community": 9
+      "community": 12
     },
     {
       "label": ".with_auth_header()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L58",
+      "source_location": "L56",
       "id": "http_service_httpservice_with_auth_header",
-      "community": 9
-    },
-    {
-      "label": ".handle_auth_error()",
-      "file_type": "code",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L63",
-      "id": "http_service_httpservice_handle_auth_error",
-      "community": 9
+      "community": 12
     },
     {
       "label": ".normalize_error()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L70",
+      "source_location": "L61",
       "id": "http_service_httpservice_normalize_error",
-      "community": 9
+      "community": 12
     },
     {
       "label": ".send()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L77",
+      "source_location": "L68",
       "id": "http_service_httpservice_send",
-      "community": 9
+      "community": 12
     },
     {
       "label": ".wrap()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L81",
+      "source_location": "L72",
       "id": "http_service_httpservice_wrap",
-      "community": 9
+      "community": 12
     },
     {
       "label": ".get()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L88",
+      "source_location": "L79",
       "id": "http_service_httpservice_get",
-      "community": 9
+      "community": 12
     },
     {
       "label": ".post()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L95",
+      "source_location": "L86",
       "id": "http_service_httpservice_post",
-      "community": 9
+      "community": 12
     },
     {
       "label": ".put()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L102",
+      "source_location": "L93",
       "id": "http_service_httpservice_put",
-      "community": 9
+      "community": 12
     },
     {
       "label": ".patch()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L109",
+      "source_location": "L100",
       "id": "http_service_httpservice_patch",
-      "community": 9
+      "community": 12
     },
     {
       "label": ".delete()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L116",
+      "source_location": "L107",
       "id": "http_service_httpservice_delete",
-      "community": 9
+      "community": 12
     },
     {
       "label": ".download()",
       "file_type": "code",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L123",
+      "source_location": "L114",
       "id": "http_service_httpservice_download",
-      "community": 9
+      "community": 12
     },
     {
       "label": "ws.service.ts",
@@ -6579,7 +6667,7 @@
       "source_file": "v2/fe/src/app/services/ws.service.ts",
       "source_location": "L1",
       "id": "v2_fe_src_app_services_ws_service_ts",
-      "community": 23
+      "community": 24
     },
     {
       "label": "WsService",
@@ -6587,7 +6675,7 @@
       "source_file": "v2/fe/src/app/services/ws.service.ts",
       "source_location": "L12",
       "id": "ws_service_wsservice",
-      "community": 23
+      "community": 24
     },
     {
       "label": ".get_token()",
@@ -6595,7 +6683,7 @@
       "source_file": "v2/fe/src/app/services/ws.service.ts",
       "source_location": "L20",
       "id": "ws_service_wsservice_get_token",
-      "community": 23
+      "community": 24
     },
     {
       "label": ".build_ws_url()",
@@ -6603,7 +6691,7 @@
       "source_file": "v2/fe/src/app/services/ws.service.ts",
       "source_location": "L26",
       "id": "ws_service_wsservice_build_ws_url",
-      "community": 23
+      "community": 24
     },
     {
       "label": ".connect()",
@@ -6611,7 +6699,7 @@
       "source_file": "v2/fe/src/app/services/ws.service.ts",
       "source_location": "L34",
       "id": "ws_service_wsservice_connect",
-      "community": 23
+      "community": 24
     },
     {
       "label": ".disconnect()",
@@ -6619,7 +6707,7 @@
       "source_file": "v2/fe/src/app/services/ws.service.ts",
       "source_location": "L47",
       "id": "ws_service_wsservice_disconnect",
-      "community": 23
+      "community": 24
     },
     {
       "label": ".on()",
@@ -6627,7 +6715,7 @@
       "source_file": "v2/fe/src/app/services/ws.service.ts",
       "source_location": "L54",
       "id": "ws_service_wsservice_on",
-      "community": 23
+      "community": 24
     },
     {
       "label": ".send()",
@@ -6635,7 +6723,7 @@
       "source_file": "v2/fe/src/app/services/ws.service.ts",
       "source_location": "L61",
       "id": "ws_service_wsservice_send",
-      "community": 23
+      "community": 24
     },
     {
       "label": ".dispatch()",
@@ -6643,7 +6731,7 @@
       "source_file": "v2/fe/src/app/services/ws.service.ts",
       "source_location": "L66",
       "id": "ws_service_wsservice_dispatch",
-      "community": 23
+      "community": 24
     },
     {
       "label": ".on_close()",
@@ -6651,7 +6739,7 @@
       "source_file": "v2/fe/src/app/services/ws.service.ts",
       "source_location": "L76",
       "id": "ws_service_wsservice_on_close",
-      "community": 23
+      "community": 24
     },
     {
       "label": "auth.guard.ts",
@@ -6851,7 +6939,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L1",
       "id": "api_lib_dictionary_ts",
-      "community": 7
+      "community": 8
     },
     {
       "label": "ensureLoaded()",
@@ -6859,7 +6947,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L26",
       "id": "dictionary_ensureloaded",
-      "community": 7
+      "community": 8
     },
     {
       "label": "lookup()",
@@ -6867,7 +6955,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L42",
       "id": "dictionary_lookup",
-      "community": 7
+      "community": 8
     },
     {
       "label": "translatePhrase()",
@@ -6875,7 +6963,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L49",
       "id": "dictionary_translatephrase",
-      "community": 7
+      "community": 8
     },
     {
       "label": "learnFromStreamline()",
@@ -6883,7 +6971,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L71",
       "id": "dictionary_learnfromstreamline",
-      "community": 7
+      "community": 8
     },
     {
       "label": "learnFromTokens()",
@@ -6891,7 +6979,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L91",
       "id": "dictionary_learnfromtokens",
-      "community": 7
+      "community": 8
     },
     {
       "label": "upsertEntry()",
@@ -6899,7 +6987,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L117",
       "id": "dictionary_upsertentry",
-      "community": 7
+      "community": 8
     },
     {
       "label": "schedulFlush()",
@@ -6907,7 +6995,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L136",
       "id": "dictionary_schedulflush",
-      "community": 7
+      "community": 8
     },
     {
       "label": "flushToDB()",
@@ -6915,7 +7003,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L141",
       "id": "dictionary_flushtodb",
-      "community": 7
+      "community": 8
     },
     {
       "label": "dictionaryStats()",
@@ -6923,7 +7011,7 @@
       "source_file": "api/lib/dictionary.ts",
       "source_location": "L164",
       "id": "dictionary_dictionarystats",
-      "community": 7
+      "community": 8
     },
     {
       "label": "mindmap-generator.ts",
@@ -6955,7 +7043,7 @@
       "source_file": "api/lib/local-streamline.ts",
       "source_location": "L1",
       "id": "api_lib_local_streamline_ts",
-      "community": 7
+      "community": 8
     },
     {
       "label": "replaceHinglish()",
@@ -6963,7 +7051,7 @@
       "source_file": "api/lib/local-streamline.ts",
       "source_location": "L56",
       "id": "local_streamline_replacehinglish",
-      "community": 7
+      "community": 8
     },
     {
       "label": "replaceUIKeywords()",
@@ -6971,7 +7059,7 @@
       "source_file": "api/lib/local-streamline.ts",
       "source_location": "L63",
       "id": "local_streamline_replaceuikeywords",
-      "community": 7
+      "community": 8
     },
     {
       "label": "cleanPunctuation()",
@@ -6979,7 +7067,7 @@
       "source_file": "api/lib/local-streamline.ts",
       "source_location": "L71",
       "id": "local_streamline_cleanpunctuation",
-      "community": 7
+      "community": 8
     },
     {
       "label": "localStreamline()",
@@ -6987,7 +7075,7 @@
       "source_file": "api/lib/local-streamline.ts",
       "source_location": "L83",
       "id": "local_streamline_localstreamline",
-      "community": 7
+      "community": 8
     },
     {
       "label": "diff.ts",
@@ -7155,7 +7243,7 @@
       "source_file": "api/lib/streamline.ts",
       "source_location": "L1",
       "id": "api_lib_streamline_ts",
-      "community": 7
+      "community": 8
     },
     {
       "label": "streamlineInput()",
@@ -7163,7 +7251,7 @@
       "source_file": "api/lib/streamline.ts",
       "source_location": "L24",
       "id": "streamline_streamlineinput",
-      "community": 7
+      "community": 8
     },
     {
       "label": "invalidateStreamlineCache()",
@@ -7171,7 +7259,7 @@
       "source_file": "api/lib/streamline.ts",
       "source_location": "L80",
       "id": "streamline_invalidatestreamlinecache",
-      "community": 7
+      "community": 8
     },
     {
       "label": "hash.ts",
@@ -13279,7 +13367,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L30",
+      "source_location": "L32",
       "weight": 1.0,
       "_src": "auth_service_authservice",
       "_tgt": "auth_service_authservice_constructor",
@@ -13303,7 +13391,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L60",
+      "source_location": "L95",
       "weight": 1.0,
       "_src": "auth_service_authservice",
       "_tgt": "auth_service_authservice_register",
@@ -13327,7 +13415,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L55",
+      "source_location": "L90",
       "weight": 1.0,
       "_src": "auth_service_authservice",
       "_tgt": "auth_service_authservice_login",
@@ -13339,7 +13427,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L75",
+      "source_location": "L118",
       "weight": 1.0,
       "_src": "auth_service_authservice",
       "_tgt": "auth_service_authservice_logout",
@@ -13375,7 +13463,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0,
       "_src": "v2_fe_src_app_services_auth_service_ts",
       "_tgt": "auth_service_authservice",
@@ -13387,7 +13475,67 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L32",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "auth_service_authservice",
+      "_tgt": "auth_service_authservice_bind_cross_tab_sync",
+      "source": "auth_service_authservice",
+      "target": "auth_service_authservice_bind_cross_tab_sync",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_src": "auth_service_authservice",
+      "_tgt": "auth_service_authservice_on_storage_event",
+      "source": "auth_service_authservice",
+      "target": "auth_service_authservice_on_storage_event",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L48",
+      "weight": 1.0,
+      "_src": "auth_service_authservice",
+      "_tgt": "auth_service_authservice_handle_remote_signin",
+      "source": "auth_service_authservice",
+      "target": "auth_service_authservice_handle_remote_signin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_src": "auth_service_authservice",
+      "_tgt": "auth_service_authservice_is_guest_route",
+      "source": "auth_service_authservice",
+      "target": "auth_service_authservice_is_guest_route",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L60",
+      "weight": 1.0,
+      "_src": "auth_service_authservice",
+      "_tgt": "auth_service_authservice_handle_remote_signout",
+      "source": "auth_service_authservice",
+      "target": "auth_service_authservice_handle_remote_signout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L67",
       "weight": 1.0,
       "_src": "auth_service_authservice",
       "_tgt": "auth_service_authservice_hydrate_from_local_storage",
@@ -13399,7 +13547,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L43",
+      "source_location": "L78",
       "weight": 1.0,
       "_src": "auth_service_authservice",
       "_tgt": "auth_service_authservice_persist",
@@ -13411,7 +13559,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L48",
+      "source_location": "L83",
       "weight": 1.0,
       "_src": "auth_service_authservice",
       "_tgt": "auth_service_authservice_apply_token_set",
@@ -13423,7 +13571,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L65",
+      "source_location": "L102",
       "weight": 1.0,
       "_src": "auth_service_authservice",
       "_tgt": "auth_service_authservice_refresh",
@@ -13435,7 +13583,19 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L81",
+      "source_location": "L112",
+      "weight": 1.0,
+      "_src": "auth_service_authservice",
+      "_tgt": "auth_service_authservice_refresh_singleflight",
+      "source": "auth_service_authservice",
+      "target": "auth_service_authservice_refresh_singleflight",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L124",
       "weight": 1.0,
       "_src": "auth_service_authservice",
       "_tgt": "auth_service_authservice_clear",
@@ -13447,12 +13607,24 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L30",
+      "source_location": "L33",
       "weight": 1.0,
       "_src": "auth_service_authservice_constructor",
       "_tgt": "auth_service_authservice_hydrate_from_local_storage",
       "source": "auth_service_authservice_constructor",
       "target": "auth_service_authservice_hydrate_from_local_storage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_src": "auth_service_authservice_constructor",
+      "_tgt": "auth_service_authservice_bind_cross_tab_sync",
+      "source": "auth_service_authservice_constructor",
+      "target": "auth_service_authservice_bind_cross_tab_sync",
       "confidence_score": 1.0
     },
     {
@@ -13471,7 +13643,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L62",
+      "source_location": "L97",
       "weight": 1.0,
       "_src": "auth_service_authservice_register",
       "_tgt": "auth_service_authservice_apply_token_set",
@@ -13507,7 +13679,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L57",
+      "source_location": "L92",
       "weight": 1.0,
       "_src": "auth_service_authservice_login",
       "_tgt": "auth_service_authservice_apply_token_set",
@@ -13531,7 +13703,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L78",
+      "source_location": "L121",
       "weight": 1.0,
       "_src": "auth_service_authservice_logout",
       "_tgt": "auth_service_authservice_clear",
@@ -17299,7 +17471,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "_src": "v2_fe_src_app_interceptors_auth_interceptor_ts",
       "_tgt": "auth_interceptor_read_token",
@@ -17311,7 +17483,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_src": "v2_fe_src_app_interceptors_auth_interceptor_ts",
       "_tgt": "auth_interceptor_is_api_request",
@@ -17323,7 +17495,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0,
       "_src": "v2_fe_src_app_interceptors_auth_interceptor_ts",
       "_tgt": "auth_interceptor_is_public_route",
@@ -17338,16 +17510,64 @@
       "source_location": "L19",
       "weight": 1.0,
       "_src": "v2_fe_src_app_interceptors_auth_interceptor_ts",
-      "_tgt": "auth_interceptor_on_auth_failure",
+      "_tgt": "auth_interceptor_should_intercept",
       "source": "v2_fe_src_app_interceptors_auth_interceptor_ts",
-      "target": "auth_interceptor_on_auth_failure",
+      "target": "auth_interceptor_should_intercept",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
-      "source_location": "L24",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_src": "v2_fe_src_app_interceptors_auth_interceptor_ts",
+      "_tgt": "auth_interceptor_attach_auth",
+      "source": "v2_fe_src_app_interceptors_auth_interceptor_ts",
+      "target": "auth_interceptor_attach_auth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_src": "v2_fe_src_app_interceptors_auth_interceptor_ts",
+      "_tgt": "auth_interceptor_is_unauthorized",
+      "source": "v2_fe_src_app_interceptors_auth_interceptor_ts",
+      "target": "auth_interceptor_is_unauthorized",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_src": "v2_fe_src_app_interceptors_auth_interceptor_ts",
+      "_tgt": "auth_interceptor_sign_out",
+      "source": "v2_fe_src_app_interceptors_auth_interceptor_ts",
+      "target": "auth_interceptor_sign_out",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
+      "source_location": "L28",
+      "weight": 1.0,
+      "_src": "v2_fe_src_app_interceptors_auth_interceptor_ts",
+      "_tgt": "auth_interceptor_retry_with_refresh",
+      "source": "v2_fe_src_app_interceptors_auth_interceptor_ts",
+      "target": "auth_interceptor_retry_with_refresh",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
+      "source_location": "L38",
       "weight": 1.0,
       "_src": "v2_fe_src_app_interceptors_auth_interceptor_ts",
       "_tgt": "auth_interceptor_auth_interceptor",
@@ -17359,7 +17579,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
-      "source_location": "L30",
+      "source_location": "L44",
       "weight": 1.0,
       "_src": "auth_interceptor_auth_interceptor",
       "_tgt": "auth_interceptor_read_token",
@@ -17371,11 +17591,35 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
-      "source_location": "L27",
+      "source_location": "L19",
       "weight": 1.0,
-      "_src": "auth_interceptor_auth_interceptor",
+      "_src": "auth_interceptor_should_intercept",
       "_tgt": "auth_interceptor_is_api_request",
       "source": "auth_interceptor_is_api_request",
+      "target": "auth_interceptor_should_intercept",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_src": "auth_interceptor_should_intercept",
+      "_tgt": "auth_interceptor_is_public_route",
+      "source": "auth_interceptor_is_public_route",
+      "target": "auth_interceptor_should_intercept",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_src": "auth_interceptor_auth_interceptor",
+      "_tgt": "auth_interceptor_should_intercept",
+      "source": "auth_interceptor_should_intercept",
       "target": "auth_interceptor_auth_interceptor",
       "confidence_score": 1.0
     },
@@ -17383,11 +17627,11 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/interceptors/auth.interceptor.ts",
-      "source_location": "L28",
+      "source_location": "L45",
       "weight": 1.0,
       "_src": "auth_interceptor_auth_interceptor",
-      "_tgt": "auth_interceptor_is_public_route",
-      "source": "auth_interceptor_is_public_route",
+      "_tgt": "auth_interceptor_attach_auth",
+      "source": "auth_interceptor_attach_auth",
       "target": "auth_interceptor_auth_interceptor",
       "confidence_score": 1.0
     },
@@ -18031,7 +18275,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/pages/register/register.ts",
-      "source_location": "L34",
+      "source_location": "L35",
       "weight": 1.0,
       "_src": "register_register_submit",
       "_tgt": "register_register",
@@ -18067,7 +18311,55 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_src": "auth_service_authservice_on_storage_event",
+      "_tgt": "auth_service_authservice_handle_remote_signout",
+      "source": "auth_service_authservice_on_storage_event",
+      "target": "auth_service_authservice_handle_remote_signout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "_src": "auth_service_authservice_on_storage_event",
+      "_tgt": "auth_service_authservice_handle_remote_signin",
+      "source": "auth_service_authservice_on_storage_event",
+      "target": "auth_service_authservice_handle_remote_signin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_src": "auth_service_authservice_handle_remote_signin",
+      "_tgt": "auth_service_authservice_hydrate_from_local_storage",
+      "source": "auth_service_authservice_handle_remote_signin",
+      "target": "auth_service_authservice_hydrate_from_local_storage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
       "source_location": "L52",
+      "weight": 1.0,
+      "_src": "auth_service_authservice_handle_remote_signin",
+      "_tgt": "auth_service_authservice_is_guest_route",
+      "source": "auth_service_authservice_handle_remote_signin",
+      "target": "auth_service_authservice_is_guest_route",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L87",
       "weight": 1.0,
       "_src": "auth_service_authservice_apply_token_set",
       "_tgt": "auth_service_authservice_persist",
@@ -18079,7 +18371,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L70",
+      "source_location": "L107",
       "weight": 1.0,
       "_src": "auth_service_authservice_refresh",
       "_tgt": "auth_service_authservice_apply_token_set",
@@ -18091,12 +18383,24 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/auth.service.ts",
-      "source_location": "L72",
+      "source_location": "L109",
       "weight": 1.0,
       "_src": "auth_service_authservice_refresh",
       "_tgt": "auth_service_authservice_clear",
       "source": "auth_service_authservice_refresh",
       "target": "auth_service_authservice_clear",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/auth.service.ts",
+      "source_location": "L114",
+      "weight": 1.0,
+      "_src": "auth_service_authservice_refresh_singleflight",
+      "_tgt": "auth_service_authservice_refresh",
+      "source": "auth_service_authservice_refresh",
+      "target": "auth_service_authservice_refresh_singleflight",
       "confidence_score": 1.0
     },
     {
@@ -18118,6 +18422,30 @@
       "source_location": "L19",
       "weight": 1.0,
       "_src": "global_service_globalservice",
+      "_tgt": "global_service_globalservice_constructor",
+      "source": "global_service_globalservice",
+      "target": "global_service_globalservice_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/global.service.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_src": "global_service_globalservice",
+      "_tgt": "global_service_globalservice_bind_auth_state_sync",
+      "source": "global_service_globalservice",
+      "target": "global_service_globalservice_bind_auth_state_sync",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/global.service.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_src": "global_service_globalservice",
       "_tgt": "global_service_globalservice_bootstrap",
       "source": "global_service_globalservice",
       "target": "global_service_globalservice_bootstrap",
@@ -18127,7 +18455,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/global.service.ts",
-      "source_location": "L24",
+      "source_location": "L34",
       "weight": 1.0,
       "_src": "global_service_globalservice",
       "_tgt": "global_service_globalservice_fetch_me",
@@ -18139,7 +18467,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/global.service.ts",
-      "source_location": "L30",
+      "source_location": "L40",
       "weight": 1.0,
       "_src": "global_service_globalservice",
       "_tgt": "global_service_globalservice_run_fetch_me",
@@ -18151,7 +18479,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/global.service.ts",
-      "source_location": "L39",
+      "source_location": "L49",
       "weight": 1.0,
       "_src": "global_service_globalservice",
       "_tgt": "global_service_globalservice_handle_unauthenticated",
@@ -18163,7 +18491,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/global.service.ts",
-      "source_location": "L45",
+      "source_location": "L55",
       "weight": 1.0,
       "_src": "global_service_globalservice",
       "_tgt": "global_service_globalservice_clear",
@@ -18175,7 +18503,19 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/global.service.ts",
-      "source_location": "L21",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_src": "global_service_globalservice_constructor",
+      "_tgt": "global_service_globalservice_bind_auth_state_sync",
+      "source": "global_service_globalservice_constructor",
+      "target": "global_service_globalservice_bind_auth_state_sync",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/global.service.ts",
+      "source_location": "L31",
       "weight": 1.0,
       "_src": "global_service_globalservice_bootstrap",
       "_tgt": "global_service_globalservice_fetch_me",
@@ -18187,7 +18527,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/global.service.ts",
-      "source_location": "L26",
+      "source_location": "L36",
       "weight": 1.0,
       "_src": "global_service_globalservice_fetch_me",
       "_tgt": "global_service_globalservice_run_fetch_me",
@@ -18199,7 +18539,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/global.service.ts",
-      "source_location": "L34",
+      "source_location": "L44",
       "weight": 1.0,
       "_src": "global_service_globalservice_run_fetch_me",
       "_tgt": "global_service_globalservice_handle_unauthenticated",
@@ -18211,7 +18551,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/global.service.ts",
-      "source_location": "L41",
+      "source_location": "L51",
       "weight": 1.0,
       "_src": "global_service_globalservice_handle_unauthenticated",
       "_tgt": "global_service_globalservice_clear",
@@ -18223,7 +18563,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L13",
+      "source_location": "L12",
       "weight": 1.0,
       "_src": "v2_fe_src_app_services_http_service_ts",
       "_tgt": "http_service_httpservice",
@@ -18235,7 +18575,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L19",
+      "source_location": "L17",
       "weight": 1.0,
       "_src": "http_service_httpservice",
       "_tgt": "http_service_httpservice_get_token",
@@ -18247,7 +18587,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L25",
+      "source_location": "L23",
       "weight": 1.0,
       "_src": "http_service_httpservice",
       "_tgt": "http_service_httpservice_build_url",
@@ -18259,7 +18599,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L32",
+      "source_location": "L30",
       "weight": 1.0,
       "_src": "http_service_httpservice",
       "_tgt": "http_service_httpservice_to_http_params",
@@ -18271,7 +18611,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L43",
+      "source_location": "L41",
       "weight": 1.0,
       "_src": "http_service_httpservice",
       "_tgt": "http_service_httpservice_prune_empty",
@@ -18283,7 +18623,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L58",
+      "source_location": "L56",
       "weight": 1.0,
       "_src": "http_service_httpservice",
       "_tgt": "http_service_httpservice_with_auth_header",
@@ -18295,19 +18635,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L63",
-      "weight": 1.0,
-      "_src": "http_service_httpservice",
-      "_tgt": "http_service_httpservice_handle_auth_error",
-      "source": "http_service_httpservice",
-      "target": "http_service_httpservice_handle_auth_error",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L70",
+      "source_location": "L61",
       "weight": 1.0,
       "_src": "http_service_httpservice",
       "_tgt": "http_service_httpservice_normalize_error",
@@ -18319,7 +18647,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L77",
+      "source_location": "L68",
       "weight": 1.0,
       "_src": "http_service_httpservice",
       "_tgt": "http_service_httpservice_send",
@@ -18331,7 +18659,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L81",
+      "source_location": "L72",
       "weight": 1.0,
       "_src": "http_service_httpservice",
       "_tgt": "http_service_httpservice_wrap",
@@ -18343,7 +18671,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L88",
+      "source_location": "L79",
       "weight": 1.0,
       "_src": "http_service_httpservice",
       "_tgt": "http_service_httpservice_get",
@@ -18355,7 +18683,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L95",
+      "source_location": "L86",
       "weight": 1.0,
       "_src": "http_service_httpservice",
       "_tgt": "http_service_httpservice_post",
@@ -18367,7 +18695,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L102",
+      "source_location": "L93",
       "weight": 1.0,
       "_src": "http_service_httpservice",
       "_tgt": "http_service_httpservice_put",
@@ -18379,7 +18707,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L109",
+      "source_location": "L100",
       "weight": 1.0,
       "_src": "http_service_httpservice",
       "_tgt": "http_service_httpservice_patch",
@@ -18391,7 +18719,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L116",
+      "source_location": "L107",
       "weight": 1.0,
       "_src": "http_service_httpservice",
       "_tgt": "http_service_httpservice_delete",
@@ -18403,7 +18731,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L123",
+      "source_location": "L114",
       "weight": 1.0,
       "_src": "http_service_httpservice",
       "_tgt": "http_service_httpservice_download",
@@ -18415,7 +18743,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L59",
+      "source_location": "L57",
       "weight": 1.0,
       "_src": "http_service_httpservice_with_auth_header",
       "_tgt": "http_service_httpservice_get_token",
@@ -18427,7 +18755,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L89",
+      "source_location": "L80",
       "weight": 1.0,
       "_src": "http_service_httpservice_get",
       "_tgt": "http_service_httpservice_build_url",
@@ -18439,7 +18767,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L96",
+      "source_location": "L87",
       "weight": 1.0,
       "_src": "http_service_httpservice_post",
       "_tgt": "http_service_httpservice_build_url",
@@ -18451,7 +18779,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L103",
+      "source_location": "L94",
       "weight": 1.0,
       "_src": "http_service_httpservice_put",
       "_tgt": "http_service_httpservice_build_url",
@@ -18463,12 +18791,204 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L110",
+      "source_location": "L101",
       "weight": 1.0,
       "_src": "http_service_httpservice_patch",
       "_tgt": "http_service_httpservice_build_url",
       "source": "http_service_httpservice_build_url",
       "target": "http_service_httpservice_patch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L108",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_delete",
+      "_tgt": "http_service_httpservice_build_url",
+      "source": "http_service_httpservice_build_url",
+      "target": "http_service_httpservice_delete",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L115",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_download",
+      "_tgt": "http_service_httpservice_build_url",
+      "source": "http_service_httpservice_build_url",
+      "target": "http_service_httpservice_download",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L81",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_get",
+      "_tgt": "http_service_httpservice_to_http_params",
+      "source": "http_service_httpservice_to_http_params",
+      "target": "http_service_httpservice_get",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L88",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_post",
+      "_tgt": "http_service_httpservice_to_http_params",
+      "source": "http_service_httpservice_to_http_params",
+      "target": "http_service_httpservice_post",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L95",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_put",
+      "_tgt": "http_service_httpservice_to_http_params",
+      "source": "http_service_httpservice_to_http_params",
+      "target": "http_service_httpservice_put",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L102",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_patch",
+      "_tgt": "http_service_httpservice_to_http_params",
+      "source": "http_service_httpservice_to_http_params",
+      "target": "http_service_httpservice_patch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L109",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_delete",
+      "_tgt": "http_service_httpservice_to_http_params",
+      "source": "http_service_httpservice_to_http_params",
+      "target": "http_service_httpservice_delete",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L116",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_download",
+      "_tgt": "http_service_httpservice_to_http_params",
+      "source": "http_service_httpservice_to_http_params",
+      "target": "http_service_httpservice_download",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L87",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_post",
+      "_tgt": "http_service_httpservice_prune_empty",
+      "source": "http_service_httpservice_prune_empty",
+      "target": "http_service_httpservice_post",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L94",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_put",
+      "_tgt": "http_service_httpservice_prune_empty",
+      "source": "http_service_httpservice_prune_empty",
+      "target": "http_service_httpservice_put",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L101",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_patch",
+      "_tgt": "http_service_httpservice_prune_empty",
+      "source": "http_service_httpservice_prune_empty",
+      "target": "http_service_httpservice_patch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L82",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_get",
+      "_tgt": "http_service_httpservice_with_auth_header",
+      "source": "http_service_httpservice_with_auth_header",
+      "target": "http_service_httpservice_get",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L89",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_post",
+      "_tgt": "http_service_httpservice_with_auth_header",
+      "source": "http_service_httpservice_with_auth_header",
+      "target": "http_service_httpservice_post",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L96",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_put",
+      "_tgt": "http_service_httpservice_with_auth_header",
+      "source": "http_service_httpservice_with_auth_header",
+      "target": "http_service_httpservice_put",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L103",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_patch",
+      "_tgt": "http_service_httpservice_with_auth_header",
+      "source": "http_service_httpservice_with_auth_header",
+      "target": "http_service_httpservice_patch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "v2/fe/src/app/services/http.service.ts",
+      "source_location": "L110",
+      "weight": 1.0,
+      "_src": "http_service_httpservice_delete",
+      "_tgt": "http_service_httpservice_with_auth_header",
+      "source": "http_service_httpservice_with_auth_header",
+      "target": "http_service_httpservice_delete",
       "confidence_score": 1.0
     },
     {
@@ -18477,198 +18997,6 @@
       "source_file": "v2/fe/src/app/services/http.service.ts",
       "source_location": "L117",
       "weight": 1.0,
-      "_src": "http_service_httpservice_delete",
-      "_tgt": "http_service_httpservice_build_url",
-      "source": "http_service_httpservice_build_url",
-      "target": "http_service_httpservice_delete",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L124",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_download",
-      "_tgt": "http_service_httpservice_build_url",
-      "source": "http_service_httpservice_build_url",
-      "target": "http_service_httpservice_download",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L90",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_get",
-      "_tgt": "http_service_httpservice_to_http_params",
-      "source": "http_service_httpservice_to_http_params",
-      "target": "http_service_httpservice_get",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L97",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_post",
-      "_tgt": "http_service_httpservice_to_http_params",
-      "source": "http_service_httpservice_to_http_params",
-      "target": "http_service_httpservice_post",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L104",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_put",
-      "_tgt": "http_service_httpservice_to_http_params",
-      "source": "http_service_httpservice_to_http_params",
-      "target": "http_service_httpservice_put",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L111",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_patch",
-      "_tgt": "http_service_httpservice_to_http_params",
-      "source": "http_service_httpservice_to_http_params",
-      "target": "http_service_httpservice_patch",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L118",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_delete",
-      "_tgt": "http_service_httpservice_to_http_params",
-      "source": "http_service_httpservice_to_http_params",
-      "target": "http_service_httpservice_delete",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L125",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_download",
-      "_tgt": "http_service_httpservice_to_http_params",
-      "source": "http_service_httpservice_to_http_params",
-      "target": "http_service_httpservice_download",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L96",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_post",
-      "_tgt": "http_service_httpservice_prune_empty",
-      "source": "http_service_httpservice_prune_empty",
-      "target": "http_service_httpservice_post",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L103",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_put",
-      "_tgt": "http_service_httpservice_prune_empty",
-      "source": "http_service_httpservice_prune_empty",
-      "target": "http_service_httpservice_put",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L110",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_patch",
-      "_tgt": "http_service_httpservice_prune_empty",
-      "source": "http_service_httpservice_prune_empty",
-      "target": "http_service_httpservice_patch",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L91",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_get",
-      "_tgt": "http_service_httpservice_with_auth_header",
-      "source": "http_service_httpservice_with_auth_header",
-      "target": "http_service_httpservice_get",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L98",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_post",
-      "_tgt": "http_service_httpservice_with_auth_header",
-      "source": "http_service_httpservice_with_auth_header",
-      "target": "http_service_httpservice_post",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L105",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_put",
-      "_tgt": "http_service_httpservice_with_auth_header",
-      "source": "http_service_httpservice_with_auth_header",
-      "target": "http_service_httpservice_put",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L112",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_patch",
-      "_tgt": "http_service_httpservice_with_auth_header",
-      "source": "http_service_httpservice_with_auth_header",
-      "target": "http_service_httpservice_patch",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L119",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_delete",
-      "_tgt": "http_service_httpservice_with_auth_header",
-      "source": "http_service_httpservice_with_auth_header",
-      "target": "http_service_httpservice_delete",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L126",
-      "weight": 1.0,
       "_src": "http_service_httpservice_download",
       "_tgt": "http_service_httpservice_with_auth_header",
       "source": "http_service_httpservice_with_auth_header",
@@ -18679,19 +19007,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L84",
-      "weight": 1.0,
-      "_src": "http_service_httpservice_wrap",
-      "_tgt": "http_service_httpservice_handle_auth_error",
-      "source": "http_service_httpservice_handle_auth_error",
-      "target": "http_service_httpservice_wrap",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L84",
+      "source_location": "L75",
       "weight": 1.0,
       "_src": "http_service_httpservice_wrap",
       "_tgt": "http_service_httpservice_normalize_error",
@@ -18703,7 +19019,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L78",
+      "source_location": "L69",
       "weight": 1.0,
       "_src": "http_service_httpservice_send",
       "_tgt": "http_service_httpservice_wrap",
@@ -18715,7 +19031,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L89",
+      "source_location": "L80",
       "weight": 1.0,
       "_src": "http_service_httpservice_get",
       "_tgt": "http_service_httpservice_send",
@@ -18727,7 +19043,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L96",
+      "source_location": "L87",
       "weight": 1.0,
       "_src": "http_service_httpservice_post",
       "_tgt": "http_service_httpservice_send",
@@ -18739,7 +19055,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L103",
+      "source_location": "L94",
       "weight": 1.0,
       "_src": "http_service_httpservice_put",
       "_tgt": "http_service_httpservice_send",
@@ -18751,7 +19067,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L110",
+      "source_location": "L101",
       "weight": 1.0,
       "_src": "http_service_httpservice_patch",
       "_tgt": "http_service_httpservice_send",
@@ -18763,7 +19079,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L117",
+      "source_location": "L108",
       "weight": 1.0,
       "_src": "http_service_httpservice_delete",
       "_tgt": "http_service_httpservice_send",
@@ -18775,7 +19091,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L124",
+      "source_location": "L115",
       "weight": 1.0,
       "_src": "http_service_httpservice_download",
       "_tgt": "http_service_httpservice_send",
@@ -18787,7 +19103,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "v2/fe/src/app/services/http.service.ts",
-      "source_location": "L124",
+      "source_location": "L115",
       "weight": 1.0,
       "_src": "http_service_httpservice_download",
       "_tgt": "http_service_httpservice_get",

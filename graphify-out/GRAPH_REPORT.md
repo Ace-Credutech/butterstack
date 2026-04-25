@@ -1,11 +1,11 @@
-# Graph Report - .  (2026-04-25)
+# Graph Report - .  (2026-04-26)
 
 ## Corpus Check
-- 241 files · ~141,479 words
+- 241 files · ~141,706 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 983 nodes · 1101 edges · 227 communities detected
+- 994 nodes · 1120 edges · 227 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -243,8 +243,8 @@
 2. `PrototypePreviewComponent` - 39 edges
 3. `ModulesPanelComponent` - 38 edges
 4. `WorkspaceComponent` - 28 edges
-5. `HttpService` - 16 edges
-6. `AuthService` - 15 edges
+5. `AuthService` - 21 edges
+6. `HttpService` - 15 edges
 7. `ModuleStructureInputComponent` - 14 edges
 8. `DesignSettingsComponent` - 12 edges
 9. `renderComponent()` - 12 edges
@@ -296,20 +296,20 @@ Cohesion: 0.1
 Nodes (1): WorkspaceComponent
 
 ### Community 6 - "Community 6"
+Cohesion: 0.16
+Nodes (1): AuthService
+
+### Community 7 - "Community 7"
 Cohesion: 0.19
 Nodes (10): apply_press(), clamp01(), dent_translate(), distance(), ease_out(), element_center(), GravityDirective, lerp() (+2 more)
 
-### Community 7 - "Community 7"
+### Community 8 - "Community 8"
 Cohesion: 0.18
 Nodes (11): ensureLoaded(), learnFromStreamline(), learnFromTokens(), lookup(), schedulFlush(), translatePhrase(), upsertEntry(), cleanPunctuation() (+3 more)
 
-### Community 8 - "Community 8"
+### Community 9 - "Community 9"
 Cohesion: 0.24
 Nodes (7): build_grid(), clamp01(), distance(), ease_out(), GravityBackdrop, lerp(), reduced_motion()
-
-### Community 9 - "Community 9"
-Cohesion: 0.35
-Nodes (1): HttpService
 
 ### Community 10 - "Community 10"
 Cohesion: 0.18
@@ -320,8 +320,8 @@ Cohesion: 0.27
 Nodes (2): ModuleStructureInputComponent, uid()
 
 ### Community 12 - "Community 12"
-Cohesion: 0.22
-Nodes (1): AuthService
+Cohesion: 0.38
+Nodes (1): HttpService
 
 ### Community 13 - "Community 13"
 Cohesion: 0.24
@@ -364,76 +364,76 @@ Cohesion: 0.24
 Nodes (3): check_permissions(), run_handler(), should_open_transaction()
 
 ### Community 23 - "Community 23"
+Cohesion: 0.31
+Nodes (6): attach_auth(), auth_interceptor(), is_api_request(), is_public_route(), read_token(), should_intercept()
+
+### Community 24 - "Community 24"
 Cohesion: 0.24
 Nodes (1): WsService
 
-### Community 24 - "Community 24"
-Cohesion: 0.25
-Nodes (1): ConfidenceComponent
-
 ### Community 25 - "Community 25"
-Cohesion: 0.39
-Nodes (1): ApiService
+Cohesion: 0.36
+Nodes (1): GlobalService
 
 ### Community 26 - "Community 26"
 Cohesion: 0.25
-Nodes (1): ElicitationService
+Nodes (1): ConfidenceComponent
 
 ### Community 27 - "Community 27"
 Cohesion: 0.39
-Nodes (6): check_authority(), dispatch_event(), get_event_handler(), register_event_handler(), register_event_handlers(), validate_payload()
+Nodes (1): ApiService
 
 ### Community 28 - "Community 28"
+Cohesion: 0.25
+Nodes (1): ElicitationService
+
+### Community 29 - "Community 29"
+Cohesion: 0.39
+Nodes (6): check_authority(), dispatch_event(), get_event_handler(), register_event_handler(), register_event_handlers(), validate_payload()
+
+### Community 30 - "Community 30"
 Cohesion: 0.46
 Nodes (7): build_envelope(), claim_next_sequence_no(), envelope_matches(), find_existing_by_idempotency(), persist_event(), post_event_function(), shape_idempotent_reply()
 
-### Community 29 - "Community 29"
+### Community 31 - "Community 31"
 Cohesion: 0.48
 Nodes (5): boot(), register_apis(), register_crons(), register_workers(), run_migrations_on_dev()
 
-### Community 30 - "Community 30"
-Cohesion: 0.48
-Nodes (1): GlobalService
-
-### Community 31 - "Community 31"
+### Community 32 - "Community 32"
 Cohesion: 0.33
 Nodes (1): ApiKeysSettingsComponent
 
-### Community 32 - "Community 32"
+### Community 33 - "Community 33"
 Cohesion: 0.33
 Nodes (1): UserAvatarComponent
 
-### Community 33 - "Community 33"
+### Community 34 - "Community 34"
 Cohesion: 0.33
 Nodes (1): UsagePanelComponent
 
-### Community 34 - "Community 34"
+### Community 35 - "Community 35"
 Cohesion: 0.33
 Nodes (1): PrototypeService
 
-### Community 35 - "Community 35"
+### Community 36 - "Community 36"
 Cohesion: 0.33
 Nodes (1): ExportService
 
-### Community 36 - "Community 36"
+### Community 37 - "Community 37"
 Cohesion: 0.67
 Nodes (5): attach_source(), auth_middleware(), claims_only_user(), try_bearer(), try_session_cookie()
 
-### Community 37 - "Community 37"
+### Community 38 - "Community 38"
 Cohesion: 0.33
 Nodes (0): 
 
-### Community 38 - "Community 38"
+### Community 39 - "Community 39"
 Cohesion: 0.4
 Nodes (2): find_handlers_for_queue(), start_workers()
 
-### Community 39 - "Community 39"
+### Community 40 - "Community 40"
 Cohesion: 0.4
 Nodes (2): build_connection(), get_or_build_queue()
-
-### Community 40 - "Community 40"
-Cohesion: 0.53
-Nodes (4): auth_interceptor(), is_api_request(), is_public_route(), read_token()
 
 ### Community 41 - "Community 41"
 Cohesion: 0.4

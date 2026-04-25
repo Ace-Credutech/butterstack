@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { effect, Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpService } from './http.service';
 import { AuthService } from './auth.service';
@@ -15,6 +15,16 @@ export class GlobalService {
   readonly current_user = signal<CurrentUser | null>(null);
   readonly loaded       = signal(false);
   private in_flight: Promise<void> | null = null;
+
+  constructor() { this.bind_auth_state_sync(); }
+
+  private bind_auth_state_sync(): void {
+    effect(() => {
+      const is_auth = this.auth.authenticated();
+      if (is_auth && !this.current_user()) this.fetch_me();
+      if (!is_auth && this.current_user()) this.current_user.set(null);
+    });
+  }
 
   bootstrap(): void {
     if (!this.auth.authenticated()) { this.current_user.set(null); this.loaded.set(true); return; }

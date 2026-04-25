@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable, timeout } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 type Primitive  = string | number | boolean;
@@ -72,6 +72,12 @@ export class HttpService {
     return err;
   }
 
+  private static readonly REQUEST_TIMEOUT_MS = 8000;
+
+  private send<T>(obs: Observable<T>): Promise<T> {
+    return this.wrap(() => firstValueFrom(obs.pipe(timeout(HttpService.REQUEST_TIMEOUT_MS))));
+  }
+
   private async wrap<T>(run: () => Promise<T>): Promise<T> {
     this.loading_count.update(n => n + 1);
     try { return await run(); }
@@ -80,45 +86,45 @@ export class HttpService {
   }
 
   get<T = any>(path: string, query_params?: ParamsLike): Promise<T> {
-    return this.wrap(() => firstValueFrom(this.http.get<T>(this.build_url(path), {
+    return this.send(this.http.get<T>(this.build_url(path), {
       params:  this.to_http_params(query_params),
       headers: this.with_auth_header(),
-    })));
+    }));
   }
 
   post<T = any>(path: string, body?: any, query_params?: ParamsLike): Promise<T> {
-    return this.wrap(() => firstValueFrom(this.http.post<T>(this.build_url(path), this.prune_empty(body) ?? {}, {
+    return this.send(this.http.post<T>(this.build_url(path), this.prune_empty(body) ?? {}, {
       params:  this.to_http_params(query_params),
       headers: this.with_auth_header(),
-    })));
+    }));
   }
 
   put<T = any>(path: string, body?: any, query_params?: ParamsLike): Promise<T> {
-    return this.wrap(() => firstValueFrom(this.http.put<T>(this.build_url(path), this.prune_empty(body) ?? {}, {
+    return this.send(this.http.put<T>(this.build_url(path), this.prune_empty(body) ?? {}, {
       params:  this.to_http_params(query_params),
       headers: this.with_auth_header(),
-    })));
+    }));
   }
 
   patch<T = any>(path: string, body?: any, query_params?: ParamsLike): Promise<T> {
-    return this.wrap(() => firstValueFrom(this.http.patch<T>(this.build_url(path), this.prune_empty(body) ?? {}, {
+    return this.send(this.http.patch<T>(this.build_url(path), this.prune_empty(body) ?? {}, {
       params:  this.to_http_params(query_params),
       headers: this.with_auth_header(),
-    })));
+    }));
   }
 
   delete<T = any>(path: string, query_params?: ParamsLike): Promise<T> {
-    return this.wrap(() => firstValueFrom(this.http.delete<T>(this.build_url(path), {
+    return this.send(this.http.delete<T>(this.build_url(path), {
       params:  this.to_http_params(query_params),
       headers: this.with_auth_header(),
-    })));
+    }));
   }
 
   download(path: string, query_params?: ParamsLike): Promise<Blob> {
-    return this.wrap(() => firstValueFrom(this.http.get(this.build_url(path), {
+    return this.send(this.http.get(this.build_url(path), {
       params:       this.to_http_params(query_params),
       headers:      this.with_auth_header(),
       responseType: 'blob',
-    })));
+    }));
   }
 }

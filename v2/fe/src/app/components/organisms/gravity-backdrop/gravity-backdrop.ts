@@ -35,12 +35,12 @@ export class GravityBackdrop implements OnInit {
 
   readonly canvas_ref = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
 
-  readonly cell_size       = input(32);     // grid spacing in px
+  readonly cell_size       = input(40);     // grid spacing in px
   readonly radius          = input(180);    // cursor influence radius
   readonly strength        = input(10);     // peak pull (px) at cursor center
   readonly dot_size        = input(1.1);    // base dot radius
   readonly dot_size_peak   = input(1.6);    // dot radius near cursor
-  readonly damping         = input(0.12);   // lerp speed per frame
+  readonly damping         = input(0.16);   // lerp speed per frame
   readonly base_color      = input('15, 23, 42');          // slate-900 rgb
   readonly base_alpha      = input(0.08);
   readonly accent_color    = input('34, 197, 94');         // green-500 rgb
@@ -60,7 +60,7 @@ export class GravityBackdrop implements OnInit {
     this.bind_canvas();
     this.bind_resize();
     this.bind_pointer();
-    this.start_loop();
+    this.draw();
   }
 
   private bind_canvas() {
@@ -83,7 +83,7 @@ export class GravityBackdrop implements OnInit {
         .subscribe(e => this.on_pointer_move(e));
       fromEvent<PointerEvent>(document, 'pointerleave')
         .pipe(takeUntilDestroyed(this.destroy))
-        .subscribe(() => { this.cursor_x = -9999; this.cursor_y = -9999; });
+        .subscribe(() => { this.cursor_x = -9999; this.cursor_y = -9999; this.ensure_loop(); });
     });
   }
 
@@ -91,6 +91,7 @@ export class GravityBackdrop implements OnInit {
     const rect = this.canvas_ref().nativeElement.getBoundingClientRect();
     this.cursor_x = e.clientX - rect.left;
     this.cursor_y = e.clientY - rect.top;
+    this.ensure_loop();
   }
 
   private resize_canvas() {
@@ -106,24 +107,27 @@ export class GravityBackdrop implements OnInit {
     canvas.style.height = `${this.height}px`;
     this.ctx?.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     this.dots = build_grid(this.width, this.height, this.cell_size());
+    this.draw();
   }
 
-  private start_loop() {
+  private ensure_loop() {
+    if (this.raf !== null) return;
     this.zone.runOutsideAngular(() => {
       const tick = () => {
-        this.step();
+        const settled = this.step();
         this.draw();
+        if (settled) { this.raf = null; return; }
         this.raf = requestAnimationFrame(tick);
       };
       this.raf = requestAnimationFrame(tick);
     });
-    this.destroy.onDestroy(() => { if (this.raf !== null) cancelAnimationFrame(this.raf); });
   }
 
-  private step() {
+  private step(): boolean {
     const r = this.radius();
     const s = this.strength();
     const k = this.damping();
+    let max_delta = 0;
     for (const dot of this.dots) {
       const dx = this.cursor_x - dot.home_x;
       const dy = this.cursor_y - dot.home_y;
@@ -139,7 +143,12 @@ export class GravityBackdrop implements OnInit {
       }
       dot.x = lerp(dot.x, dot.tx, k);
       dot.y = lerp(dot.y, dot.ty, k);
+      const ddx = dot.x - dot.tx;
+      const ddy = dot.y - dot.ty;
+      const delta = Math.abs(ddx) + Math.abs(ddy);
+      if (delta > max_delta) max_delta = delta;
     }
+    return max_delta < 0.05;
   }
 
   private draw() {

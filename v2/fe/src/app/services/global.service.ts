@@ -1,4 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { HttpService } from './http.service';
 import { AuthService } from './auth.service';
 
@@ -7,16 +8,17 @@ type MeResponse = { code: number; message: string; data: { authenticated: boolea
 
 @Injectable({ providedIn: 'root' })
 export class GlobalService {
-  private readonly http = inject(HttpService);
-  private readonly auth = inject(AuthService);
+  private readonly http   = inject(HttpService);
+  private readonly auth   = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly current_user = signal<CurrentUser | null>(null);
   readonly loaded       = signal(false);
   private in_flight: Promise<void> | null = null;
 
-  async bootstrap(): Promise<void> {
+  bootstrap(): void {
     if (!this.auth.authenticated()) { this.current_user.set(null); this.loaded.set(true); return; }
-    await this.fetch_me();
+    this.fetch_me();
   }
 
   fetch_me(): Promise<void> {
@@ -29,9 +31,15 @@ export class GlobalService {
     try {
       const res = await this.http.get<MeResponse>('/auth/me');
       if (res?.data?.authenticated && res.data.user) this.current_user.set(res.data.user);
-      else this.current_user.set(null);
+      else                                           this.handle_unauthenticated();
     } catch { this.current_user.set(null); }
     finally { this.loaded.set(true); }
+  }
+
+  private handle_unauthenticated(): void {
+    this.current_user.set(null);
+    this.auth.clear();
+    if (this.router.url.startsWith('/app')) this.router.navigate(['/login']);
   }
 
   clear(): void { this.current_user.set(null); this.loaded.set(true); }

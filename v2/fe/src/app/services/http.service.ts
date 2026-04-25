@@ -1,6 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { firstValueFrom, Observable, timeout } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -11,10 +10,9 @@ const TOKEN_LS_KEY = 'bs_auth';
 
 @Injectable({ providedIn: 'root' })
 export class HttpService {
-  private readonly http   = inject(HttpClient);
-  private readonly router = inject(Router);
-  readonly loading_count  = signal(0);
-  readonly loading        = () => this.loading_count() > 0;
+  private readonly http  = inject(HttpClient);
+  readonly loading_count = signal(0);
+  readonly loading       = () => this.loading_count() > 0;
 
   private get_token(): string | null {
     const raw = localStorage.getItem(TOKEN_LS_KEY);
@@ -60,13 +58,6 @@ export class HttpService {
     return token ? { Authorization: `Bearer ${token}` } : {};
   }
 
-  private handle_auth_error(err: HttpErrorResponse) {
-    if (err.status === 401 || err.status === 403) {
-      localStorage.removeItem(TOKEN_LS_KEY);
-      this.router.navigate(['/login']);
-    }
-  }
-
   private normalize_error(err: any): any {
     if (err instanceof HttpErrorResponse) return err.error?.error ?? err.error ?? { code: err.status, message: err.message };
     return err;
@@ -81,7 +72,7 @@ export class HttpService {
   private async wrap<T>(run: () => Promise<T>): Promise<T> {
     this.loading_count.update(n => n + 1);
     try { return await run(); }
-    catch (err: any) { this.handle_auth_error(err); throw this.normalize_error(err); }
+    catch (err: any) { throw this.normalize_error(err); }
     finally { this.loading_count.update(n => Math.max(0, n - 1)); }
   }
 

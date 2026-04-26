@@ -1,0 +1,54 @@
+<div class="bg-white border border-gray-100 rounded-xl">
+  <header class="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+    <div>
+      <h3 class="text-sm font-semibold text-gray-900">Permissions</h3>
+      <p class="text-xs text-gray-500">Toggle what this role can do.</p>
+    </div>
+    <div class="flex items-center gap-2">
+      @if (is_wildcard()) { <bs-chip tone="violet" variant="soft">Super-admin (all)</bs-chip> }
+      <bs-chip tone="green" variant="outline">{{ enabled_count() }} enabled</bs-chip>
+    </div>
+  </header>
+
+  <ul class="divide-y divide-gray-50">
+    @for (node of tree(); track node.key) {
+      <li class="px-5 py-3">
+        <div class="flex items-center justify-between gap-3">
+          <button type="button" (click)="toggle_group(node, [])" class="flex items-center gap-2 min-w-0" [disabled]="disabled() || is_wildcard()">
+            <bs-checkbox [checked]="node_state(node, []) === 'all'" [indeterminate]="node_state(node, []) === 'some'" [disabled]="disabled() || is_wildcard()" />
+            <span class="text-sm font-medium text-gray-800">{{ node.label }}</span>
+          </button>
+        </div>
+
+        @if (node.children) {
+          <ul class="mt-2 ml-6 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5">
+            @for (child of node.children; track child.key) {
+              @if (child.leaf) {
+                <li>
+                  <button type="button" (click)="toggle_leaf([node.key, child.key])" class="flex items-center gap-2 w-full text-left py-1" [disabled]="disabled() || is_wildcard()">
+                    <bs-checkbox [checked]="is_set([node.key, child.key])" [disabled]="disabled() || is_wildcard()" />
+                    <span class="text-sm text-gray-600">{{ child.label }}</span>
+                  </button>
+                </li>
+              } @else {
+                <li class="col-span-full mt-1">
+                  <div class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">{{ child.label }}</div>
+                  <ul class="ml-4 mt-1 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
+                    @for (grand of child.children ?? []; track grand.key) {
+                      <li>
+                        <button type="button" (click)="toggle_leaf([node.key, child.key, grand.key])" class="flex items-center gap-2 w-full text-left py-1" [disabled]="disabled() || is_wildcard()">
+                          <bs-checkbox [checked]="is_set([node.key, child.key, grand.key])" [disabled]="disabled() || is_wildcard()" />
+                          <span class="text-sm text-gray-600">{{ grand.label }}</span>
+                        </button>
+                      </li>
+                    }
+                  </ul>
+                </li>
+              }
+            }
+          </ul>
+        }
+      </li>
+    }
+  </ul>
+</div>

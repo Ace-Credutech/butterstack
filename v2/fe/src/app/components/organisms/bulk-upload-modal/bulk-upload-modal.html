@@ -1,0 +1,95 @@
+@if (open()) {
+  <div class="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm" (click)="on_close()"></div>
+  <div class="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 pointer-events-none">
+    <div class="bg-white border border-gray-100 rounded-xl shadow-2xl w-full max-w-3xl max-h-[80vh] flex flex-col pointer-events-auto">
+      <header class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div>
+          <h2 class="text-sm font-semibold text-gray-900">Bulk upsert users</h2>
+          <p class="text-xs text-gray-500 mt-0.5">CSV columns: <code class="font-mono text-[11px]">email, name, role_slug, is_active, password</code> · Missing users are created in Keycloak.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" (click)="download_template()" class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-md transition">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+            Download template
+          </button>
+          <bs-icon-button path="M6 18L18 6M6 6l12 12" label="Close" size="sm" (clicked)="on_close()" />
+        </div>
+      </header>
+
+      <div class="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+        @if (rows().length === 0) {
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label class="block border-2 border-dashed border-gray-200 rounded-lg p-8 text-center hover:border-green-300 hover:bg-green-50/40 transition cursor-pointer">
+              <input type="file" accept=".csv,text/csv" (change)="pick_file($event)" class="hidden" />
+              <div class="flex flex-col items-center gap-1.5">
+                <svg class="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                <p class="text-sm font-medium text-gray-700">Upload CSV file</p>
+                <p class="text-[11px] text-gray-500">Add or update via spreadsheet</p>
+              </div>
+            </label>
+
+            <button type="button" (click)="load_existing()" [disabled]="loading()" class="block border-2 border-dashed border-gray-200 rounded-lg p-8 text-center hover:border-green-300 hover:bg-green-50/40 transition disabled:opacity-50">
+              <div class="flex flex-col items-center gap-1.5">
+                <svg class="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-5a4 4 0 11-8 0 4 4 0 018 0zm6 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <p class="text-sm font-medium text-gray-700">{{ loading() ? 'Loading…' : 'Load current users' }}</p>
+                <p class="text-[11px] text-gray-500">Bulk-edit existing roles & status</p>
+              </div>
+            </button>
+          </div>
+
+          <p class="text-xs text-gray-500 px-1">Tip: download the template, fill it offline (including new users you want to create), then upload here.</p>
+        } @else {
+          <div class="flex items-center gap-3 px-3 py-2 bg-gray-50 border border-gray-100 rounded-lg">
+            <span class="text-xs text-gray-700 font-medium truncate flex-1">{{ file_name() }}</span>
+            <bs-chip tone="green" variant="soft">{{ valid_count() }} valid</bs-chip>
+            @if (invalid_count() > 0) { <bs-chip tone="red" variant="soft">{{ invalid_count() }} invalid</bs-chip> }
+            <button type="button" (click)="reset()" class="text-xs text-gray-500 hover:text-gray-700">Clear</button>
+          </div>
+
+          <div class="border border-gray-100 rounded-lg overflow-hidden">
+            <table class="w-full text-xs">
+              <thead class="bg-gray-50 text-[10px] uppercase tracking-wide text-gray-500">
+                <tr>
+                  <th class="px-3 py-2 text-left">Email</th>
+                  <th class="px-3 py-2 text-left">Name</th>
+                  <th class="px-3 py-2 text-left">Role</th>
+                  <th class="px-3 py-2 text-left">Active</th>
+                  <th class="px-3 py-2 text-left">Source</th>
+                  <th class="px-3 py-2 text-left">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-50">
+                @for (r of rows(); track $index) {
+                  <tr [class.bg-red-50]="!r.valid">
+                    <td class="px-3 py-1.5 text-gray-700 truncate max-w-[180px]" [attr.title]="r.email">{{ r.email }}</td>
+                    <td class="px-3 py-1.5 text-gray-500 truncate max-w-[140px]" [attr.title]="r.name">{{ r.name || '—' }}</td>
+                    <td class="px-3 py-1.5 text-gray-500">{{ r.role_slug || '—' }}</td>
+                    <td class="px-3 py-1.5 text-gray-500">{{ r.is_active === undefined ? '—' : r.is_active }}</td>
+                    <td class="px-3 py-1.5">
+                      @if (r.source === 'existing') { <bs-chip tone="slate" variant="outline">Existing</bs-chip> }
+                      @else                          { <bs-chip tone="blue"  variant="outline">CSV</bs-chip>      }
+                    </td>
+                    <td class="px-3 py-1.5">
+                      @if (r.valid) {
+                        <span class="text-green-700">OK</span>
+                      } @else {
+                        <span class="text-red-600">{{ r.reason }}</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          @if (error()) { <div class="text-sm text-red-600 px-3 py-2 bg-red-50 border border-red-100 rounded-lg">{{ error() }}</div> }
+        }
+      </div>
+
+      <footer class="flex items-center justify-end gap-2 px-6 py-4 border-t border-gray-100">
+        <bs-button variant="secondary" size="sm" (clicked)="on_close()">Cancel</bs-button>
+        <bs-button size="sm" [loading]="submitting()" [disabled]="valid_count() === 0" (clicked)="submit()">Apply {{ valid_count() }} changes</bs-button>
+      </footer>
+    </div>
+  </div>
+}

@@ -1,0 +1,43 @@
+<div class="min-h-screen bg-gray-50">
+  <bs-header />
+
+  <main class="max-w-7xl mx-auto px-8 py-8">
+    @if (loading()) {
+      <div class="flex items-center justify-center py-16"><bs-spinner size="lg" /></div>
+    } @else if (!role()) {
+      <p class="text-sm text-gray-500">Role not found. <a routerLink="/admin/roles" class="text-green-600 hover:underline">Back to roles</a></p>
+    } @else {
+      <a routerLink="/admin/roles" class="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700 mb-2">
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Back to roles
+      </a>
+
+      <bs-section-header [title]="role()!.name" [subtitle]="role()!.description ?? ''">
+        @if (is_system()) { <bs-chip tone="slate" variant="outline">System role</bs-chip> }
+        <bs-button variant="secondary" size="sm" (clicked)="reset()" [disabled]="saving()">Reset</bs-button>
+        <bs-button size="sm" [loading]="saving()" (clicked)="save()">Save permissions</bs-button>
+      </bs-section-header>
+
+      <bs-error-alert [message]="error()" />
+
+      <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+          <bs-permission-tree-editor [(value)]="permissions" [disabled]="saving()" />
+        </div>
+        <aside class="lg:col-span-1 space-y-3">
+          <div class="bg-gray-900 text-gray-100 border border-gray-200 rounded-xl">
+            <header class="flex items-center justify-between px-4 py-2.5 border-b border-white/10">
+              <span class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">JSON preview</span>
+              <span class="text-[10px] font-mono text-gray-500">permissions_json</span>
+            </header>
+            <pre class="px-4 py-3 text-[11px] leading-relaxed font-mono overflow-auto max-h-[60vh] whitespace-pre-wrap break-words">{{ json_view() }}</pre>
+          </div>
+          <div class="text-xs text-gray-500 px-1">
+            Permissions are stored as a nested JSONB tree. <code class="font-mono text-[11px]">true</code> grants the leaf;
+            absence is the same as <code class="font-mono text-[11px]">false</code>. <code class="font-mono text-[11px]">{{ '{ "*": true }' }}</code> grants everything (super-admin).
+          </div>
+        </aside>
+      </div>
+    }
+  </main>
+</div>

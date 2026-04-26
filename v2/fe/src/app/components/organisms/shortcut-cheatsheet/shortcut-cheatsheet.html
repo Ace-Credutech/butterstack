@@ -1,0 +1,30 @@
+@if (shortcuts.cheatsheet_open()) {
+  <div class="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm" (click)="close()"></div>
+  <div class="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 pointer-events-none">
+    <div class="bg-white border border-gray-100 rounded-xl shadow-2xl w-full max-w-md max-h-[70vh] flex flex-col pointer-events-auto">
+      <header class="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
+        <h2 class="text-sm font-semibold text-gray-900">Keyboard shortcuts</h2>
+        <bs-icon-button path="M6 18L18 6M6 6l12 12" label="Close" size="sm" (clicked)="close()" />
+      </header>
+      <div class="flex-1 overflow-y-auto px-5 py-4 space-y-5">
+        @for (group of groups(); track group.name) {
+          <div>
+            <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-2">{{ group.name }}</p>
+            <ul class="space-y-1.5">
+              @for (sc of group.items; track sc.description) {
+                <li class="flex items-center justify-between gap-3 text-sm">
+                  <span class="text-gray-600">{{ sc.description }}</span>
+                  <span class="flex items-center gap-1">
+                    @for (k of key_parts(sc.keys); track $index) {
+                      <bs-kbd>{{ k }}</bs-kbd>
+                    }
+                  </span>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,65 @@
+<div class="bg-white border border-gray-100 rounded-xl overflow-hidden">
+  <div class="bs-grid-header bg-gray-50 border-b border-gray-100" [class.sticky]="sticky_header()" [class.top-0]="sticky_header()" [class.z-10]="sticky_header()">
+    <div class="flex items-center" [style.min-height.px]="row_height()">
+      @if (selectable()) {
+        <div class="w-10 px-4 shrink-0">
+          <bs-checkbox [checked]="all_selected()" [indeterminate]="some_selected()" (checkedChange)="toggle_all()" />
+        </div>
+      }
+      @for (col of columns(); track col.id) {
+        <div class="px-4 flex-1 min-w-0" [style.flex-basis]="col.width || null" [style.flex-grow]="col.width ? '0' : '1'" [class]="align_class(col)">
+          <bs-column-header [label]="col.header" [sortable]="col.sortable ?? false" [active]="sort_active(col)" [direction]="sort_dir()" [align]="col.align ?? 'left'" (clicked)="on_sort(col)" />
+        </div>
+      }
+    </div>
+  </div>
+
+  @if (loading() && rows().length === 0) {
+    @for (i of skeleton_rows; track i) {
+      <div class="flex items-center border-t border-gray-50" [style.min-height.px]="row_height()">
+        @if (selectable()) { <div class="w-10 px-4 shrink-0"><bs-skeleton width="14px" height="14px" /></div> }
+        @for (col of columns(); track col.id) {
+          <div class="px-4 flex-1 min-w-0" [style.flex-basis]="col.width || null" [style.flex-grow]="col.width ? '0' : '1'" [class]="align_class(col)">
+            <bs-skeleton [width]="skeleton_for_index(i + $index)" />
+          </div>
+        }
+      </div>
+    }
+  } @else if (rows().length === 0) {
+    <bs-empty-state [title]="empty_title()" [subtitle]="empty_subtitle()" [cta_label]="empty_cta()" (cta_clicked)="empty_action.emit()" />
+  } @else if (should_virtualize()) {
+    <cdk-virtual-scroll-viewport [itemSize]="row_height()" [style.height]="viewport_height()" class="bs-table-viewport">
+      <div *cdkVirtualFor="let row of rows(); trackBy: track_by_id; let i = index" class="flex items-center border-t border-gray-50 hover:bg-gray-50/60 transition cursor-pointer" [style.min-height.px]="row_height()" (click)="on_row_click(row)">
+        @if (selectable()) {
+          <div class="w-10 px-4 shrink-0" (click)="toggle_row(row, $event)">
+            <bs-checkbox [checked]="selection().has(row.id)" />
+          </div>
+        }
+        @for (col of columns(); track col.id) {
+          <div class="px-4 flex-1 min-w-0" [style.flex-basis]="col.width || null" [style.flex-grow]="col.width ? '0' : '1'" [class]="align_class(col)">
+            @if (col.cell) { <ng-container *ngTemplateOutlet="col.cell; context: { $implicit: row, row: row, index: i }" /> }
+            @else if (col.text) { <span class="text-gray-700">{{ col.text(row) }}</span> }
+          </div>
+        }
+      </div>
+    </cdk-virtual-scroll-viewport>
+  } @else {
+    @for (row of rows(); track track_by_id($index, row); let i = $index) {
+      <div class="flex items-center border-t border-gray-50 hover:bg-gray-50/60 transition cursor-pointer" [style.min-height.px]="row_height()" (click)="on_row_click(row)">
+        @if (selectable()) {
+          <div class="w-10 px-4 shrink-0" (click)="toggle_row(row, $event)">
+            <bs-checkbox [checked]="selection().has(row.id)" />
+          </div>
+        }
+        @for (col of columns(); track col.id) {
+          <div class="px-4 flex-1 min-w-0" [style.flex-basis]="col.width || null" [style.flex-grow]="col.width ? '0' : '1'" [class]="align_class(col)">
+            @if (col.cell) { <ng-container *ngTemplateOutlet="col.cell; context: { $implicit: row, row: row, index: i }" /> }
+            @else if (col.text) { <span class="text-gray-700">{{ col.text(row) }}</span> }
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <ng-content select="[footer]" />
+</div>

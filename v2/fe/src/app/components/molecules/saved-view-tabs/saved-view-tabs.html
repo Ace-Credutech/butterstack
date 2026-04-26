@@ -1,0 +1,21 @@
+<div class="flex items-center gap-1 border-b border-gray-100 -mx-1 px-1">
+  @for (v of views(); track v.id) {
+    <button type="button" (click)="view_selected.emit(v.id)"
+            class="relative inline-flex items-center gap-2 px-3 py-2.5 text-sm font-medium transition"
+            [class.text-gray-900]="v.id === active_id()"
+            [class.text-gray-500]="v.id !== active_id()"
+            [class.hover:text-gray-800]="v.id !== active_id()">
+      <span>{{ v.label }}</span>
+      @if (v.count !== undefined) {
+        <span class="inline-flex items-center justify-center min-w-[20px] h-4 px-1.5 rounded text-[10px] font-semibold"
+              [class.bg-green-100]="v.id === active_id()"
+              [class.text-green-700]="v.id === active_id()"
+              [class.bg-gray-100]="v.id !== active_id()"
+              [class.text-gray-500]="v.id !== active_id()">{{ v.count }}</span>
+      }
+      @if (v.id === active_id()) {
+        <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-green-600"></span>
+      }
+    </button>
+  }
+</div>

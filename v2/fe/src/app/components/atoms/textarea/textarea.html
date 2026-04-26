@@ -1,0 +1,8 @@
+<textarea
+  [placeholder]="placeholder()"
+  [rows]="rows()"
+  [disabled]="disabled()"
+  [ngModel]="value()"
+  (ngModelChange)="value.set($event)"
+  class="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-sm placeholder:text-gray-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 shadow-sm transition resize-y disabled:opacity-50">
+</textarea>

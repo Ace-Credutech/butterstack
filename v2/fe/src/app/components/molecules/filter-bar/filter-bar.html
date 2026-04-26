@@ -1,0 +1,13 @@
+<div class="flex items-center gap-2 py-3">
+  <div class="w-72">
+    <bs-search [value]="query()" (valueChange)="query_changed.emit($event)" placeholder="Search…" [hint]="search_hint()" />
+  </div>
+  <div class="flex items-center gap-2 flex-wrap">
+    <ng-content />
+  </div>
+  @if (active_filters() > 0) {
+    <button type="button" (click)="clear_clicked.emit()" class="ml-auto text-xs text-gray-500 hover:text-gray-700 transition">
+      Clear all ({{ active_filters() }})
+    </button>
+  }
+</div>

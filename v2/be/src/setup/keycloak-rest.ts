@@ -113,3 +113,21 @@ export const kc_create_user = async (spec: NewUserSpec): Promise<{ id: string }>
   if (!id) throw { code: 500, message: 'Keycloak did not return new user id' };
   return { id };
 };
+
+export const kc_find_user_id_by_email = async (email: string): Promise<string | null> => {
+  ensure_kc_configured();
+  const admin_token = await get_admin_token();
+  const url         = `${env.KEYCLOAK_URL!.replace(/\/$/, '')}/admin/realms/${env.KEYCLOAK_REALM}/users?email=${encodeURIComponent(email)}&exact=true`;
+  const res = await axios.get(url, { headers: { Authorization: `Bearer ${admin_token}` }, validateStatus: () => true });
+  if (res.status !== 200) throw translate_kc_error(res, 'Keycloak user lookup failed');
+  const list = res.data as Array<{ id: string }>;
+  return list.length > 0 ? (list[0]?.id ?? null) : null;
+};
+
+export const kc_set_password = async (user_id: string, password: string): Promise<void> => {
+  ensure_kc_configured();
+  const admin_token = await get_admin_token();
+  const url         = `${env.KEYCLOAK_URL!.replace(/\/$/, '')}/admin/realms/${env.KEYCLOAK_REALM}/users/${user_id}/reset-password`;
+  const res = await axios.put(url, { type: 'password', value: password, temporary: false }, { headers: { Authorization: `Bearer ${admin_token}`, 'Content-Type': 'application/json' }, validateStatus: () => true });
+  if (res.status >= 400) throw translate_kc_error(res, 'Keycloak password reset failed');
+};

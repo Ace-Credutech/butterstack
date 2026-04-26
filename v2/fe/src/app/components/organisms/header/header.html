@@ -4,6 +4,12 @@
   @if (auth.authenticated()) {
     <div class="flex items-center gap-4">
       <a bsGravity [radius]="120" routerLink="/app/projects" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">Projects</a>
+      @if (perm.can('admin.users.read')) {
+        <a bsGravity [radius]="120" routerLink="/admin/users" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">Users</a>
+      }
+      @if (perm.can('admin.roles.read')) {
+        <a bsGravity [radius]="120" routerLink="/admin/roles" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">Roles</a>
+      }
       <span bsGravity [radius]="120" class="text-sm text-gray-500">{{ global.current_user()?.name }}</span>
       <button bsGravity [radius]="120" (click)="logout()" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">Logout</button>
     </div>

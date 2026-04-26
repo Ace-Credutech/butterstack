@@ -50,6 +50,7 @@
 
   <bs-user-detail-drawer [user]="opened_user()" [roles]="roles()" (closed)="close_drawer()" (user_changed)="on_user_changed($event)" />
   <bs-bulk-upload-modal [open]="bulk_open()" [valid_role_slugs]="valid_role_slugs()" (closed)="close_bulk()" (applied)="on_bulk_applied($event)" />
+  <bs-invite-user-modal [open]="invite_open()" [roles]="roles()" (closed)="close_invite()" (invited)="on_invited($event)" />
 
   <ng-template #user_cell let-u>
     <div class="flex items-center gap-2.5">

@@ -1,0 +1,40 @@
+@if (user(); as u) {
+  <div class="relative">
+    <button type="button" (click)="toggle()" [attr.aria-expanded]="open()" aria-haspopup="menu"
+            class="flex items-center gap-2 rounded-full p-0.5 pr-2 hover:bg-gray-100 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500/40">
+      <bs-avatar [name]="u.name" [id]="u.id" size="sm" />
+      <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </button>
+
+    @if (open()) {
+      <div role="menu" class="absolute right-0 top-full mt-2 w-72 bg-white border border-gray-100 rounded-xl shadow-xl py-1 z-50 origin-top-right animate-in fade-in slide-in-from-top-1 duration-100">
+        <div class="px-4 py-3 border-b border-gray-100">
+          <div class="flex items-center gap-3">
+            <bs-avatar [name]="u.name" [id]="u.id" size="md" />
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-semibold text-gray-900 truncate">{{ u.name }}</p>
+              <p class="text-xs text-gray-500 truncate">{{ u.email }}</p>
+            </div>
+          </div>
+          @if (u.role) {
+            <div class="mt-3">
+              <bs-chip [tone]="role_tone(u.role.slug)" variant="soft">{{ u.role.name }}</bs-chip>
+            </div>
+          }
+        </div>
+
+        <div class="py-1">
+          <button type="button" (click)="sign_out()" role="menuitem"
+                  class="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition text-left">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+            </svg>
+            <span>Sign out</span>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+}

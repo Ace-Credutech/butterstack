@@ -1,14 +1,12 @@
 import { Component, input, computed } from '@angular/core';
 
-const palette = [
-  ['from-violet-500', 'to-fuchsia-500'],
-  ['from-green-500',  'to-emerald-500'],
-  ['from-blue-500',   'to-cyan-500'],
-  ['from-amber-500',  'to-orange-500'],
-  ['from-rose-500',   'to-pink-500'],
-  ['from-indigo-500', 'to-blue-500'],
-  ['from-teal-500',   'to-green-500'],
-  ['from-purple-500', 'to-violet-500'],
+const green_pairs = [
+  ['from-green-500',   'to-emerald-600'],
+  ['from-emerald-500', 'to-teal-600'],
+  ['from-green-400',   'to-green-700'],
+  ['from-teal-500',    'to-green-600'],
+  ['from-emerald-400', 'to-green-600'],
+  ['from-lime-500',    'to-green-600'],
 ];
 
 const hash_string = (s: string): number => {
@@ -34,7 +32,7 @@ export class Avatar {
   readonly initials = computed(() => initials(this.name()));
   readonly gradient = computed(() => {
     const seed = this.id() || this.name();
-    const [from, to] = palette[hash_string(seed) % palette.length];
+    const [from, to] = green_pairs[hash_string(seed) % green_pairs.length];
     return `bg-gradient-to-br ${from} ${to}`;
   });
 

@@ -2,6 +2,8 @@ import { Transaction } from 'sequelize';
 import { Error_Interface } from '@config/interfaces/error.interface';
 import { User } from '@models/user.model';
 import { Role } from '@models/role.model';
+import { kc_update_user } from '@setup/keycloak-rest';
+import { log } from '@setup/log';
 import { update_user_function_params, update_user_function_return } from './update-user.interface';
 
 const find_target_user = async (id: string, transaction: Transaction) => User.findByPk(id, { include: [{ model: Role }], transaction });
@@ -23,10 +25,29 @@ const guard_promote_super_admin = (acting_user: any, role_slug: string | undefin
   return null;
 };
 
-const apply_changes = async (target: User, role_id: string | undefined, is_active: boolean | undefined, transaction: Transaction) => {
+const compose_display_name = (first?: string, last?: string, fallback?: string): string | undefined => {
+  if (first === undefined && last === undefined) return undefined;
+  const composed = [first, last].filter(Boolean).join(' ').trim();
+  return composed.length > 0 ? composed : fallback;
+};
+
+const sync_to_keycloak = async (target: User, first?: string, last?: string, is_active?: boolean): Promise<void> => {
+  if (first === undefined && last === undefined && is_active === undefined) return;
+  try { await kc_update_user(target.keycloak_sub, { first_name: first, last_name: last, enabled: is_active }); }
+  catch (e: any) { log.warn('user_update.kc_sync_failed', { user_id: target.id, error: String(e?.message ?? e) }); }
+};
+
+const apply_changes = async (
+  target: User,
+  role_id: string | undefined,
+  is_active: boolean | undefined,
+  display_name: string | undefined,
+  transaction: Transaction,
+) => {
   const fields: Partial<User> = {};
-  if (role_id  !== undefined) (fields as any).role_id   = role_id;
-  if (is_active !== undefined) (fields as any).is_active = is_active;
+  if (role_id      !== undefined) (fields as any).role_id   = role_id;
+  if (is_active    !== undefined) (fields as any).is_active = is_active;
+  if (display_name !== undefined) (fields as any).name      = display_name;
   if (Object.keys(fields).length === 0) return target;
   await target.update(fields, { transaction });
   return User.findByPk(target.id, { include: [{ model: Role }], transaction });
@@ -58,7 +79,9 @@ const update_user_function = async (data: update_user_function_params, transacti
     role_id = role.id;
   }
 
-  const updated = await apply_changes(target, role_id, data.is_active, transaction);
+  const display_name = compose_display_name(data.first_name, data.last_name, target.name);
+  await sync_to_keycloak(target, data.first_name, data.last_name, data.is_active);
+  const updated = await apply_changes(target, role_id, data.is_active, display_name, transaction);
   return { code: 200, message: 'updated', data: shape_user(updated) };
 };
 

@@ -1,0 +1,41 @@
+@if (open()) {
+  <div class="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm" (click)="on_close()"></div>
+  <div class="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 pointer-events-none">
+    <div class="bg-white border border-gray-100 rounded-xl shadow-2xl w-full max-w-md flex flex-col pointer-events-auto">
+      <header class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <div>
+          <h2 class="text-sm font-semibold text-gray-900">Invite user</h2>
+          <p class="text-xs text-gray-500 mt-0.5">They'll receive an email to set their password.</p>
+        </div>
+        <bs-icon-button path="M6 18L18 6M6 6l12 12" label="Close" size="sm" (clicked)="on_close()" />
+      </header>
+
+      <div class="px-5 py-5 space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <bs-form-field label="First name" placeholder="Jane"   name="invite_first_name" autocomplete="given-name"  [required]="true"  [value]="first_name()" (valueChange)="first_name.set($event)" />
+          <bs-form-field label="Last name"  placeholder="Doe"    name="invite_last_name"  autocomplete="family-name"                  [value]="last_name()"  (valueChange)="last_name.set($event)" />
+        </div>
+
+        <bs-form-field label="Email" type="email" placeholder="jane@company.com" name="invite_email" autocomplete="off" [required]="true" [value]="email()" (valueChange)="email.set($event)" />
+
+        <div>
+          <bs-label>Role</bs-label>
+          <bs-select [value]="role_slug()" (valueChange)="role_slug.set($event)" [options]="role_options()" />
+        </div>
+
+        <bs-error-alert [message]="error()" />
+        @if (success()) {
+          <div class="flex items-start gap-2 px-3 py-2.5 bg-green-50 border border-green-100 rounded-lg text-sm text-green-700">
+            <svg class="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span>{{ success() }}</span>
+          </div>
+        }
+      </div>
+
+      <footer class="flex items-center justify-end gap-2 px-5 py-3 border-t border-gray-100">
+        <bs-button variant="secondary" size="sm" (clicked)="on_close()">Cancel</bs-button>
+        <bs-button size="sm" [loading]="loading()" [disabled]="!can_submit()" (clicked)="submit()">Send invite</bs-button>
+      </footer>
+    </div>
+  </div>
+}

@@ -1,21 +1,29 @@
 @if (user(); as u) {
   <div class="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm" (click)="closed.emit()"></div>
-  <aside class="fixed inset-y-0 right-0 z-50 w-full sm:w-[420px] bg-white border-l border-gray-100 shadow-2xl flex flex-col">
+  <aside class="fixed inset-y-0 right-0 z-50 w-full sm:w-[440px] bg-white border-l border-gray-100 shadow-2xl flex flex-col">
     <header class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-      <h2 class="text-sm font-semibold text-gray-900">User detail</h2>
+      <h2 class="text-sm font-semibold text-gray-900">Edit user</h2>
       <bs-icon-button path="M6 18L18 6M6 6l12 12" label="Close" size="sm" (clicked)="closed.emit()" />
     </header>
 
-    <div class="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+    <div class="flex-1 overflow-y-auto px-6 py-5 space-y-6">
       <div class="flex items-start gap-3">
-        <bs-avatar [name]="u.name" [id]="u.id" size="lg" />
+        <bs-avatar [name]="preview_name()" [id]="u.id" size="lg" />
         <div class="min-w-0">
-          <p class="text-base font-semibold text-gray-900 truncate">{{ u.name }}</p>
+          <p class="text-base font-semibold text-gray-900 truncate">{{ preview_name() }}</p>
           <p class="text-sm text-gray-500 truncate">{{ u.email }}</p>
           <div class="mt-2 flex items-center gap-2">
             @if (u.role) { <bs-chip [tone]="role_tone(u.role.slug)" variant="soft">{{ u.role.name }}</bs-chip> }
-            @if (u.is_active) { <bs-chip tone="green" variant="soft">Active</bs-chip> } @else { <bs-chip tone="red" variant="soft">Disabled</bs-chip> }
+            @if (chosen_active()) { <bs-chip tone="green" variant="soft">Active</bs-chip> } @else { <bs-chip tone="red" variant="soft">Disabled</bs-chip> }
           </div>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-500">Profile</p>
+        <div class="grid grid-cols-2 gap-3">
+          <bs-form-field label="First name" placeholder="Jane" name="edit_first_name" autocomplete="given-name"  [required]="true" [value]="chosen_first()" (valueChange)="chosen_first.set($event)" />
+          <bs-form-field label="Last name"  placeholder="Doe"  name="edit_last_name"  autocomplete="family-name"                  [value]="chosen_last()"  (valueChange)="chosen_last.set($event)" />
         </div>
       </div>
 
@@ -42,6 +50,7 @@
       <div class="space-y-2">
         <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-500">Metadata</p>
         <div class="text-xs text-gray-500 space-y-1">
+          <div class="flex justify-between"><span>Email</span><span class="text-gray-700 truncate ml-2">{{ u.email }}</span></div>
           <div class="flex justify-between"><span>User ID</span><span class="font-mono text-gray-700">{{ u.id.slice(0, 8) }}…</span></div>
           <div class="flex justify-between"><span>Joined</span><span class="text-gray-700">{{ u.created_at | date:'mediumDate' }}</span></div>
         </div>

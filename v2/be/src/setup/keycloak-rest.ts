@@ -124,6 +124,21 @@ export const kc_find_user_id_by_email = async (email: string): Promise<string | 
   return list.length > 0 ? (list[0]?.id ?? null) : null;
 };
 
+export type UserUpdateSpec = { first_name?: string; last_name?: string; enabled?: boolean };
+
+export const kc_update_user = async (user_id: string, spec: UserUpdateSpec): Promise<void> => {
+  ensure_kc_configured();
+  const admin_token = await get_admin_token();
+  const url         = `${env.KEYCLOAK_URL!.replace(/\/$/, '')}/admin/realms/${env.KEYCLOAK_REALM}/users/${user_id}`;
+  const body: Record<string, unknown> = {};
+  if (spec.first_name !== undefined) body['firstName'] = spec.first_name;
+  if (spec.last_name  !== undefined) body['lastName']  = spec.last_name;
+  if (spec.enabled    !== undefined) body['enabled']   = spec.enabled;
+  if (Object.keys(body).length === 0) return;
+  const res = await axios.put(url, body, { headers: { Authorization: `Bearer ${admin_token}`, 'Content-Type': 'application/json' }, validateStatus: () => true });
+  if (res.status >= 400) throw translate_kc_error(res, 'Keycloak user update failed');
+};
+
 export const kc_set_password = async (user_id: string, password: string): Promise<void> => {
   ensure_kc_configured();
   const admin_token = await get_admin_token();

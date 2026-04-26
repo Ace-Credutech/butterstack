@@ -15,6 +15,7 @@ import { Chip } from '../../components/atoms/chip/chip';
 import { Button } from '../../components/atoms/button/button';
 import { UserDetailDrawer } from '../../components/organisms/user-detail-drawer/user-detail-drawer';
 import { BulkUploadModal } from '../../components/organisms/bulk-upload-modal/bulk-upload-modal';
+import { InviteUserModal } from '../../components/organisms/invite-user-modal/invite-user-modal';
 import { AdminService, AdminUser, AdminRole } from '../../services/admin.service';
 import { CsvService } from '../../services/csv.service';
 import { ShortcutService } from '../../services/shortcut.service';
@@ -33,7 +34,7 @@ const empty_filter_state = () => ({ q: '', role: [] as string[], status: [] as s
 
 @Component({
   selector:    'bs-admin-users',
-  imports:     [DatePipe, Header, SectionHeader, SavedViewTabs, FilterBar, FilterChip, Pagination, BulkActionBar, Table, Avatar, Chip, Button, UserDetailDrawer, BulkUploadModal],
+  imports:     [DatePipe, Header, SectionHeader, SavedViewTabs, FilterBar, FilterChip, Pagination, BulkActionBar, Table, Avatar, Chip, Button, UserDetailDrawer, BulkUploadModal, InviteUserModal],
   templateUrl: './admin-users.html',
 })
 export class AdminUsers implements OnInit {
@@ -255,8 +256,12 @@ export class AdminUsers implements OnInit {
     );
   }
 
-  open_invite() {
-    window.alert('Invite flow coming soon. Until Keycloak invitation API is wired, send users the /register link directly.');
+  readonly invite_open = signal(false);
+  open_invite()  { this.invite_open.set(true); }
+  close_invite() { this.invite_open.set(false); }
+
+  on_invited(_: { email: string }) {
+    this.load_users();
   }
 
   on_user_changed(u: AdminUser) {

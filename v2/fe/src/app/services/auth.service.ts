@@ -97,6 +97,14 @@ export class AuthService {
     this.apply_token_set(res);
   }
 
+  async forgot_password(email: string): Promise<void> {
+    await this.http.post('/auth/forgot-password', { email });
+  }
+
+  async reset_password(token: string, new_password: string): Promise<void> {
+    await this.http.post('/auth/reset-password', { token, new_password });
+  }
+
   private refresh_in_flight: Promise<boolean> | null = null;
 
   async refresh(): Promise<boolean> {

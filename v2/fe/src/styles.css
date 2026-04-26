@@ -22,7 +22,23 @@
   bs-password-field,
   bs-header,
   bs-auth-shell,
-  bs-gravity-backdrop {
+  bs-gravity-backdrop,
+  bs-search,
+  bs-skeleton,
+  bs-empty-state,
+  bs-select,
+  bs-textarea,
+  bs-section-header,
+  bs-pagination,
+  bs-filter-bar,
+  bs-bulk-action-bar,
+  bs-saved-view-tabs,
+  bs-table,
+  bs-filter-panel {
     display: block;
   }
 }
+
+.bs-table-viewport { width: 100%; }
+.bs-table-viewport .cdk-virtual-scroll-content-wrapper { width: 100%; }
+

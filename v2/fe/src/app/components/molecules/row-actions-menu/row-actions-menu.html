@@ -1,0 +1,18 @@
+<div class="relative inline-block">
+  <bs-icon-button path="M12 5v.01M12 12v.01M12 19v.01" label="Row actions" size="sm" (clicked)="toggle()" />
+  @if (open()) {
+    <div class="fixed inset-0 z-30" (click)="close()"></div>
+    <div class="absolute z-40 right-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
+      @for (a of actions(); track a.id) {
+        <button type="button" (click)="pick(a)" [disabled]="a.disabled"
+                class="w-full text-left px-3 py-1.5 text-sm transition disabled:opacity-50"
+                [class.text-gray-700]="!a.danger"
+                [class.text-red-600]="a.danger"
+                [class.hover:bg-gray-50]="!a.danger"
+                [class.hover:bg-red-50]="a.danger">
+          {{ a.label }}
+        </button>
+      }
+    </div>
+  }
+</div>

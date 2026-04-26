@@ -1,0 +1,35 @@
+@if (open()) {
+  <div class="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm" (click)="on_close()"></div>
+  <div class="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 pointer-events-none">
+    <div class="bg-white border border-gray-100 rounded-xl shadow-2xl w-full max-w-md flex flex-col pointer-events-auto">
+      <header class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <div>
+          <h2 class="text-sm font-semibold text-gray-900">Create role</h2>
+          <p class="text-xs text-gray-500 mt-0.5">Permissions are configured after creation.</p>
+        </div>
+        <bs-icon-button path="M6 18L18 6M6 6l12 12" label="Close" size="sm" (clicked)="on_close()" />
+      </header>
+
+      <div class="px-5 py-5 space-y-4">
+        <bs-form-field label="Name" placeholder="e.g. Designer" name="role_name" [required]="true" [value]="name()" (valueChange)="on_name_change($event)" />
+
+        <div>
+          <bs-form-field label="Slug" placeholder="e.g. designer" name="role_slug" [required]="true" [value]="slug()" (valueChange)="on_slug_change($event)"
+                         [error]="slug() && !slug_valid() ? 'Lowercase letters, digits and underscores. Starts with a letter.' : null" />
+        </div>
+
+        <div>
+          <bs-label>Description (optional)</bs-label>
+          <bs-textarea placeholder="What does this role allow?" [rows]="3" [value]="description()" (valueChange)="description.set($event)" />
+        </div>
+
+        <bs-error-alert [message]="error()" />
+      </div>
+
+      <footer class="flex items-center justify-end gap-2 px-5 py-3 border-t border-gray-100">
+        <bs-button variant="secondary" size="sm" (clicked)="on_close()">Cancel</bs-button>
+        <bs-button size="sm" [loading]="submitting()" [disabled]="!can_submit()" (clicked)="submit()">Create role</bs-button>
+      </footer>
+    </div>
+  </div>
+}

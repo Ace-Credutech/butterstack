@@ -1,0 +1,87 @@
+<div class="min-h-screen bg-gray-50">
+  <bs-header />
+
+  <main class="max-w-7xl mx-auto px-8 py-8">
+    <bs-section-header title="Users" subtitle="Manage who can access Butterstack and what they can do.">
+      <bs-button size="sm" variant="secondary" (clicked)="export_csv()">Export CSV</bs-button>
+      <bs-button size="sm" variant="secondary" (clicked)="open_bulk()">Bulk update</bs-button>
+      <bs-button size="sm" (clicked)="open_invite()">Invite users</bs-button>
+    </bs-section-header>
+
+    <div class="mt-6">
+      <div class="flex items-center justify-between">
+        <bs-saved-view-tabs [views]="views()" [active_id]="active_view()" (view_selected)="on_view($event)" />
+        <button type="button" (click)="save_current_view()" class="text-xs text-green-600 hover:text-green-700 font-medium px-2 py-1">+ Save view</button>
+      </div>
+
+      <div #filter_bar><bs-filter-bar
+        [query]="filters().q"
+        (query_changed)="on_query($event)"
+        search_hint="/"
+        [active_filters]="active_filter_count()"
+        (clear_clicked)="clear_filters()">
+        <bs-filter-chip label="Role"   [options]="role_options()"   [selected]="filters().role"   (changed)="on_role_filter($event)" />
+        <bs-filter-chip label="Status" [options]="status_options"   [selected]="filters().status" (changed)="on_status_filter($event)" />
+      </bs-filter-bar></div>
+
+      <bs-bulk-action-bar [count]="selection().size" [actions]="bulk_actions" (action_selected)="on_bulk_action($event)" (cancel_clicked)="clear_selection()" />
+
+      <bs-table
+        [columns]="[
+          { id: 'user',   header: 'User',      sortable: true,  cell: user_cell },
+          { id: 'role',   header: 'Role',      cell: role_cell },
+          { id: 'status', header: 'Status',    cell: status_cell, width: '120px' },
+          { id: 'joined', header: 'Joined',    sortable: true,  cell: joined_cell, width: '140px' }
+        ]"
+        [rows]="users()"
+        [loading]="loading()"
+        [selectable]="true"
+        [(selection)]="selection"
+        [(sort)]="sort"
+        empty_title="No users match these filters"
+        empty_subtitle="Try clearing filters or searching by a different term."
+        empty_cta="Clear filters"
+        (empty_action)="clear_filters()"
+        (row_clicked)="open_user($event)" />
+
+      <bs-pagination [page]="page()" [size]="size()" [total]="total()" (page_changed)="on_page($event)" (size_changed)="on_size($event)" />
+    </div>
+  </main>
+
+  <bs-user-detail-drawer [user]="opened_user()" [roles]="roles()" (closed)="close_drawer()" (user_changed)="on_user_changed($event)" />
+  <bs-bulk-upload-modal [open]="bulk_open()" [valid_role_slugs]="valid_role_slugs()" (closed)="close_bulk()" (applied)="on_bulk_applied($event)" />
+
+  <ng-template #user_cell let-u>
+    <div class="flex items-center gap-2.5">
+      <bs-avatar [name]="u.name" [id]="u.id" size="sm" />
+      <div class="min-w-0">
+        <p class="text-sm font-medium text-gray-900 truncate">{{ u.name }}</p>
+        <p class="text-xs text-gray-500 truncate">{{ u.email }}</p>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #role_cell let-u>
+    @if (u.role) {
+      <bs-chip [tone]="role_tone(u.role.slug)" variant="soft">{{ u.role.name }}</bs-chip>
+    } @else {
+      <span class="text-xs text-gray-400">—</span>
+    }
+  </ng-template>
+
+  <ng-template #status_cell let-u>
+    @if (u.is_active) {
+      <bs-chip tone="green" variant="soft">
+        <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Active
+      </bs-chip>
+    } @else {
+      <bs-chip tone="red" variant="soft">
+        <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Disabled
+      </bs-chip>
+    }
+  </ng-template>
+
+  <ng-template #joined_cell let-u>
+    <span class="text-xs text-gray-500">{{ u.created_at | date:'mediumDate' }}</span>
+  </ng-template>
+</div>

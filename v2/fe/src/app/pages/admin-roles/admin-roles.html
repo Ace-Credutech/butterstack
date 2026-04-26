@@ -1,0 +1,60 @@
+<div class="min-h-screen bg-gray-50">
+  <bs-header />
+
+  <main class="max-w-7xl mx-auto px-8 py-8">
+    <bs-section-header title="Roles" subtitle="Define what each role can access. Custom roles can be created and edited; system roles are protected.">
+      <bs-button size="sm" (clicked)="open_create()">New role</bs-button>
+    </bs-section-header>
+
+    <div class="mt-6">
+      <bs-table
+        [columns]="[
+          { id: 'role',        header: 'Role',         cell: role_cell,     width: '180px' },
+          { id: 'description', header: 'Description',  cell: desc_cell },
+          { id: 'perms',       header: 'Permissions',  cell: perms_cell,    width: '160px' },
+          { id: 'users',       header: 'Users',        align: 'right', cell: users_cell, width: '90px' },
+          { id: 'type',        header: 'Type',         cell: type_cell,     width: '110px' },
+          { id: 'updated',     header: 'Updated',      cell: updated_cell,  width: '140px' }
+        ]"
+        [rows]="roles()"
+        [loading]="loading()"
+        empty_title="No roles yet"
+        empty_subtitle="Create your first custom role."
+        (row_clicked)="open_role($event)" />
+    </div>
+  </main>
+
+  <bs-create-role-modal [open]="create_open()" (closed)="close_create()" (created)="on_role_created($event)" />
+
+  <ng-template #role_cell let-r>
+    <bs-chip [tone]="role_tone(r.slug)" variant="soft">{{ r.name }}</bs-chip>
+  </ng-template>
+
+  <ng-template #desc_cell let-r>
+    @if (r.description) {
+      <p class="text-sm text-gray-600 truncate" [attr.title]="r.description">{{ r.description }}</p>
+    } @else {
+      <span class="text-xs text-gray-400">—</span>
+    }
+  </ng-template>
+
+  <ng-template #perms_cell let-r>
+    <span class="text-xs text-gray-500">{{ perm_count(r) >= 99 ? 'All permissions' : perm_count(r) + ' permissions' }}</span>
+  </ng-template>
+
+  <ng-template #users_cell let-r>
+    <span class="text-sm font-medium text-gray-700">{{ r.user_count }}</span>
+  </ng-template>
+
+  <ng-template #type_cell let-r>
+    @if (r.is_system) {
+      <bs-chip tone="slate" variant="outline">System</bs-chip>
+    } @else {
+      <bs-chip tone="blue" variant="outline">Custom</bs-chip>
+    }
+  </ng-template>
+
+  <ng-template #updated_cell let-r>
+    <span class="text-xs text-gray-500">{{ r.updated_at | date:'mediumDate' }}</span>
+  </ng-template>
+</div>

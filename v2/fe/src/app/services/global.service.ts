@@ -3,7 +3,8 @@ import { Router } from '@angular/router';
 import { HttpService } from './http.service';
 import { AuthService } from './auth.service';
 
-export type CurrentUser = { id: string; email: string; name: string; role: string | null };
+export type RolePayload = { id: string; slug: string; name: string; permissions: Record<string, unknown> };
+export type CurrentUser = { id: string; email: string; name: string; role: RolePayload | null };
 type MeResponse = { code: number; message: string; data: { authenticated: boolean; user?: CurrentUser } };
 
 @Injectable({ providedIn: 'root' })

@@ -1,0 +1,20 @@
+<div class="relative">
+  <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z"/>
+  </svg>
+  <input
+    #input_el
+    type="search"
+    [placeholder]="placeholder()"
+    [ngModel]="value()"
+    (ngModelChange)="value.set($event)"
+    class="w-full pl-9 pr-9 py-2 bg-white border border-gray-200 rounded-lg text-sm placeholder:text-gray-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition"
+  />
+  @if (value()) {
+    <button type="button" (click)="clear()" class="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-gray-100 transition" aria-label="Clear">
+      <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  } @else if (hint()) {
+    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 px-1.5 py-0.5 border border-gray-200 rounded bg-gray-50 font-mono">{{ hint() }}</span>
+  }
+</div>

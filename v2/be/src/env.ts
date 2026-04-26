@@ -47,6 +47,15 @@ const env_schema = z.object({
   MAX_FILE_SIZE_KB:          z.coerce.number().int().positive().default(5120),
   ALLOWED_IMAGE_TYPES:       csv.default('image/jpeg,image/png,image/webp,image/gif'),
   ALLOWED_DOCUMENT_TYPES:    csv.default('application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
+
+  // App URLs
+  APP_URL:                   z.string().default('http://localhost:4300'),
+
+  // Email (Brevo transactional API)
+  BREVO_API_KEY:             z.string().optional(),
+  BREVO_SENDER_EMAIL:        z.string().default('no-reply@butterstack.app'),
+  BREVO_SENDER_NAME:         z.string().default('Butterstack'),
+  PASSWORD_RESET_TTL_MIN:    z.coerce.number().int().positive().default(30),
 });
 
 export const env = env_schema.parse(process.env);

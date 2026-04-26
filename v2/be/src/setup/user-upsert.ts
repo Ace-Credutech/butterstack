@@ -7,12 +7,27 @@ import { log } from './log';
 const derive_name = (claims: KeycloakClaims): string =>
   claims.name ?? claims.preferred_username ?? claims.email ?? claims.sub;
 
-const build_creation_fields = (claims: KeycloakClaims) => ({
+const is_first_user = async (transaction?: Transaction): Promise<boolean> => {
+  const count = await User.count({ transaction });
+  return count === 0;
+};
+
+const role_id_for_slug = async (slug: string, transaction?: Transaction): Promise<string | null> => {
+  const role = await Role.findOne({ where: { slug } as any, transaction });
+  return role?.id ?? null;
+};
+
+const initial_role_for_new_user = async (transaction?: Transaction): Promise<string | null> => {
+  if (await is_first_user(transaction)) return role_id_for_slug('product_manager', transaction);
+  return role_id_for_slug('member', transaction);
+};
+
+const build_creation_fields = async (claims: KeycloakClaims, transaction?: Transaction) => ({
   id:           claims.sub,
   email:        claims.email ?? `${claims.sub}@unknown`,
   name:         derive_name(claims),
   keycloak_sub: claims.sub,
-  role_id:      null,
+  role_id:      await initial_role_for_new_user(transaction),
   is_active:    true,
 });
 
@@ -28,7 +43,8 @@ export const ensure_user_from_claims = async (claims: KeycloakClaims, transactio
   try {
     const existing = await User.findByPk(claims.sub, { include: [{ model: Role }], transaction });
     if (existing) { await sync_if_changed(existing, claims, transaction); return existing; }
-    await User.create(build_creation_fields(claims) as any, { transaction });
+    const fields = await build_creation_fields(claims, transaction);
+    await User.create(fields as any, { transaction });
     return User.findByPk(claims.sub, { include: [{ model: Role }], transaction });
   } catch (e: any) {
     log.warn('user_upsert.failed', { sub: claims.sub, error: String(e?.message ?? e) });

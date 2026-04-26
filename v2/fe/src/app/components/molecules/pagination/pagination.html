@@ -1,0 +1,26 @@
+<div class="flex items-center justify-between gap-4 px-4 py-3 border-t border-gray-100">
+  <div class="text-xs text-gray-500">
+    @if (total() === 0) { No results } @else { Showing <span class="font-medium text-gray-700">{{ range_start() }}</span>–<span class="font-medium text-gray-700">{{ range_end() }}</span> of <span class="font-medium text-gray-700">{{ total() }}</span> }
+  </div>
+
+  <div class="flex items-center gap-3">
+    <div class="w-32"><bs-select [value]="size_value()" (valueChange)="on_size($event)" [options]="size_select()" /></div>
+
+    <div class="flex items-center gap-0.5">
+      <bs-icon-button path="M15 19l-7-7 7-7" label="Previous" size="sm" (clicked)="go_prev()" [disabled]="page() === 1" />
+      @for (p of visible_pages(); track $index) {
+        @if (p === 'gap') {
+          <span class="px-1.5 text-xs text-gray-400">…</span>
+        } @else {
+          <button type="button" (click)="go_to(p)"
+                  class="min-w-[28px] h-7 px-1.5 text-xs font-medium rounded transition"
+                  [class.bg-green-600]="p === page()"
+                  [class.text-white]="p === page()"
+                  [class.text-gray-600]="p !== page()"
+                  [class.hover:bg-gray-100]="p !== page()">{{ p }}</button>
+        }
+      }
+      <bs-icon-button path="M9 5l7 7-7 7" label="Next" size="sm" (clicked)="go_next()" [disabled]="page() === total_pages()" />
+    </div>
+  </div>
+</div>

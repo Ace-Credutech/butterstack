@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 import { AuthService } from '../services/auth.service';
 
 const TOKEN_LS_KEY      = 'bs_auth';
-const PUBLIC_PATH_REGEX = /\/auth\/(login|register|refresh|logout)$/;
+const PUBLIC_PATH_REGEX = /\/auth\/(login|register|refresh|logout|forgot-password|reset-password)$/;
 
 const read_token = (): string | null => {
   const raw = localStorage.getItem(TOKEN_LS_KEY);

@@ -4,7 +4,8 @@ import { HttpService } from './http.service';
 import { AuthService } from './auth.service';
 
 export type RolePayload = { id: string; slug: string; name: string; permissions: Record<string, unknown> };
-export type CurrentUser = { id: string; email: string; name: string; role: RolePayload | null };
+export type OrgPayload  = { id: string; slug: string; name: string; type: 'personal' | 'team' };
+export type CurrentUser = { id: string; email: string; name: string; role: RolePayload | null; org: OrgPayload | null };
 type MeResponse = { code: number; message: string; data: { authenticated: boolean; user?: CurrentUser } };
 
 @Injectable({ providedIn: 'root' })

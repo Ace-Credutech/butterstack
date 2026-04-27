@@ -14,6 +14,9 @@ import { auth_reset_password_details }  from '@apis/auth/auth-reset-password/aut
 import { post_event_details }    from '@apis/events/post-event/post-event.details';
 import { get_event_details }     from '@apis/events/get-event/get-event.details';
 
+import { list_orgs_details }     from '@apis/orgs/list-orgs/list-orgs.details';
+import { get_org_details }       from '@apis/orgs/get-org/get-org.details';
+
 import { list_projects_details } from '@apis/projects/list-projects/list-projects.details';
 
 import { list_users_details }    from '@apis/admin/list-users/list-users.details';
@@ -37,6 +40,9 @@ export const api_list: ApiDetails[] = [
 
   post_event_details,
   get_event_details,
+
+  list_orgs_details,
+  get_org_details,
 
   list_projects_details,
 

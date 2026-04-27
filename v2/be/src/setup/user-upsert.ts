@@ -3,6 +3,7 @@ import { User } from '@models/user.model';
 import { Role } from '@models/role.model';
 import { KeycloakClaims } from './jwt-verify';
 import { log } from './log';
+import { ensure_personal_org_for_user } from './orgs';
 
 const derive_name = (claims: KeycloakClaims): string =>
   claims.name ?? claims.preferred_username ?? claims.email ?? claims.sub;
@@ -45,6 +46,7 @@ export const ensure_user_from_claims = async (claims: KeycloakClaims, transactio
     if (existing) { await sync_if_changed(existing, claims, transaction); return existing; }
     const fields = await build_creation_fields(claims, transaction);
     await User.create(fields as any, { transaction });
+    await ensure_personal_org_for_user(claims.sub, derive_name(claims), transaction);
     return User.findByPk(claims.sub, { include: [{ model: Role }], transaction });
   } catch (e: any) {
     log.warn('user_upsert.failed', { sub: claims.sub, error: String(e?.message ?? e) });

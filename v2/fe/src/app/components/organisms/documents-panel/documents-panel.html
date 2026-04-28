@@ -112,9 +112,6 @@
               </td>
               <td class="px-4 py-3 max-w-[220px]">
                 <p class="font-medium text-gray-900 truncate">{{ doc.ai_name ?? doc.filename }}</p>
-                @if (doc.ai_name && doc.ai_name !== doc.filename) {
-                  <p class="text-xs text-gray-400 truncate">{{ doc.filename }}</p>
-                }
               </td>
               @if (is_org_mode()) {
                 <td class="px-4 py-3">

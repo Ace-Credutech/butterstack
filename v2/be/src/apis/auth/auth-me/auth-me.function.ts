@@ -24,7 +24,7 @@ const shape_user = (user: any, orgs: ReturnType<typeof shape_org_entry>[]) => ({
   id:    user.id,
   email: user.email,
   name:  user.name,
-  role:  shape_role(user.Role),
+  role:  shape_role((user as any).role),
   orgs,
 });
 

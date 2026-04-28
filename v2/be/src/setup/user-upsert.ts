@@ -42,12 +42,12 @@ const sync_if_changed = async (user: User, claims: KeycloakClaims, transaction?:
 
 export const ensure_user_from_claims = async (claims: KeycloakClaims, transaction?: Transaction): Promise<User | null> => {
   try {
-    const existing = await User.findByPk(claims.sub, { include: [{ model: Role }], transaction });
+    const existing = await User.findByPk(claims.sub, { include: [{ model: Role, as: 'role' }], transaction });
     if (existing) { await sync_if_changed(existing, claims, transaction); return existing; }
     const fields = await build_creation_fields(claims, transaction);
     await User.create(fields as any, { transaction });
     await ensure_personal_org_for_user(claims.sub, derive_name(claims), transaction);
-    return User.findByPk(claims.sub, { include: [{ model: Role }], transaction });
+    return User.findByPk(claims.sub, { include: [{ model: Role, as: 'role' }], transaction });
   } catch (e: any) {
     log.warn('user_upsert.failed', { sub: claims.sub, error: String(e?.message ?? e) });
     return null;

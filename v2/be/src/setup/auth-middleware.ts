@@ -42,7 +42,7 @@ const try_session_cookie = async (c: Context) => {
   if (!sid) return null;
   const session = await load_session(sid as string);
   if (!session) return null;
-  const user = await User.findByPk(session.user_id, { include: [{ model: Role }] });
+  const user = await User.findByPk(session.user_id, { include: [{ model: Role, as: 'role' }] });
   if (!user) return null;
   return attach_source(user, 'session');
 };

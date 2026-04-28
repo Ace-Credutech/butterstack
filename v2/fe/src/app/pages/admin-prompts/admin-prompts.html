@@ -1,53 +1,138 @@
 <div class="min-h-screen bg-gray-50">
   <bs-header />
 
-  <main class="max-w-5xl mx-auto px-8 py-8">
-    <bs-section-header title="Prompts" subtitle="Every AI call goes through one of these. Edit model, temperature, system text — changes take effect immediately." />
+  <main class="max-w-7xl mx-auto px-8 py-8">
 
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">Prompts</h1>
+      <p class="text-sm text-gray-500 mt-1">Every AI call goes through one of these. Edit model, temperature, system text — changes take effect immediately.</p>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex items-center gap-3 mb-4 flex-wrap">
+      <div class="relative flex-1 min-w-56 max-w-72">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" placeholder="Search name, slug, description…"
+               class="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+               (input)="set_search($event)" />
+      </div>
+
+      <div class="flex items-center gap-1.5 flex-wrap">
+        @for (cat of categories; track cat) {
+          <button type="button" (click)="set_category(cat)"
+                  [class]="category() === cat
+                    ? 'px-3 py-1.5 text-xs font-medium rounded-md bg-gray-900 text-white'
+                    : 'px-3 py-1.5 text-xs font-medium rounded-md bg-white border border-gray-200 text-gray-600 hover:border-gray-400 transition'">
+            {{ cat }}
+          </button>
+        }
+      </div>
+
+      <div class="ml-auto flex items-center gap-2">
+        <span class="text-xs text-gray-400">Rows</span>
+        <select (change)="set_page_size($event)"
+                class="text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-green-500">
+          @for (s of page_sizes; track s) {
+            <option [value]="s" [selected]="page_size() === s">{{ s }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Table -->
     @if (loading()) {
-      <div class="mt-8 space-y-6">
-        @for (_ of [1,2,3]; track $index) {
-          <div class="h-32 rounded-xl bg-gray-100 animate-pulse"></div>
+      <div class="rounded-xl border border-gray-200 bg-white overflow-hidden">
+        @for (_ of [1,2,3,4,5]; track $index) {
+          <div class="h-14 border-b border-gray-100 animate-pulse bg-gray-50 last:border-0"></div>
         }
       </div>
     } @else {
-      <div class="mt-8 space-y-8">
-        @for (group of groups(); track group.category) {
-          <div>
-            <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">{{ group.category }}</h2>
-            <div class="rounded-xl border border-gray-200 bg-white overflow-hidden divide-y divide-gray-100">
-              @for (p of group.prompts; track p.id) {
-                <button type="button" (click)="open(p)"
-                        class="w-full flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition text-left group">
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-2">
-                      <span class="text-sm font-semibold text-gray-900">{{ p.name }}</span>
-                      <code class="text-[11px] text-gray-400 font-mono">{{ p.slug }}</code>
-                    </div>
-                    @if (p.description) {
-                      <p class="text-xs text-gray-500 mt-0.5 truncate">{{ p.description }}</p>
-                    }
-                  </div>
-
-                  @if (p.version; as v) {
-                    <div class="flex items-center gap-2 shrink-0">
-                      <bs-chip [tone]="model_tone(v.model)" variant="soft">{{ v.model }}</bs-chip>
-                      <span class="text-xs text-gray-400">v{{ v.version }}</span>
-                      <span class="text-xs text-gray-400">t={{ v.temperature }}</span>
-                      <span class="text-xs text-gray-400">{{ v.max_tokens }} tok</span>
-                      <bs-chip tone="slate" variant="soft">{{ v.response_format }}</bs-chip>
-                    </div>
-                  }
-
-                  <svg class="w-4 h-4 text-gray-300 group-hover:text-gray-500 shrink-0 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <div class="rounded-xl border border-gray-200 bg-white overflow-hidden">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-gray-100 bg-gray-50">
+              <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-[28%]">Name</th>
+              <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Description</th>
+              <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-28">Category</th>
+              <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-44">Model</th>
+              <th class="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-10">v</th>
+              <th class="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-16">Temp</th>
+              <th class="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-20">Tokens</th>
+              <th class="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-28">Format</th>
+              <th class="w-8"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            @for (p of visible(); track p.id) {
+              <tr class="hover:bg-gray-50 cursor-pointer transition group" (click)="open(p)">
+                <td class="px-4 py-3">
+                  <span class="font-medium text-gray-900">{{ p.name }}</span><br>
+                  <code class="text-[11px] text-gray-400 font-mono">{{ p.slug }}</code>
+                </td>
+                <td class="px-4 py-3 max-w-0">
+                  <span class="block truncate text-xs text-gray-500">{{ p.description }}</span>
+                </td>
+                <td class="px-4 py-3">
+                  <bs-chip tone="slate" variant="soft">{{ p.category }}</bs-chip>
+                </td>
+                @if (p.version; as v) {
+                  <td class="px-4 py-3"><bs-chip [tone]="model_tone(v.model)" variant="soft">{{ v.model }}</bs-chip></td>
+                  <td class="px-4 py-3 text-center text-xs text-gray-400">{{ v.version }}</td>
+                  <td class="px-4 py-3 text-center text-xs text-gray-400">{{ v.temperature }}</td>
+                  <td class="px-4 py-3 text-center text-xs text-gray-400">{{ v.max_tokens }}</td>
+                  <td class="px-4 py-3 text-center"><bs-chip tone="slate" variant="soft">{{ v.response_format }}</bs-chip></td>
+                } @else {
+                  <td colspan="5" class="px-4 py-3 text-xs text-gray-300 text-center">no version</td>
+                }
+                <td class="px-4 py-3 text-right">
+                  <svg class="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition inline-block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
                   </svg>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="9" class="px-4 py-10 text-center text-sm text-gray-400">No prompts match your filters.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination footer -->
+      <div class="flex items-center justify-between mt-3 px-1">
+        <span class="text-xs text-gray-400">{{ range_label() }}</span>
+
+        @if (total_pages() > 1) {
+          <div class="flex items-center gap-1">
+            <button type="button" (click)="prev_page()" [disabled]="page() === 1"
+                    class="px-2 py-1.5 rounded-md text-xs text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition">
+              ←
+            </button>
+
+            @for (p of page_numbers(); track $index) {
+              @if (p === '…') {
+                <span class="px-2 py-1.5 text-xs text-gray-400">…</span>
+              } @else {
+                <button type="button" (click)="go_page(p)"
+                        [class]="page() === p
+                          ? 'px-3 py-1.5 rounded-md text-xs font-semibold bg-gray-900 text-white'
+                          : 'px-3 py-1.5 rounded-md text-xs text-gray-600 hover:bg-gray-100 transition'">
+                  {{ p }}
                 </button>
               }
-            </div>
+            }
+
+            <button type="button" (click)="next_page()" [disabled]="page() === total_pages()"
+                    class="px-2 py-1.5 rounded-md text-xs text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition">
+              →
+            </button>
           </div>
         }
       </div>
     }
+
   </main>
 </div>

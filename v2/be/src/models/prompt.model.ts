@@ -22,7 +22,7 @@ Prompt.init({
   name:               { type: DataTypes.STRING, allowNull: false },
   description:        { type: DataTypes.TEXT,   allowNull: true },
   category:           { type: DataTypes.STRING, allowNull: false },
-  current_version_id: { type: DataTypes.UUID,   allowNull: true },
+  current_version_id: { type: DataTypes.UUID,   allowNull: true, references: { model: 'prompt_versions', key: 'id' } },
   status:             { type: DataTypes.STRING, allowNull: false, defaultValue: 'active' },
   created_at:         DataTypes.DATE,
   updated_at:         DataTypes.DATE,

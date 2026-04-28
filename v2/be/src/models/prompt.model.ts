@@ -26,4 +26,4 @@ Prompt.init({
   status:             { type: DataTypes.STRING, allowNull: false, defaultValue: 'active' },
   created_at:         DataTypes.DATE,
   updated_at:         DataTypes.DATE,
-}, { sequelize, tableName: 'prompts' });
+}, { sequelize, tableName: 'prompts', paranoid: false });

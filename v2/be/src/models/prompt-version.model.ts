@@ -45,7 +45,7 @@ PromptVersion.init({
   created_by:       { type: DataTypes.UUID,             allowNull: true },
   created_at:       DataTypes.DATE,
   updated_at:       DataTypes.DATE,
-}, { sequelize, tableName: 'prompt_versions' });
+}, { sequelize, tableName: 'prompt_versions', paranoid: false });
 
 Prompt.hasMany(PromptVersion,      { foreignKey: 'prompt_id', as: 'versions' });
 PromptVersion.belongsTo(Prompt,    { foreignKey: 'prompt_id', as: 'prompt' });

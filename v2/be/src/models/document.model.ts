@@ -2,7 +2,7 @@ import { DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOpt
 import { sequelize } from '@setup/sequelize';
 import { User } from './user.model';
 
-export type DocumentParseStatus = 'pending' | 'parsed' | 'failed';
+export type DocumentParseStatus = 'pending' | 'parsed' | 'failed' | 'cancelled';
 export type DocumentPurpose     = 'requirement' | 'design' | 'technical_spec' | 'meeting_notes' | 'wireframe' | 'user_research' | 'competitive_analysis' | 'reference' | 'other';
 
 export class Document extends Model<InferAttributes<Document>, InferCreationAttributes<Document>> {

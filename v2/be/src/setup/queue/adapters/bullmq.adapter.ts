@@ -51,6 +51,21 @@ export const bullmq_adapter = (): QueueClient => ({
     await q.add(job_name, payload, { ...translate_opts(opts), repeat: { pattern: cron } });
     log.info('queue.repeatable.added', { queue, job_name, cron });
   },
+  async cancel_job(queue, job_id) {
+    try {
+      const q   = get_or_build_queue(queue);
+      const job = await q.getJob(job_id);
+      if (!job) return false;
+      const state = await job.getState();
+      if (state === 'active') return false;
+      await job.remove();
+      log.info('queue.cancel_job', { queue, job_id, state });
+      return true;
+    } catch (err) {
+      log.error('queue.cancel_job.failed', { queue, job_id, error: String((err as any)?.message ?? err) });
+      return false;
+    }
+  },
   async close() {
     await Promise.all(workers_running.map(w => w.close()));
     for (const q of queues_by_name.values()) await q.close();

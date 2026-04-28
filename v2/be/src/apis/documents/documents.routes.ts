@@ -19,6 +19,7 @@ import { Op }                from 'sequelize';
 import type { DocumentLinkEntityType } from '@models/document-link.model';
 import { sequelize }         from '@setup/sequelize';
 import type { DocumentParsePayload } from '@src/workers/document-parse/document-parse.worker';
+import { broadcast_to_user } from '@setup/ws/ws-server';
 
 const BUCKET             = env.MINIO_BUCKET_NAME ?? 'butterstack';
 const VALID_ENTITY_TYPES = new Set<string>(['org', 'user', 'conversation']);
@@ -107,7 +108,7 @@ const upload_document = async (c: Context) => {
         entity_id,
         uploaded_by: user.id,
       };
-      void get_queue().publish<DocumentParsePayload>('documents', 'document.parse', parse_payload, { delay_ms: 500 });
+      void get_queue().publish<DocumentParsePayload>('documents', 'document.parse', parse_payload, { delay_ms: 500, job_id: `parse-${doc.id}` });
 
       return ok(c, shape_document(doc, link), 'document uploaded');
     } catch (e) {
@@ -192,6 +193,41 @@ const get_document_content = async (c: Context) => {
   }
 };
 
+const cancel_pending_parse = async (doc_id: string, reason: string): Promise<void> => {
+  try {
+    await get_queue().cancel_job('documents', `parse-${doc_id}`).catch(() => {});
+    await Document.update({ parse_status: 'cancelled', parse_error: reason }, { where: { id: doc_id, parse_status: 'pending' } });
+    await PromptRun.update({ status: 'cancelled', error_message: reason }, { where: { scope_type: 'document', scope_id: doc_id, status: 'pending' } });
+  } catch (error) {
+    log.error('documents.cancel_pending_parse.failed', { doc_id, error: String((error as any)?.message ?? error) });
+  }
+};
+
+// POST /api/documents/:id/cancel-parse
+const cancel_document_parse = async (c: Context) => {
+  try {
+    const user = require_user(c);
+    if (!user) return err(c, 401, 'Authentication required');
+
+    const id  = c.req.param('id');
+    const doc = await Document.findByPk(id);
+    if (!doc) return err(c, 404, 'Document not found');
+    if (doc.parse_status !== 'pending') return ok(c, { document_id: id, skipped: true });
+
+    await cancel_pending_parse(id, 'Cancelled by user');
+    const updated_doc = await Document.findByPk(id);
+    void broadcast_to_user(user.id, {
+      type:    'document.parsed',
+      payload: { document_id: id, parse_status: 'cancelled', ai_name: doc.ai_name, ai_summary: doc.ai_summary, parse_error: 'Cancelled by user', passage_count: 0 },
+    });
+
+    return ok(c, { document_id: id, parse_status: updated_doc?.parse_status ?? 'cancelled' });
+  } catch (error) {
+    log.error('documents.cancel_parse.failed', { error: String((error as any)?.message ?? error) });
+    return err(c, 500, 'Failed to cancel parse');
+  }
+};
+
 // DELETE /api/documents/:id
 const delete_document = async (c: Context) => {
   try {
@@ -201,6 +237,9 @@ const delete_document = async (c: Context) => {
     const id  = c.req.param('id');
     const doc = await Document.findByPk(id);
     if (!doc) return err(c, 404, 'Document not found');
+
+    // Cancel any in-flight parse before deleting
+    if (doc.parse_status === 'pending') await cancel_pending_parse(id, 'Document deleted');
 
     await delete_object(BUCKET, doc.storage_key);
     await DocumentLink.destroy({ where: { document_id: id } });
@@ -344,7 +383,7 @@ const reparse_document = async (c: Context) => {
       entity_id:   link.entity_id,
       uploaded_by: user.id,
     };
-    void get_queue().publish<DocumentParsePayload>('documents', 'document.parse', payload, { delay_ms: 200 });
+    void get_queue().publish<DocumentParsePayload>('documents', 'document.parse', payload, { delay_ms: 200, job_id: `parse-${doc.id}` });
 
     return ok(c, { document_id: id, parse_status: 'pending' }, 'reparse queued');
   } catch (error) {
@@ -355,12 +394,13 @@ const reparse_document = async (c: Context) => {
 
 export const register_document_routes = () => {
   app.use('/api/documents/*', auth_middleware);
-  app.post('/api/documents/upload',     upload_document);
-  app.get('/api/documents/all',         list_all_documents);
-  app.get('/api/documents',             list_documents);
-  app.get('/api/documents/:id/runs',    get_document_runs);
-  app.get('/api/documents/:id/content', get_document_content);
-  app.post('/api/documents/:id/reparse', reparse_document);
-  app.delete('/api/documents/:id',      delete_document);
-  app.get('/api/documents/:id/url',     get_document_url);
+  app.post('/api/documents/upload',            upload_document);
+  app.get('/api/documents/all',                list_all_documents);
+  app.get('/api/documents',                    list_documents);
+  app.get('/api/documents/:id/runs',           get_document_runs);
+  app.get('/api/documents/:id/content',        get_document_content);
+  app.post('/api/documents/:id/reparse',       reparse_document);
+  app.post('/api/documents/:id/cancel-parse',  cancel_document_parse);
+  app.delete('/api/documents/:id',             delete_document);
+  app.get('/api/documents/:id/url',            get_document_url);
 };

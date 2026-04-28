@@ -273,6 +273,10 @@ const parse_document = async (c: Context) => {
       extract_result = await extract_via_vision_ai(doc, file_buffer, uploaded_by);
     }
 
+    // Guard: if the doc was cancelled or deleted while the AI call was in flight, skip saving
+    await doc.reload();
+    if (doc.parse_status !== 'pending') return ok(c, { document_id, skipped: true });
+
     await save_parse_results(doc, extract_result);
     await doc.reload();
 

@@ -3,7 +3,7 @@ import { HttpService } from './http.service';
 
 export type DocumentEntityType = 'org' | 'project' | 'user' | 'conversation';
 export type DocumentPurpose    = 'requirement' | 'design' | 'technical_spec' | 'meeting_notes' | 'wireframe' | 'user_research' | 'competitive_analysis' | 'reference' | 'other';
-export type ParseStatus        = 'pending' | 'parsed' | 'failed';
+export type ParseStatus        = 'pending' | 'parsed' | 'failed' | 'cancelled';
 
 export interface DocumentUploader { id: string; name: string; email: string }
 
@@ -133,5 +133,9 @@ export class DocumentsService {
 
   reparse(id: string): Promise<{ code: number; message: string; data: { document_id: string; parse_status: string } }> {
     return this.http.post<{ code: number; message: string; data: { document_id: string; parse_status: string } }>(`/documents/${id}/reparse`, {});
+  }
+
+  cancel_parse(id: string): Promise<{ code: number; message: string; data: { document_id: string; parse_status: string } }> {
+    return this.http.post<{ code: number; message: string; data: { document_id: string; parse_status: string } }>(`/documents/${id}/cancel-parse`, {});
   }
 }

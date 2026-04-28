@@ -82,6 +82,7 @@ export class DocumentsPanel implements OnInit, OnDestroy {
   readonly runs_error      = signal<string | null>(null);
   readonly expanded_run    = signal<string | null>(null);
   readonly reparsing       = signal(false);
+  readonly cancelling      = signal(false);
 
   readonly total_tokens = computed(() => {
     const list = this.runs();
@@ -341,6 +342,22 @@ export class DocumentsPanel implements OnInit, OnDestroy {
       this.error.set(e?.message ?? 'Failed to queue reparse');
     } finally {
       this.reparsing.set(false);
+    }
+  }
+
+  async cancel_parse_run(doc: DocumentItem) {
+    try {
+      this.cancelling.set(true);
+      await this.docs_svc.cancel_parse(doc.id);
+      this.documents.update(list => list.map(d => d.id === doc.id ? { ...d, parse_status: 'cancelled' as const } : d));
+      if (this.viewed_doc()?.id === doc.id) {
+        this.viewed_doc.update(d => d ? { ...d, parse_status: 'cancelled' as const } : null);
+        this.runs.update(list => list.map(r => r.status === 'pending' ? { ...r, status: 'cancelled', error_message: 'Cancelled by user' } : r));
+      }
+    } catch (e: any) {
+      this.error.set(e?.message ?? 'Failed to cancel parse');
+    } finally {
+      this.cancelling.set(false);
     }
   }
 

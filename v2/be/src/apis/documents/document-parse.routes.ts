@@ -5,7 +5,7 @@ const pdf_parse = (pdf_parse_pkg as any).default ?? pdf_parse_pkg;
 import * as XLSX                from 'xlsx';
 import { app }                  from '@setup/hono';
 import { get_object }           from '@setup/storage';
-import { run_prompt, create_pending_run, complete_run } from '@setup/prompts/run';
+import { run_prompt_stream, create_pending_run, complete_run } from '@setup/prompts/run';
 import { vision_call }          from '@setup/prompts/ai-call';
 import { broadcast_to_user, broadcast_to_org, broadcast_to_project } from '@setup/ws/ws-server';
 import { env }                  from '@src/env';
@@ -130,14 +130,14 @@ const strip_and_parse = (raw: string): ExtractResult => {
 
 const extract_via_text_ai = async (doc: Document, content_text: string, uploaded_by: string): Promise<ExtractResult> => {
   try {
-    const result = await run_prompt<ExtractResult>({
+    const result = await run_prompt_stream<ExtractResult>({
       slug:       EXTRACT_SLUG,
       variables:  { filename: doc.filename, content: content_text.slice(0, 30_000) },
       scope_type: 'document',
       scope_id:   doc.id,
       user_id:    uploaded_by,
     });
-    // run_prompt returns the raw string when response_format='text' in the DB (the default).
+    // run_prompt_stream returns the raw string when response_format='text' in the DB (the default).
     // Normalise here so the function always returns a parsed ExtractResult regardless.
     const data = typeof result.data === 'string' ? strip_and_parse(result.data) : result.data;
     return data;
@@ -210,7 +210,7 @@ const collect_passage_links = (
   return links;
 };
 
-const save_parse_results = async (doc: Document, result: ExtractResult): Promise<void> => {
+const save_parse_results = async (doc: Document, result: ExtractResult, override_parsed_text?: string): Promise<void> => {
   try {
     const tx = await sequelize.transaction();
     try {
@@ -250,7 +250,7 @@ const save_parse_results = async (doc: Document, result: ExtractResult): Promise
 
       await doc.update({
         parse_status: 'parsed',
-        parsed_text:  result.extracted_text || null,
+        parsed_text:  override_parsed_text ?? result.extracted_text ?? null,
         ai_name:      result.ai_name        || null,
         ai_summary:   result.ai_summary     || null,
         keywords:     result.keywords       ?? [],
@@ -309,9 +309,15 @@ const broadcast_result = async (
 
 const parse_document = async (c: Context) => {
   let doc: Document | null = null;
+  let entity_type = '';
+  let entity_id   = '';
+  let uploaded_by = '';
   try {
-    const body        = await c.req.json() as { document_id: string; entity_type: string; entity_id: string; uploaded_by: string };
-    const { document_id, entity_type, entity_id, uploaded_by } = body;
+    const body  = await c.req.json() as { document_id: string; entity_type: string; entity_id: string; uploaded_by: string };
+    const document_id = body.document_id;
+    entity_type = body.entity_type;
+    entity_id   = body.entity_id;
+    uploaded_by = body.uploaded_by;
 
     doc = await Document.findByPk(document_id);
     if (!doc) return err(c, 404, 'Document not found');
@@ -320,12 +326,13 @@ const parse_document = async (c: Context) => {
     const file_buffer = await get_object(BUCKET, doc.storage_key);
 
     let extract_result: ExtractResult;
+    let source_text: string | undefined;
     if (is_text_mime(doc.mime_type)) {
-      const content_text = file_buffer.toString('utf-8');
-      extract_result     = await extract_via_text_ai(doc, content_text, uploaded_by);
+      source_text    = file_buffer.toString('utf-8');
+      extract_result = await extract_via_text_ai(doc, source_text, uploaded_by);
     } else if (is_pdf(doc.mime_type) || is_docx(doc.mime_type) || is_xlsx(doc.mime_type)) {
-      const content_text = await extract_text_from_binary(file_buffer, doc.mime_type);
-      extract_result     = await extract_via_text_ai(doc, content_text, uploaded_by);
+      source_text    = await extract_text_from_binary(file_buffer, doc.mime_type);
+      extract_result = await extract_via_text_ai(doc, source_text, uploaded_by);
     } else if (is_image_mime(doc.mime_type)) {
       extract_result = await extract_via_vision_ai(doc, file_buffer, uploaded_by);
     } else {
@@ -336,7 +343,7 @@ const parse_document = async (c: Context) => {
     await doc.reload();
     if (doc.parse_status !== 'pending') return ok(c, { document_id, skipped: true });
 
-    await save_parse_results(doc, extract_result);
+    await save_parse_results(doc, extract_result, source_text);
     await doc.reload();
 
     await broadcast_result(doc, entity_type, entity_id, uploaded_by, extract_result.passages.length);
@@ -345,7 +352,7 @@ const parse_document = async (c: Context) => {
   } catch (error) {
     log.error('document_parse.failed', { document_id: doc?.id, error: String((error as any)?.message ?? error) });
     if (doc) await mark_failed(doc, String((error as any)?.message ?? error));
-    if (doc) await broadcast_result(doc, '', '', '', 0);
+    if (doc) await broadcast_result(doc, entity_type, entity_id, uploaded_by, 0);
     return err(c, 500, 'Parse failed');
   }
 };

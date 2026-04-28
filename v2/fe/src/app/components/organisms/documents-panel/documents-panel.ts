@@ -133,18 +133,23 @@ export class DocumentsPanel implements OnInit, OnDestroy {
 
   private ws_unsub_run_started:   (() => void) | null = null;
   private ws_unsub_run_completed: (() => void) | null = null;
+  private ws_unsub_run_delta:     (() => void) | null = null;
+
+  readonly streaming_text = signal<Record<string, string>>({});
 
   ngOnInit() {
     this.load();
     this.ws_unsub               = this.ws.on<any>('document.parsed',  (e) => this.on_document_parsed(e.payload));
     this.ws_unsub_run_started   = this.ws.on<any>('run.started',      (e) => this.on_run_started(e.payload));
     this.ws_unsub_run_completed = this.ws.on<any>('run.completed',    (e) => this.on_run_completed(e.payload));
+    this.ws_unsub_run_delta     = this.ws.on<any>('run.delta',        (e) => this.on_run_delta(e.payload));
   }
 
   ngOnDestroy() {
     this.ws_unsub?.();
     this.ws_unsub_run_started?.();
     this.ws_unsub_run_completed?.();
+    this.ws_unsub_run_delta?.();
     if (this.search_timer) clearTimeout(this.search_timer);
   }
 
@@ -153,10 +158,33 @@ export class DocumentsPanel implements OnInit, OnDestroy {
     this.documents.update(list =>
       list.map(doc =>
         doc.id === payload.document_id
-          ? { ...doc, parse_status: payload.parse_status, ai_name: payload.ai_name ?? doc.ai_name, ai_summary: payload.ai_summary ?? doc.ai_summary }
+          ? { ...doc, parse_status: payload.parse_status, ai_name: payload.ai_name ?? doc.ai_name, ai_summary: payload.ai_summary ?? doc.ai_summary, parse_error: payload.parse_error ?? null }
           : doc,
       ),
     );
+    // Also update the slide-over panel if this document is currently open
+    if (this.viewed_doc()?.id === payload.document_id) {
+      this.viewed_doc.update(d => d ? { ...d, parse_status: payload.parse_status, ai_name: payload.ai_name ?? d.ai_name, ai_summary: payload.ai_summary ?? d.ai_summary, parse_error: payload.parse_error ?? null } : null);
+      // If parse just succeeded and the user is on a content tab, lazily fetch content
+      if (payload.parse_status === 'parsed' && this.slide_tab() !== 'runs' && !this.content() && !this.content_loading()) {
+        void this.fetch_content_for_viewed();
+      }
+    }
+  }
+
+  private async fetch_content_for_viewed() {
+    const doc = this.viewed_doc();
+    if (!doc) return;
+    this.content_loading.set(true);
+    this.content_error.set(null);
+    try {
+      const res = await this.docs_svc.get_content(doc.id);
+      this.content.set(res.data);
+    } catch (e: any) {
+      this.content_error.set(e?.message ?? 'Failed to load content');
+    } finally {
+      this.content_loading.set(false);
+    }
   }
 
   private on_run_started(payload: any) {
@@ -178,6 +206,8 @@ export class DocumentsPanel implements OnInit, OnDestroy {
       created_at:    payload.created_at,
     };
     this.runs.update(list => [pending_run, ...list.filter(r => r.id !== payload.run_id)]);
+    // Always re-sync from API in case any older run was missed
+    void this.load_runs();
   }
 
   private on_run_completed(payload: any) {
@@ -194,6 +224,19 @@ export class DocumentsPanel implements OnInit, OnDestroy {
         error_message: payload.error_message ?? null,
       }),
     );
+    // Clear the streaming buffer for this run once it's complete
+    this.streaming_text.update(map => {
+      if (!(payload.run_id in map)) return map;
+      const next = { ...map };
+      delete next[payload.run_id];
+      return next;
+    });
+  }
+
+  private on_run_delta(payload: any) {
+    if (!payload?.run_id || !payload?.scope_id || !payload?.chunk) return;
+    if (this.viewed_doc()?.id !== payload.scope_id) return;
+    this.streaming_text.update(map => ({ ...map, [payload.run_id]: (map[payload.run_id] ?? '') + payload.chunk }));
   }
 
   set_search(value: string) {

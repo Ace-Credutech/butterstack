@@ -7,7 +7,7 @@ import { Button }  from '../../components/atoms/button/button';
 import { Chip }          from '../../components/atoms/chip/chip';
 import { AdminService, AdminPromptFull, PromptModel, PromptResponseFormat, UpdatePromptBody } from '../../services/admin.service';
 
-const MODELS: PromptModel[] = ['claude-opus-4-7', 'claude-sonnet-4-6', 'claude-haiku-4-5', 'gpt-5', 'gpt-4.1'];
+const MODELS: PromptModel[] = ['claude-opus-4-7', 'claude-sonnet-4-6', 'claude-haiku-4-5', 'gpt-5', 'gpt-5-mini', 'gpt-4.1', 'gpt-4.1-mini', 'gpt-4.1-nano'];
 const FORMATS: PromptResponseFormat[] = ['text', 'json', 'json_schema'];
 
 const derive_provider = (model: string): 'OpenAI' | 'Anthropic' | 'Unknown' => {

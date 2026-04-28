@@ -37,7 +37,7 @@ export type ListRolesResponse = { code: number; message: string; data: { items: 
 export type UpdateUserBody    = { role_slug?: string; is_active?: boolean };
 export type UpdateRoleBody    = { name?: string; description?: string; permissions?: Record<string, unknown> };
 
-export type PromptModel          = 'claude-opus-4-7' | 'claude-sonnet-4-6' | 'claude-haiku-4-5' | 'gpt-5' | 'gpt-4.1';
+export type PromptModel          = 'claude-opus-4-7' | 'claude-sonnet-4-6' | 'claude-haiku-4-5' | 'gpt-5' | 'gpt-5-mini' | 'gpt-4.1' | 'gpt-4.1-mini' | 'gpt-4.1-nano';
 export type PromptResponseFormat = 'text' | 'json' | 'json_schema';
 
 export type PromptVersionSummary = {

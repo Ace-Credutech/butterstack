@@ -18,6 +18,12 @@ export interface AiCallOutput {
   tokens_out: number;
 }
 
+export interface StreamFinal {
+  full_text:  string;
+  tokens_in:  number;
+  tokens_out: number;
+}
+
 export interface VisionCallInput {
   model:        string;
   system_text:  string;
@@ -225,7 +231,92 @@ const call_anthropic_vision = async (input: VisionCallInput): Promise<AiCallOutp
   }
 };
 
+// ── Streaming (OpenAI) ───────────────────────────────────────────────────────
+
+const stream_openai = async function* (input: AiCallInput): AsyncGenerator<string, StreamFinal, void> {
+  try {
+    const client      = new OpenAI({ apiKey: env.OPENAI_API_KEY });
+    const caps        = model_caps(input.model);
+    const wants_json  = input.response_format === 'json' || input.response_format === 'json_schema';
+    const messages    = build_openai_messages(input.system_text, input.user_message, caps);
+    const token_param = caps.token_param === 'max_completion_tokens'
+      ? { max_completion_tokens: input.max_tokens }
+      : { max_tokens: input.max_tokens };
+
+    const stream = await client.chat.completions.create({
+      model:    input.model,
+      messages,
+      ...token_param,
+      ...(caps.supports_temperature ? { temperature: input.temperature } : {}),
+      ...(wants_json && caps.supports_json_mode ? { response_format: { type: 'json_object' } } : {}),
+      stream:         true,
+      stream_options: { include_usage: true },
+    });
+
+    let full_text  = '';
+    let tokens_in  = 0;
+    let tokens_out = 0;
+
+    for await (const chunk of stream) {
+      const delta = chunk.choices[0]?.delta?.content ?? '';
+      if (delta) { full_text += delta; yield delta; }
+      if (chunk.usage) {
+        tokens_in  = chunk.usage.prompt_tokens     ?? 0;
+        tokens_out = chunk.usage.completion_tokens ?? 0;
+      }
+    }
+    return { full_text, tokens_in, tokens_out };
+  } catch (error: any) {
+    log.error('ai_call.stream_openai.failed', { model: input.model, error: String(error?.message ?? error) });
+    throw error;
+  }
+};
+
+// ── Streaming (Anthropic) ────────────────────────────────────────────────────
+
+const stream_anthropic = async function* (input: AiCallInput): AsyncGenerator<string, StreamFinal, void> {
+  try {
+    const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
+    const stream = client.messages.stream({
+      model:       input.model,
+      max_tokens:  input.max_tokens,
+      temperature: input.temperature,
+      system:      input.system_text,
+      messages:    [{ role: 'user', content: input.user_message }],
+    });
+
+    let full_text = '';
+    for await (const event of stream) {
+      if (event.type === 'content_block_delta' && (event.delta as any)?.type === 'text_delta') {
+        const delta: string = (event.delta as any).text ?? '';
+        if (delta) { full_text += delta; yield delta; }
+      }
+    }
+    const final = await stream.finalMessage();
+    return {
+      full_text,
+      tokens_in:  final.usage?.input_tokens  ?? 0,
+      tokens_out: final.usage?.output_tokens ?? 0,
+    };
+  } catch (error: any) {
+    log.error('ai_call.stream_anthropic.failed', { model: input.model, error: String(error?.message ?? error) });
+    throw error;
+  }
+};
+
 // ── Public API ───────────────────────────────────────────────────────────────
+
+export const ai_call_stream = async function* (input: AiCallInput): AsyncGenerator<string, StreamFinal, void> {
+  try {
+    const caps = model_caps(input.model);
+    if (caps.provider === 'anthropic') return yield* stream_anthropic(input);
+    if (caps.provider === 'openai')    return yield* stream_openai(input);
+    throw new Error(`Unknown provider for stream: ${input.model}`);
+  } catch (error: any) {
+    log.error('ai_call_stream.failed', { model: input.model, error: String(error?.message ?? error) });
+    throw error;
+  }
+};
 
 export const ai_call = async (input: AiCallInput): Promise<AiCallOutput> => {
   try {

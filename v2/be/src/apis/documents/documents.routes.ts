@@ -110,7 +110,19 @@ const upload_document = async (c: Context) => {
       };
       void get_queue().publish<DocumentParsePayload>('documents', 'document.parse', parse_payload, { delay_ms: 500, job_id: `parse-${doc.id}` });
 
-      return ok(c, shape_document(doc, link), 'document uploaded');
+      // Hydrate uploader + scope_label so the upload response renders the row fully
+      // (otherwise the list shows `—` for Uploaded by / Scope until next refresh).
+      const doc_full = await Document.findByPk(doc.id, {
+        include: [{ model: User, as: 'uploader', attributes: ['id', 'name', 'email'] }],
+      });
+      const org = entity_type === 'org'
+        ? await Organisation.findByPk(entity_id, { attributes: ['name'] })
+        : null;
+      const scope_label = entity_type === 'org'  ? (org?.name ?? 'Organization')
+                       :  entity_type === 'user' ? 'My Documents'
+                       :  entity_type;
+
+      return ok(c, { ...shape_document(doc_full ?? doc, link), scope_label }, 'document uploaded');
     } catch (e) {
       await tx.rollback();
       await delete_object(BUCKET, storage_key).catch(() => {});
@@ -392,6 +404,10 @@ const reparse_document = async (c: Context) => {
     await DocumentPassage.destroy({ where: { document_id: id } });
     await DocumentEntity.destroy({ where: { document_id: id } });
     await doc.update({ parse_status: 'pending', parse_error: null });
+
+    // BullMQ silently skips re-adds with the same jobId while the prior job still exists in Redis
+    // (any state — completed/failed/delayed). Drop the old one first so the new parse actually runs.
+    await get_queue().cancel_job('documents', `parse-${doc.id}`).catch(() => {});
 
     const payload: DocumentParsePayload = {
       document_id: doc.id,

@@ -4,7 +4,7 @@ import { Prompt } from './prompt.model';
 import { User } from './user.model';
 
 export type PromptVersionStatus = 'draft' | 'active' | 'superseded' | 'rolled_back';
-export type PromptModel          = 'claude-opus-4-7' | 'claude-sonnet-4-6' | 'claude-haiku-4-5' | 'gpt-5' | 'gpt-4.1';
+export type PromptModel          = 'claude-opus-4-7' | 'claude-sonnet-4-6' | 'claude-haiku-4-5' | 'gpt-5' | 'gpt-5-mini' | 'gpt-4.1' | 'gpt-4.1-mini' | 'gpt-4.1-nano';
 export type PromptResponseFormat = 'text' | 'json' | 'json_schema';
 
 export class PromptVersion extends Model<InferAttributes<PromptVersion>, InferCreationAttributes<PromptVersion>> {

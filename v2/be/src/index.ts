@@ -6,6 +6,8 @@ import { sequelize, close_all_dbs } from '@setup/sequelize';
 import '@models/index';
 import { migrator } from '@setup/migrator';
 import { api_list } from './api.list';
+import { register_document_routes }       from '@apis/documents/documents.routes';
+import { register_document_parse_routes } from '@apis/documents/document-parse.routes';
 import { register_event_handlers } from '@apis/events/dispatcher';
 import { event_list } from '@apis/events/event_list';
 import { upgrade_ws, on_open, on_message, on_close, attach_bun_server, start_redis_bridge } from '@setup/ws/ws-server';
@@ -26,6 +28,8 @@ const run_migrations_on_dev = async () => {
 const register_apis = () => {
   app.use('/api/*', auth_middleware);
   for (const details of api_list) setup_api(details);
+  register_document_routes();
+  register_document_parse_routes();
 };
 
 const register_workers = () => {

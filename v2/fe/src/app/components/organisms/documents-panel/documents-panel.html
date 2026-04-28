@@ -1,0 +1,313 @@
+<div class="rounded-xl border border-gray-200 bg-white overflow-hidden">
+
+  <!-- Toolbar -->
+  <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+    <h3 class="text-sm font-semibold text-gray-900">Documents
+      @if (!loading() && total() > 0) {
+        <span class="ml-1.5 text-xs font-normal text-gray-400">({{ total() }})</span>
+      }
+    </h3>
+    <div class="flex items-center gap-2">
+      <select (change)="change_page_size(+$any($event.target).value)"
+              class="text-xs border border-gray-200 rounded-md px-2 py-1 text-gray-600 bg-white focus:outline-none focus:ring-1 focus:ring-gray-300">
+        @for (s of page_sizes; track s) {
+          <option [value]="s" [selected]="s === page_size()">{{ s }} / page</option>
+        }
+      </select>
+      <button type="button" (click)="trigger_upload()"
+              [disabled]="uploading()"
+              class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-gray-900 text-white hover:bg-gray-700 disabled:opacity-50 transition">
+        @if (uploading()) {
+          <span class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          Uploading…
+        } @else {
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+          </svg>
+          Upload
+        }
+      </button>
+      <input type="file" [id]="'doc-upload-' + entity_id()" class="hidden" (change)="on_file_selected($event)" />
+    </div>
+  </div>
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="px-4 py-2 bg-red-50 border-b border-red-100 text-xs text-red-600">{{ error() }}</div>
+  }
+
+  <!-- Loading skeleton -->
+  @if (loading()) {
+    <div class="divide-y divide-gray-50">
+      @for (_ of [1,2,3,4,5]; track $index) {
+        <div class="flex items-center gap-3 px-4 py-3 animate-pulse">
+          <div class="w-12 h-4 bg-gray-100 rounded shrink-0"></div>
+          <div class="flex-1 h-4 bg-gray-100 rounded"></div>
+          <div class="w-20 h-4 bg-gray-100 rounded"></div>
+          <div class="w-16 h-4 bg-gray-100 rounded"></div>
+          <div class="w-24 h-4 bg-gray-100 rounded"></div>
+          <div class="w-16 h-4 bg-gray-100 rounded"></div>
+        </div>
+      }
+    </div>
+
+  <!-- Empty -->
+  } @else if (documents().length === 0) {
+    <div class="px-4 py-12 text-center">
+      <p class="text-sm text-gray-400">No documents yet.</p>
+      <button type="button" (click)="trigger_upload()"
+              class="mt-2 text-xs text-green-600 hover:text-green-700 font-medium transition">
+        Upload the first one
+      </button>
+    </div>
+
+  <!-- Table -->
+  } @else {
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-gray-100 bg-gray-50/60">
+            <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 w-8">Type</th>
+            <th class="text-left px-4 py-2 text-xs font-medium text-gray-500">Name</th>
+            <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 w-28">Purpose</th>
+            <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 w-24">Status</th>
+            <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 w-32">Uploaded by</th>
+            <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 w-28">Size</th>
+            <th class="text-right px-4 py-2 text-xs font-medium text-gray-500 w-28">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          @for (doc of documents(); track doc.id) {
+            <tr class="hover:bg-gray-50/60 transition group">
+
+              <!-- Type badge -->
+              <td class="px-4 py-3">
+                <span class="inline-block px-1.5 py-0.5 text-[10px] font-semibold rounded bg-gray-100 text-gray-600 tracking-wide">
+                  {{ mime_label(doc.mime_type) }}
+                </span>
+              </td>
+
+              <!-- Name -->
+              <td class="px-4 py-3 max-w-xs">
+                <p class="font-medium text-gray-900 truncate">{{ doc.ai_name ?? doc.filename }}</p>
+                @if (doc.ai_name && doc.ai_name !== doc.filename) {
+                  <p class="text-xs text-gray-400 truncate">{{ doc.filename }}</p>
+                }
+              </td>
+
+              <!-- Purpose -->
+              <td class="px-4 py-3">
+                <span class="inline-block px-2 py-0.5 text-xs rounded-full bg-blue-50 text-blue-700 font-medium">
+                  {{ purpose_label(doc.purpose) }}
+                </span>
+              </td>
+
+              <!-- Status -->
+              <td class="px-4 py-3">
+                @if (doc.parse_status === 'pending') {
+                  <span class="flex items-center gap-1 text-xs text-amber-600 font-medium">
+                    <span class="w-2.5 h-2.5 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></span>
+                    Parsing
+                  </span>
+                } @else if (doc.parse_status === 'parsed') {
+                  <span class="flex items-center gap-1 text-xs text-green-600 font-medium">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    Parsed
+                  </span>
+                } @else {
+                  <span class="flex items-center gap-1 text-xs text-red-500 font-medium">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    Failed
+                  </span>
+                }
+              </td>
+
+              <!-- Uploaded by -->
+              <td class="px-4 py-3">
+                <span class="text-xs text-gray-600 truncate block max-w-[7rem]">{{ doc.uploaded_by?.name ?? '—' }}</span>
+              </td>
+
+              <!-- Size -->
+              <td class="px-4 py-3">
+                <span class="text-xs text-gray-400">{{ format_bytes(doc.size_bytes) }}</span>
+              </td>
+
+              <!-- Actions -->
+              <td class="px-4 py-3">
+                <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition">
+
+                  @if (doc.parse_status === 'parsed') {
+                    <button type="button" (click)="view_content(doc)"
+                            title="View parsed content"
+                            class="p-1.5 rounded-md text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                      </svg>
+                    </button>
+                  }
+
+                  <button type="button" (click)="download(doc)"
+                          title="Download"
+                          class="p-1.5 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                  </button>
+
+                  <button type="button" (click)="remove(doc)"
+                          title="Delete"
+                          class="p-1.5 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    @if (total_pages() > 1) {
+      <div class="flex items-center justify-between px-4 py-3 border-t border-gray-100">
+        <span class="text-xs text-gray-400">Page {{ page() }} of {{ total_pages() }}</span>
+        <div class="flex items-center gap-1">
+          <button type="button" (click)="go_to_page(page() - 1)" [disabled]="page() === 1"
+                  class="px-2 py-1 text-xs rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition">‹</button>
+          @for (p of page_numbers(); track $index) {
+            @if (p === '...') {
+              <span class="px-2 py-1 text-xs text-gray-400">…</span>
+            } @else {
+              <button type="button" (click)="go_to_page(p)"
+                      [class]="p === page()
+                        ? 'px-2.5 py-1 text-xs rounded-md bg-gray-900 text-white font-medium'
+                        : 'px-2.5 py-1 text-xs rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition'">
+                {{ p }}
+              </button>
+            }
+          }
+          <button type="button" (click)="go_to_page(page() + 1)" [disabled]="page() === total_pages()"
+                  class="px-2 py-1 text-xs rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition">›</button>
+        </div>
+      </div>
+    }
+  }
+
+</div>
+
+
+<!-- Parsed Content Slide-over -->
+@if (viewed_doc()) {
+  <div class="fixed inset-0 z-50 flex">
+    <!-- Backdrop -->
+    <div class="flex-1 bg-black/30" (click)="close_content()"></div>
+
+    <!-- Panel -->
+    <div class="w-[520px] bg-white shadow-2xl flex flex-col overflow-hidden">
+
+      <!-- Header -->
+      <div class="flex items-start justify-between px-6 py-4 border-b border-gray-100 shrink-0">
+        <div class="min-w-0 pr-4">
+          <p class="text-xs font-medium text-indigo-600 uppercase tracking-wide mb-0.5">Parsed Content</p>
+          <h2 class="text-base font-semibold text-gray-900 truncate">{{ viewed_doc()!.ai_name ?? viewed_doc()!.filename }}</h2>
+          @if (viewed_doc()!.ai_name && viewed_doc()!.ai_name !== viewed_doc()!.filename) {
+            <p class="text-xs text-gray-400 mt-0.5 truncate">{{ viewed_doc()!.filename }}</p>
+          }
+        </div>
+        <button type="button" (click)="close_content()"
+                class="shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto">
+
+        @if (content_loading()) {
+          <div class="flex items-center justify-center py-20 text-gray-400 text-sm gap-2">
+            <span class="w-4 h-4 border-2 border-gray-300 border-t-transparent rounded-full animate-spin"></span>
+            Loading…
+          </div>
+
+        } @else if (content_error()) {
+          <div class="px-6 py-4 text-sm text-red-500">{{ content_error() }}</div>
+
+        } @else if (content()) {
+
+          <!-- Summary -->
+          @if (content()!.document.ai_summary) {
+            <div class="px-6 py-4 border-b border-gray-100">
+              <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Summary</p>
+              <p class="text-sm text-gray-700 leading-relaxed">{{ content()!.document.ai_summary }}</p>
+            </div>
+          }
+
+          <!-- Keywords -->
+          @if (content()!.document.keywords?.length) {
+            <div class="px-6 py-4 border-b border-gray-100">
+              <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Keywords</p>
+              <div class="flex flex-wrap gap-1.5">
+                @for (kw of content()!.document.keywords; track kw) {
+                  <span class="px-2 py-0.5 text-xs rounded-full bg-indigo-50 text-indigo-700 font-medium">{{ kw }}</span>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Entities -->
+          @if (content()!.entities.length) {
+            <div class="px-6 py-4 border-b border-gray-100">
+              <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Entities</p>
+              <div class="flex flex-wrap gap-1.5">
+                @for (entity of content()!.entities; track entity.id) {
+                  <span class="flex items-center gap-1 px-2 py-0.5 text-xs rounded-full border border-gray-200 text-gray-700">
+                    <span class="text-[10px] text-gray-400 uppercase">{{ entity.type }}</span>
+                    <span class="font-medium">{{ entity.name }}</span>
+                  </span>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Passages -->
+          @if (content()!.passages.length) {
+            <div class="px-6 py-4">
+              <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">
+                Passages
+                <span class="normal-case font-normal text-gray-400 ml-1">({{ content()!.passages.length }})</span>
+              </p>
+              <div class="space-y-4">
+                @for (passage of content()!.passages; track passage.id) {
+                  <div class="border-l-2 border-gray-200 pl-3">
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="px-1.5 py-0.5 text-[10px] font-semibold rounded bg-gray-100 text-gray-500 uppercase tracking-wide">
+                        {{ passage.type }}
+                      </span>
+                      @if (passage.heading) {
+                        <span class="text-xs font-medium text-gray-700">{{ passage.heading }}</span>
+                      }
+                    </div>
+                    <p class="text-sm text-gray-700 leading-relaxed">{{ passage.text }}</p>
+                    @if (passage.keywords?.length) {
+                      <div class="flex flex-wrap gap-1 mt-1.5">
+                        @for (kw of passage.keywords; track kw) {
+                          <span class="px-1.5 py-0.5 text-[10px] rounded bg-amber-50 text-amber-700">{{ kw }}</span>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+
+          } @else {
+            <div class="px-6 py-8 text-center text-sm text-gray-400">No passages extracted.</div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+}

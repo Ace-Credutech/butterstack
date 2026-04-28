@@ -9,7 +9,8 @@
 
   @if (auth.authenticated()) {
     <div class="flex items-center gap-5">
-      <a bsGravity [radius]="120" routerLink="/app/projects" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">Projects</a>
+      <a bsGravity [radius]="120" routerLink="/app/projects"  class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">Projects</a>
+      <a bsGravity [radius]="120" routerLink="/app/documents" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">Documents</a>
       @if (perm.can('admin.users.read')) {
         <a bsGravity [radius]="120" routerLink="/admin/users" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">Users</a>
       }

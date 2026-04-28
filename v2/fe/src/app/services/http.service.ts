@@ -111,6 +111,13 @@ export class HttpService {
     }));
   }
 
+  post_form<T = any>(path: string, form: FormData, query_params?: ParamsLike): Promise<T> {
+    return this.send(this.http.post<T>(this.build_url(path), form, {
+      params:  this.to_http_params(query_params),
+      headers: this.with_auth_header(),
+    }));
+  }
+
   download(path: string, query_params?: ParamsLike): Promise<Blob> {
     return this.send(this.http.get(this.build_url(path), {
       params:       this.to_http_params(query_params),

@@ -71,6 +71,77 @@ const call_anthropic = async (input: AiCallInput): Promise<AiCallOutput> => {
   }
 };
 
+export interface VisionCallInput {
+  model:        string;
+  system_text:  string;
+  user_text:    string;
+  image_buffer: Buffer;
+  image_mime:   string;
+  max_tokens:   number;
+}
+
+const call_openai_vision = async (input: VisionCallInput): Promise<AiCallOutput> => {
+  try {
+    const client  = new OpenAI({ apiKey: env.OPENAI_API_KEY });
+    const b64     = input.image_buffer.toString('base64');
+    const res = await client.chat.completions.create({
+      model:      input.model,
+      max_tokens: input.max_tokens,
+      messages: [
+        { role: 'system', content: input.system_text },
+        { role: 'user', content: [
+          { type: 'text',      text: input.user_text },
+          { type: 'image_url', image_url: { url: `data:${input.image_mime};base64,${b64}`, detail: 'high' } },
+        ]},
+      ],
+      response_format: { type: 'json_object' },
+    });
+    return {
+      text:       res.choices[0]?.message?.content ?? '',
+      tokens_in:  res.usage?.prompt_tokens     ?? 0,
+      tokens_out: res.usage?.completion_tokens ?? 0,
+    };
+  } catch (error: any) {
+    log.error('ai_call.openai_vision.failed', { model: input.model, error: String(error?.message ?? error) });
+    throw error;
+  }
+};
+
+const call_anthropic_vision = async (input: VisionCallInput): Promise<AiCallOutput> => {
+  try {
+    const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
+    const b64    = input.image_buffer.toString('base64');
+    const res = await client.messages.create({
+      model:      input.model,
+      max_tokens: input.max_tokens,
+      system:     input.system_text,
+      messages: [{
+        role: 'user',
+        content: [
+          { type: 'image', source: { type: 'base64', media_type: input.image_mime as any, data: b64 } },
+          { type: 'text',  text: input.user_text },
+        ],
+      }],
+    });
+    const text = res.content.filter(b => b.type === 'text').map(b => (b as any).text).join('');
+    return { text, tokens_in: res.usage?.input_tokens ?? 0, tokens_out: res.usage?.output_tokens ?? 0 };
+  } catch (error: any) {
+    log.error('ai_call.anthropic_vision.failed', { model: input.model, error: String(error?.message ?? error) });
+    throw error;
+  }
+};
+
+export const vision_call = async (input: VisionCallInput): Promise<AiCallOutput> => {
+  try {
+    if (is_anthropic(input.model)) return await call_anthropic_vision(input);
+    if (is_openai(input.model))    return await call_openai_vision(input);
+    throw new Error(`Unknown model provider for vision call: ${input.model}`);
+  } catch (error: any) {
+    log.error('vision_call.failed', { model: input.model, error: String(error?.message ?? error) });
+    throw error;
+  }
+};
+
 export const ai_call = async (input: AiCallInput): Promise<AiCallOutput> => {
   try {
     if (is_anthropic(input.model)) return await call_anthropic(input);

@@ -1,0 +1,98 @@
+import { inject, Injectable } from '@angular/core';
+import { HttpService } from './http.service';
+
+export type DocumentEntityType = 'org' | 'project' | 'user' | 'conversation';
+export type DocumentPurpose    = 'requirement' | 'design' | 'technical_spec' | 'meeting_notes' | 'wireframe' | 'user_research' | 'competitive_analysis' | 'reference' | 'other';
+export type ParseStatus        = 'pending' | 'parsed' | 'failed';
+
+export interface DocumentUploader { id: string; name: string; email: string }
+
+export interface DocumentItem {
+  id:           string;
+  filename:     string;
+  mime_type:    string;
+  size_bytes:   number;
+  kind:         string;
+  purpose:      DocumentPurpose;
+  parse_status: ParseStatus;
+  ai_name:      string | null;
+  ai_summary:   string | null;
+  keywords:     string[];
+  entity_type:  DocumentEntityType | null;
+  entity_id:    string | null;
+  uploaded_by:  DocumentUploader | null;
+  created_at:   string;
+}
+
+export interface DocumentPassage {
+  id:       string;
+  idx:      number;
+  type:     string;
+  heading:  string | null;
+  text:     string;
+  keywords: string[];
+}
+
+export interface DocumentEntity {
+  id:   string;
+  name: string;
+  type: string;
+}
+
+export interface DocumentContent {
+  document: DocumentItem;
+  passages: DocumentPassage[];
+  entities: DocumentEntity[];
+}
+
+export interface ListDocumentsParams {
+  page?:      number;
+  page_size?: number;
+}
+
+export interface ListDocumentsData {
+  items:       DocumentItem[];
+  total:       number;
+  page:        number;
+  page_size:   number;
+  total_pages: number;
+}
+
+export interface ListDocumentsResponse  { code: number; message: string; data: ListDocumentsData }
+export interface UploadDocumentResponse { code: number; message: string; data: DocumentItem }
+export interface DeleteDocumentResponse { code: number; message: string; data: { id: string } }
+export interface GetDocumentUrlResponse { code: number; message: string; data: { url: string; expires_in: number } }
+export interface GetDocumentContentResponse { code: number; message: string; data: DocumentContent }
+
+@Injectable({ providedIn: 'root' })
+export class DocumentsService {
+  private readonly http = inject(HttpService);
+
+  list(entity_type: DocumentEntityType, entity_id: string, params: ListDocumentsParams = {}): Promise<ListDocumentsResponse> {
+    const qs = new URLSearchParams({ entity_type, entity_id });
+    if (params.page)      qs.set('page',      String(params.page));
+    if (params.page_size) qs.set('page_size', String(params.page_size));
+    return this.http.get<ListDocumentsResponse>(`/documents?${qs}`);
+  }
+
+  upload(entity_type: DocumentEntityType, entity_id: string, file: File, purpose: DocumentPurpose = 'other'): Promise<UploadDocumentResponse> {
+    const form = new FormData();
+    form.append('file',        file);
+    form.append('entity_type', entity_type);
+    form.append('entity_id',   entity_id);
+    form.append('purpose',     purpose);
+    return this.http.post_form<UploadDocumentResponse>('/documents/upload', form);
+  }
+
+  get_content(id: string): Promise<GetDocumentContentResponse> {
+    return this.http.get<GetDocumentContentResponse>(`/documents/${id}/content`);
+  }
+
+  delete(id: string): Promise<DeleteDocumentResponse> {
+    return this.http.delete<DeleteDocumentResponse>(`/documents/${id}`);
+  }
+
+  get_url(id: string): Promise<GetDocumentUrlResponse> {
+    return this.http.get<GetDocumentUrlResponse>(`/documents/${id}/url`);
+  }
+}

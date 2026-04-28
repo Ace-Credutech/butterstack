@@ -1,0 +1,38 @@
+<div class="min-h-screen bg-gray-50">
+  <bs-header />
+
+  <main class="max-w-6xl mx-auto px-8 py-8">
+
+    <!-- Page header -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">Documents</h1>
+      <p class="text-sm text-gray-500 mt-1">Files and documents across your workspace.</p>
+    </div>
+
+    <!-- Scope tabs -->
+    <div class="flex items-center gap-1 mb-5 bg-gray-100 rounded-lg p-1 w-fit">
+      <button type="button" (click)="set_tab('org')"
+              [class]="active_tab() === 'org'
+                ? 'px-4 py-1.5 text-sm font-medium rounded-md bg-white text-gray-900 shadow-sm transition'
+                : 'px-4 py-1.5 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 transition'">
+        Organization
+      </button>
+      <button type="button" (click)="set_tab('user')"
+              [class]="active_tab() === 'user'
+                ? 'px-4 py-1.5 text-sm font-medium rounded-md bg-white text-gray-900 shadow-sm transition'
+                : 'px-4 py-1.5 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 transition'">
+        My Documents
+      </button>
+    </div>
+
+    <!-- Panel -->
+    @if (entity_id(); as eid) {
+      <bs-documents-panel [entity_type]="entity_type()" [entity_id]="eid" />
+    } @else {
+      <div class="rounded-xl border border-gray-200 bg-white px-6 py-10 text-center">
+        <p class="text-sm text-gray-400">No active workspace selected.</p>
+      </div>
+    }
+
+  </main>
+</div>

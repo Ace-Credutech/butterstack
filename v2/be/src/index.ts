@@ -8,8 +8,6 @@ import { migrator } from '@setup/migrator';
 import { api_list } from './api.list';
 import { register_document_routes }       from '@apis/documents/documents.routes';
 import { register_document_parse_routes } from '@apis/documents/document-parse.routes';
-import { register_event_handlers } from '@apis/events/dispatcher';
-import { event_list } from '@apis/events/event_list';
 import { upgrade_ws, on_open, on_message, on_close, attach_bun_server, start_redis_bridge } from '@setup/ws/ws-server';
 import { setup_worker, start_workers } from '@setup/queue/setup-worker';
 import { worker_list } from './worker.list';
@@ -44,7 +42,6 @@ const register_crons = () => {
 const boot = async () => {
   await sequelize.authenticate().catch((e: any) => log.warn('boot.db.connect.failed', { error: String(e?.message ?? e) }));
   await run_migrations_on_dev();
-  register_event_handlers(event_list);
   register_apis();
   register_workers();
   register_crons();
@@ -77,7 +74,7 @@ const server = Bun.serve({
 
 attach_bun_server(server as any);
 
-log.info('boot.ready', { port: env.PORT, apis: api_list.length, events: event_list.length, workers: worker_list.length, crons: cron_list.length });
+log.info('boot.ready', { port: env.PORT, apis: api_list.length, workers: worker_list.length, crons: cron_list.length });
 
 const shutdown = async (signal: string) => {
   log.info('shutdown.start', { signal });

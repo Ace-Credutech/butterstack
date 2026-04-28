@@ -4,8 +4,8 @@ import { DocumentsService } from '../../../services/documents.service';
 import { WsService }        from '../../../services/ws.service';
 import type { DocumentItem, DocumentEntityType, DocumentContent, PromptRunItem } from '../../../services/documents.service';
 
-type ScopeFilter = 'all' | 'org' | 'project' | 'user';
-type SlideTab    = 'content' | 'runs';
+type ScopeFilter = 'all' | 'org' | 'user';
+type SlideTab    = 'summary' | 'keywords' | 'entities' | 'passages' | 'runs';
 
 const PAGE_SIZES = [10, 20, 50, 100];
 
@@ -16,15 +16,16 @@ const format_bytes = (bytes: number): string => {
 };
 
 const mime_label = (mime: string): string => {
-  if (mime.includes('pdf'))                            return 'PDF';
-  if (mime.includes('word') || mime.includes('docx'))  return 'DOCX';
-  if (mime.includes('sheet') || mime.includes('xlsx')) return 'XLSX';
-  if (mime.includes('csv'))                            return 'CSV';
-  if (mime.includes('png'))                            return 'PNG';
-  if (mime.includes('jpeg') || mime.includes('jpg'))   return 'JPG';
-  if (mime.includes('image'))                          return 'IMG';
-  if (mime.startsWith('text/plain'))                   return 'TXT';
-  if (mime.includes('json'))                           return 'JSON';
+  if (mime.includes('pdf'))                                       return 'PDF';
+  if (mime.includes('word') || mime.includes('docx'))             return 'DOCX';
+  if (mime.includes('sheet') || mime.includes('xlsx'))            return 'XLSX';
+  if (mime.includes('csv'))                                       return 'CSV';
+  if (mime.includes('png'))                                       return 'PNG';
+  if (mime.includes('jpeg') || mime.includes('jpg'))              return 'JPG';
+  if (mime.includes('image'))                                     return 'IMG';
+  if (mime.includes('markdown') || mime.endsWith('/md'))          return 'MD';
+  if (mime.startsWith('text/plain'))                              return 'TXT';
+  if (mime.includes('json'))                                      return 'JSON';
   return mime.split('/')[1]?.toUpperCase().slice(0, 6) ?? 'FILE';
 };
 
@@ -72,7 +73,7 @@ export class DocumentsPanel implements OnInit, OnDestroy {
   readonly total_pages = computed(() => Math.ceil(this.total() / this.page_size()) || 1);
 
   readonly viewed_doc      = signal<DocumentItem | null>(null);
-  readonly slide_tab       = signal<SlideTab>('content');
+  readonly slide_tab       = signal<SlideTab>('summary');
   readonly content         = signal<DocumentContent | null>(null);
   readonly content_loading = signal(false);
   readonly content_error   = signal<string | null>(null);
@@ -80,9 +81,28 @@ export class DocumentsPanel implements OnInit, OnDestroy {
   readonly runs_loading    = signal(false);
   readonly runs_error      = signal<string | null>(null);
   readonly expanded_run    = signal<string | null>(null);
+  readonly reparsing       = signal(false);
+
+  readonly total_tokens = computed(() => {
+    const list = this.runs();
+    if (!list.length) return null;
+    return list.reduce((sum, r) => sum + (r.tokens_in ?? 0) + (r.tokens_out ?? 0), 0);
+  });
+
+  readonly grouped_passages = computed(() => {
+    const passages = this.content()?.passages ?? [];
+    const groups: { key: string; type: string; heading: string | null; texts: string[] }[] = [];
+    for (const p of passages) {
+      const key = `${p.type}::${p.heading ?? ''}`;
+      const existing = groups.find(g => g.key === key);
+      if (existing) existing.texts.push(p.text);
+      else groups.push({ key, type: p.type, heading: p.heading, texts: [p.text] });
+    }
+    return groups;
+  });
 
   readonly page_sizes    = PAGE_SIZES;
-  readonly scope_filters: [ScopeFilter, string][] = [['all','All'],['org','Organization'],['project','Project'],['user','My Docs']];
+  readonly scope_filters: [ScopeFilter, string][] = [['all','All'],['org','Organization'],['user','My Docs']];
   readonly format_bytes  = format_bytes;
   readonly mime_label    = mime_label;
   readonly purpose_label = purpose_label;
@@ -107,12 +127,21 @@ export class DocumentsPanel implements OnInit, OnDestroy {
     });
   }
 
+  private ws_unsub_run_started:   (() => void) | null = null;
+  private ws_unsub_run_completed: (() => void) | null = null;
+
   ngOnInit() {
     this.load();
-    this.ws_unsub = this.ws.on<any>('document.parsed', (event) => this.on_document_parsed(event.payload));
+    this.ws_unsub               = this.ws.on<any>('document.parsed',  (e) => this.on_document_parsed(e.payload));
+    this.ws_unsub_run_started   = this.ws.on<any>('run.started',      (e) => this.on_run_started(e.payload));
+    this.ws_unsub_run_completed = this.ws.on<any>('run.completed',    (e) => this.on_run_completed(e.payload));
   }
 
-  ngOnDestroy() { this.ws_unsub?.(); }
+  ngOnDestroy() {
+    this.ws_unsub?.();
+    this.ws_unsub_run_started?.();
+    this.ws_unsub_run_completed?.();
+  }
 
   private on_document_parsed(payload: any) {
     if (!payload?.document_id) return;
@@ -122,6 +151,43 @@ export class DocumentsPanel implements OnInit, OnDestroy {
           ? { ...doc, parse_status: payload.parse_status, ai_name: payload.ai_name ?? doc.ai_name, ai_summary: payload.ai_summary ?? doc.ai_summary }
           : doc,
       ),
+    );
+  }
+
+  private on_run_started(payload: any) {
+    if (!payload?.run_id || !payload?.scope_id) return;
+    if (this.viewed_doc()?.id !== payload.scope_id) return;
+    const pending_run: PromptRunItem = {
+      id:            payload.run_id,
+      prompt_slug:   payload.prompt_slug   ?? null,
+      prompt_name:   null,
+      model:         payload.model,
+      status:        'pending',
+      tokens_in:     null,
+      tokens_out:    null,
+      latency_ms:    null,
+      input_payload: payload.input_payload ?? null,
+      output_text:   null,
+      output_parsed: null,
+      error_message: null,
+      created_at:    payload.created_at,
+    };
+    this.runs.update(list => [pending_run, ...list.filter(r => r.id !== payload.run_id)]);
+  }
+
+  private on_run_completed(payload: any) {
+    if (!payload?.run_id || !payload?.scope_id) return;
+    if (this.viewed_doc()?.id !== payload.scope_id) return;
+    this.runs.update(list =>
+      list.map(r => r.id !== payload.run_id ? r : {
+        ...r,
+        status:        payload.status,
+        tokens_in:     payload.tokens_in    ?? null,
+        tokens_out:    payload.tokens_out   ?? null,
+        latency_ms:    payload.latency_ms   ?? null,
+        output_text:   payload.output_text  ?? null,
+        error_message: payload.error_message ?? null,
+      }),
     );
   }
 
@@ -136,7 +202,7 @@ export class DocumentsPanel implements OnInit, OnDestroy {
         const filter = this.scope_filter();
         res = await this.docs_svc.list_all(this.org_id()!, {
           ...params,
-          entity_type: filter === 'all' ? undefined : filter as DocumentEntityType,
+          entity_type: filter === 'all' ? undefined : filter as 'org' | 'user',
         });
       } else {
         res = await this.docs_svc.list(this.entity_type()!, this.entity_id()!, params);
@@ -195,9 +261,12 @@ export class DocumentsPanel implements OnInit, OnDestroy {
 
   async view_content(doc: DocumentItem) {
     this.viewed_doc.set(doc);
-    this.slide_tab.set('content');
+    this.slide_tab.set('summary');
     this.content.set(null);
     this.content_error.set(null);
+    this.runs.set([]);
+    this.expanded_run.set(null);
+    if (doc.parse_status !== 'parsed') return;
     this.content_loading.set(true);
     try {
       const res = await this.docs_svc.get_content(doc.id);
@@ -216,6 +285,14 @@ export class DocumentsPanel implements OnInit, OnDestroy {
     }
   }
 
+  readonly slide_tabs: [SlideTab, string][] = [
+    ['summary',  'Summary'],
+    ['keywords', 'Keywords'],
+    ['entities', 'Entities'],
+    ['passages', 'Passages'],
+    ['runs',     'AI Calls'],
+  ];
+
   private async load_runs() {
     const doc = this.viewed_doc();
     if (!doc) return;
@@ -223,7 +300,13 @@ export class DocumentsPanel implements OnInit, OnDestroy {
       this.runs_loading.set(true);
       this.runs_error.set(null);
       const res = await this.docs_svc.get_runs(doc.id);
-      this.runs.set(res.data.items);
+      const api_items = res.data.items as PromptRunItem[];
+      const api_ids   = new Set(api_items.map(r => r.id));
+      // Preserve pending runs received via WS that aren't in the API result yet
+      this.runs.update(current => {
+        const ws_pending = current.filter(r => r.status === 'pending' && !api_ids.has(r.id));
+        return [...ws_pending, ...api_items];
+      });
     } catch (e: any) {
       this.runs_error.set(e?.message ?? 'Failed to load AI calls');
     } finally {
@@ -233,6 +316,7 @@ export class DocumentsPanel implements OnInit, OnDestroy {
 
   close_content() {
     this.viewed_doc.set(null);
+    this.slide_tab.set('summary');
     this.content.set(null);
     this.runs.set([]);
     this.expanded_run.set(null);
@@ -240,6 +324,24 @@ export class DocumentsPanel implements OnInit, OnDestroy {
 
   toggle_run(id: string) {
     this.expanded_run.update(cur => cur === id ? null : id);
+  }
+
+  async reparse(doc: DocumentItem) {
+    try {
+      this.reparsing.set(true);
+      await this.docs_svc.reparse(doc.id);
+      this.documents.update(list => list.map(d => d.id === doc.id ? { ...d, parse_status: 'pending' as const } : d));
+      if (this.viewed_doc()?.id === doc.id) {
+        this.viewed_doc.update(d => d ? { ...d, parse_status: 'pending' as const } : null);
+        this.runs.set([]);
+        this.content.set(null);
+        this.slide_tab.set('summary');
+      }
+    } catch (e: any) {
+      this.error.set(e?.message ?? 'Failed to queue reparse');
+    } finally {
+      this.reparsing.set(false);
+    }
   }
 
   async download(doc: DocumentItem) {

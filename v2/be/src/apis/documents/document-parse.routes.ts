@@ -1,13 +1,14 @@
 import { Context } from 'hono';
 import { app }                  from '@setup/hono';
 import { get_object }           from '@setup/storage';
-import { run_prompt }           from '@setup/prompts/run';
+import { run_prompt, create_pending_run, complete_run } from '@setup/prompts/run';
 import { vision_call }          from '@setup/prompts/ai-call';
 import { broadcast_to_user, broadcast_to_org, broadcast_to_project } from '@setup/ws/ws-server';
 import { env }                  from '@src/env';
 import { log }                  from '@setup/log';
 import { Document }             from '@models/document.model';
 import { DocumentPassage }      from '@models/document-passage.model';
+import { DocumentPassageLink }  from '@models/document-passage-link.model';
 import { DocumentEntity }       from '@models/document-entity.model';
 import { Prompt }               from '@models/prompt.model';
 import { PromptVersion }        from '@models/prompt-version.model';
@@ -19,11 +20,13 @@ const EXTRACT_SLUG    = 'document.extract';
 const DEFAULT_MODEL   = 'gpt-4.1';
 const DEFAULT_TOKENS  = 4000;
 
+interface PassageLink { to_idx: number; link_type: string }
+
 interface ExtractResult {
   ai_name:        string;
   ai_summary:     string;
   extracted_text: string;
-  passages:       Array<{ idx: number; type: string; heading?: string; text: string; keywords?: string[] }>;
+  passages:       Array<{ idx: number; type: string; heading?: string; text: string; keywords?: string[]; links?: PassageLink[] }>;
   entities:       Array<{ name: string; type: string }>;
   keywords:       string[];
 }
@@ -74,13 +77,14 @@ const strip_and_parse = (raw: string): ExtractResult => {
   }
 };
 
-const extract_via_text_ai = async (doc: Document, content_text: string): Promise<ExtractResult> => {
+const extract_via_text_ai = async (doc: Document, content_text: string, uploaded_by: string): Promise<ExtractResult> => {
   try {
     const result = await run_prompt<ExtractResult>({
       slug:       EXTRACT_SLUG,
       variables:  { filename: doc.filename, content: content_text.slice(0, 30_000) },
       scope_type: 'document',
       scope_id:   doc.id,
+      user_id:    uploaded_by,
     });
     return result.data;
   } catch (error) {
@@ -89,48 +93,67 @@ const extract_via_text_ai = async (doc: Document, content_text: string): Promise
   }
 };
 
-const log_vision_run = async (
-  prompt_id: string, version_id: string, doc: Document,
-  user_text: string, result: { text: string; tokens_in: number; tokens_out: number },
-  latency_ms: number, status: 'success' | 'error', error_message?: string,
-): Promise<void> => {
-  try {
-    await PromptRun.create({
-      prompt_id,
-      prompt_version_id: version_id,
-      scope_type:    'document',
-      scope_id:      doc.id,
-      input_payload: { variables: { filename: doc.filename }, user_message: user_text } as object,
-      output_text:   result.text || null,
-      output_parsed: result.text ? (() => { try { return JSON.parse(result.text); } catch { return null; } })() : null,
-      model_used:    DEFAULT_MODEL,
-      tokens_in:     result.tokens_in,
-      tokens_out:    result.tokens_out,
-      latency_ms,
-      status,
-      error_message: error_message ?? null,
-    });
-  } catch (e) {
-    log.error('document_parse.log_vision_run.failed', { document_id: doc.id, error: String((e as any)?.message ?? e) });
-  }
-};
-
-const extract_via_vision_ai = async (doc: Document, file_buffer: Buffer): Promise<ExtractResult> => {
+const extract_via_vision_ai = async (doc: Document, file_buffer: Buffer, uploaded_by: string): Promise<ExtractResult> => {
   const started_at = Date.now();
+  const run_id     = crypto.randomUUID();
+  let prompt_id = '', version_id = '', model = DEFAULT_MODEL, user_text = '';
   try {
-    const { prompt_id, version_id, system_text, user_template, model, max_tokens } = await load_extract_prompt();
-    const user_text = interpolate(user_template, {
+    const extracted = await load_extract_prompt();
+    prompt_id  = extracted.prompt_id;
+    version_id = extracted.version_id;
+    model      = extracted.model;
+    user_text  = interpolate(extracted.user_template, {
       filename: doc.filename,
       content:  '[Binary file — content is in the attached image above]',
     });
-    const result = await vision_call({ model, system_text, user_text, image_buffer: file_buffer, image_mime: doc.mime_type, max_tokens });
+    const input_payload = { variables: { filename: doc.filename }, user_message: user_text };
+
+    await create_pending_run({ run_id, prompt_id, prompt_version_id: version_id, model, scope_type: 'document', scope_id: doc.id, user_id: uploaded_by, input_payload });
+    void broadcast_to_user(uploaded_by, { type: 'run.started', payload: { run_id, scope_id: doc.id, model, prompt_slug: EXTRACT_SLUG, status: 'pending', input_payload, created_at: new Date().toISOString() } });
+
+    const result      = await vision_call({ model, system_text: extracted.system_text, user_text, image_buffer: file_buffer, image_mime: doc.mime_type, max_tokens: extracted.max_tokens });
+    const latency_ms  = Date.now() - started_at;
+
+    // Parse BEFORE marking success — if strip_and_parse throws, the run must be logged as error
+    const extract_result = strip_and_parse(result.text);
+    const parsed_out     = result.text ? (() => { try { return JSON.parse(result.text); } catch { return null; } })() : null;
+
+    void complete_run({ run_id, output_text: result.text || null, output_parsed: parsed_out, tokens_in: result.tokens_in, tokens_out: result.tokens_out, latency_ms, status: 'success' });
+    void broadcast_to_user(uploaded_by, { type: 'run.completed', payload: { run_id, scope_id: doc.id, model, status: 'success', tokens_in: result.tokens_in, tokens_out: result.tokens_out, latency_ms, output_text: result.text, error_message: null } });
+
+    return extract_result;
+  } catch (error: any) {
     const latency_ms = Date.now() - started_at;
-    void log_vision_run(prompt_id, version_id, doc, user_text, result, latency_ms, 'success');
-    return strip_and_parse(result.text);
-  } catch (error) {
-    log.error('document_parse.extract_via_vision_ai.failed', { document_id: doc.id, error: String((error as any)?.message ?? error) });
+    const error_msg  = String(error?.message ?? error);
+    void complete_run({ run_id, output_text: null, output_parsed: null, tokens_in: 0, tokens_out: 0, latency_ms, status: 'error', error_message: error_msg });
+    void broadcast_to_user(uploaded_by, { type: 'run.completed', payload: { run_id, scope_id: doc.id, model, status: 'error', tokens_in: 0, tokens_out: 0, latency_ms, output_text: null, error_message: error_msg } });
+    log.error('document_parse.extract_via_vision_ai.failed', { document_id: doc.id, error: error_msg });
     throw error;
   }
+};
+
+const build_idx_map = (passages: DocumentPassage[]): Map<number, string> => {
+  const map = new Map<number, string>();
+  for (const p of passages) map.set(p.idx, p.id);
+  return map;
+};
+
+const collect_passage_links = (
+  result: ExtractResult,
+  idx_map: Map<number, string>,
+): Array<{ from_passage_id: string; to_passage_id: string; link_type: string }> => {
+  const links: Array<{ from_passage_id: string; to_passage_id: string; link_type: string }> = [];
+  for (const p of result.passages) {
+    if (!p.links?.length) continue;
+    const from_id = idx_map.get(p.idx);
+    if (!from_id) continue;
+    for (const link of p.links) {
+      const to_id = idx_map.get(link.to_idx);
+      if (!to_id || to_id === from_id) continue;
+      links.push({ from_passage_id: from_id, to_passage_id: to_id, link_type: link.link_type as any });
+    }
+  }
+  return links;
 };
 
 const save_parse_results = async (doc: Document, result: ExtractResult): Promise<void> => {
@@ -140,18 +163,24 @@ const save_parse_results = async (doc: Document, result: ExtractResult): Promise
       await DocumentPassage.destroy({ where: { document_id: doc.id }, transaction: tx });
       await DocumentEntity.destroy({ where: { document_id: doc.id }, transaction: tx });
 
-      if (result.passages.length > 0) {
-        await DocumentPassage.bulkCreate(
-          result.passages.map((p, fallback_idx) => ({
-            document_id: doc.id,
-            idx:         p.idx ?? fallback_idx,
-            type:        (p.type || 'paragraph') as any,
-            heading:     p.heading ?? null,
-            text:        p.text,
-            keywords:    p.keywords ?? [],
-          })),
-          { transaction: tx },
-        );
+      const saved_passages = result.passages.length > 0
+        ? await DocumentPassage.bulkCreate(
+            result.passages.map((p, fallback_idx) => ({
+              document_id: doc.id,
+              idx:         p.idx ?? fallback_idx,
+              type:        (p.type || 'other') as any,
+              heading:     p.heading || null,
+              text:        p.text,
+              keywords:    p.keywords ?? [],
+            })),
+            { transaction: tx, returning: true },
+          )
+        : [];
+
+      const idx_map     = build_idx_map(saved_passages);
+      const link_rows   = collect_passage_links(result, idx_map);
+      if (link_rows.length > 0) {
+        await DocumentPassageLink.bulkCreate(link_rows as any[], { transaction: tx, ignoreDuplicates: true });
       }
 
       if (result.entities.length > 0) {
@@ -239,12 +268,9 @@ const parse_document = async (c: Context) => {
     let extract_result: ExtractResult;
     if (is_text_mime(doc.mime_type)) {
       const content_text = file_buffer.toString('utf-8');
-      extract_result     = await extract_via_text_ai(doc, content_text);
-    } else if (is_image_mime(doc.mime_type)) {
-      extract_result = await extract_via_vision_ai(doc, file_buffer);
+      extract_result     = await extract_via_text_ai(doc, content_text, uploaded_by);
     } else {
-      // PDF and other binary formats — vision API handles them too
-      extract_result = await extract_via_vision_ai(doc, file_buffer);
+      extract_result = await extract_via_vision_ai(doc, file_buffer, uploaded_by);
     }
 
     await save_parse_results(doc, extract_result);

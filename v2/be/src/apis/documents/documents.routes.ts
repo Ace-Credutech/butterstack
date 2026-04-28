@@ -14,7 +14,6 @@ import { PromptRun }         from '@models/prompt-run.model';
 import { Prompt }            from '@models/prompt.model';
 import { PromptVersion }     from '@models/prompt-version.model';
 import { User }              from '@models/user.model';
-import { Project }           from '@models/project.model';
 import { Organisation }      from '@models/organisation.model';
 import { Op }                from 'sequelize';
 import type { DocumentLinkEntityType } from '@models/document-link.model';
@@ -22,7 +21,7 @@ import { sequelize }         from '@setup/sequelize';
 import type { DocumentParsePayload } from '@src/workers/document-parse/document-parse.worker';
 
 const BUCKET             = env.MINIO_BUCKET_NAME ?? 'butterstack';
-const VALID_ENTITY_TYPES = new Set<string>(['org', 'project', 'user', 'conversation']);
+const VALID_ENTITY_TYPES = new Set<string>(['org', 'user', 'conversation']);
 const DEFAULT_PAGE_SIZE  = 20;
 const MAX_PAGE_SIZE      = 100;
 
@@ -49,6 +48,7 @@ const shape_document = (doc: Document, link?: DocumentLink) => ({
   kind:             doc.kind,
   purpose:          doc.purpose,
   parse_status:     doc.parse_status,
+  parse_error:      doc.parse_error ?? null,
   ai_name:          doc.ai_name,
   ai_summary:       doc.ai_summary,
   keywords:         doc.keywords,
@@ -283,20 +283,10 @@ const list_all_documents = async (c: Context) => {
 
     if (!org_id) return err(c, 400, 'org_id is required');
 
-    const project_ids = await Project.findAll({ where: { org_id }, attributes: ['id'], paranoid: false })
-      .then(ps => ps.map(p => p.id));
-
     const build_where = () => {
-      if (entity_type_filter === 'org')     return { entity_type: 'org',     entity_id: org_id };
-      if (entity_type_filter === 'project') return { entity_type: 'project', entity_id: { [Op.in]: project_ids.length ? project_ids : ['__none__'] } };
-      if (entity_type_filter === 'user')    return { entity_type: 'user',    entity_id: user.id };
-      return {
-        [Op.or]: [
-          { entity_type: 'org',     entity_id: org_id },
-          ...(project_ids.length ? [{ entity_type: 'project', entity_id: { [Op.in]: project_ids } }] : []),
-          { entity_type: 'user',    entity_id: user.id },
-        ],
-      };
+      if (entity_type_filter === 'org')  return { entity_type: 'org',  entity_id: org_id };
+      if (entity_type_filter === 'user') return { entity_type: 'user', entity_id: user.id };
+      return { [Op.or]: [{ entity_type: 'org', entity_id: org_id }, { entity_type: 'user', entity_id: user.id }] };
     };
 
     const { count, rows: links } = await DocumentLink.findAndCountAll({
@@ -312,16 +302,10 @@ const list_all_documents = async (c: Context) => {
     });
 
     const org = await Organisation.findByPk(org_id, { attributes: ['name'] });
-    const projects_map: Record<string, string> = {};
-    if (project_ids.length) {
-      const ps = await Project.findAll({ where: { id: { [Op.in]: project_ids } }, attributes: ['id', 'name'], paranoid: false });
-      for (const p of ps) projects_map[p.id] = p.name;
-    }
 
     const scope_label = (link: DocumentLink): string => {
-      if (link.entity_type === 'org')     return org?.name ?? 'Organization';
-      if (link.entity_type === 'project') return `Project: ${projects_map[link.entity_id] ?? link.entity_id.slice(0, 8)}`;
-      if (link.entity_type === 'user')    return 'My Documents';
+      if (link.entity_type === 'org')  return org?.name ?? 'Organization';
+      if (link.entity_type === 'user') return 'My Documents';
       return link.entity_type;
     };
 
@@ -337,6 +321,38 @@ const list_all_documents = async (c: Context) => {
   }
 };
 
+// POST /api/documents/:id/reparse
+const reparse_document = async (c: Context) => {
+  try {
+    const user = require_user(c);
+    if (!user) return err(c, 401, 'Authentication required');
+
+    const id   = c.req.param('id');
+    const doc  = await Document.findByPk(id);
+    if (!doc) return err(c, 404, 'Document not found');
+
+    const link = await DocumentLink.findOne({ where: { document_id: id } });
+    if (!link) return err(c, 404, 'Document link not found');
+
+    await DocumentPassage.destroy({ where: { document_id: id } });
+    await DocumentEntity.destroy({ where: { document_id: id } });
+    await doc.update({ parse_status: 'pending', parse_error: null });
+
+    const payload: DocumentParsePayload = {
+      document_id: doc.id,
+      entity_type: link.entity_type,
+      entity_id:   link.entity_id,
+      uploaded_by: user.id,
+    };
+    void get_queue().publish<DocumentParsePayload>('documents', 'document.parse', payload, { delay_ms: 200 });
+
+    return ok(c, { document_id: id, parse_status: 'pending' }, 'reparse queued');
+  } catch (error) {
+    log.error('documents.reparse.failed', { error: String((error as any)?.message ?? error) });
+    return err(c, 500, 'Failed to queue reparse');
+  }
+};
+
 export const register_document_routes = () => {
   app.use('/api/documents/*', auth_middleware);
   app.post('/api/documents/upload',     upload_document);
@@ -344,6 +360,7 @@ export const register_document_routes = () => {
   app.get('/api/documents',             list_documents);
   app.get('/api/documents/:id/runs',    get_document_runs);
   app.get('/api/documents/:id/content', get_document_content);
+  app.post('/api/documents/:id/reparse', reparse_document);
   app.delete('/api/documents/:id',      delete_document);
   app.get('/api/documents/:id/url',     get_document_url);
 };

@@ -49,6 +49,25 @@
               </select>
             </div>
             <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">AI Provider</label>
+              <div class="flex items-center gap-2 h-9 px-3 rounded-lg border border-gray-200 bg-gray-50">
+                @if (derive_provider(form.model) === 'OpenAI') {
+                  <span class="inline-flex items-center gap-1.5">
+                    <span class="size-2 rounded-full bg-emerald-400"></span>
+                    <span class="text-sm text-gray-700 font-medium">OpenAI</span>
+                  </span>
+                } @else if (derive_provider(form.model) === 'Anthropic') {
+                  <span class="inline-flex items-center gap-1.5">
+                    <span class="size-2 rounded-full bg-violet-400"></span>
+                    <span class="text-sm text-gray-700 font-medium">Anthropic</span>
+                  </span>
+                } @else {
+                  <span class="text-sm text-gray-400">Unknown</span>
+                }
+                <span class="ml-auto text-xs text-gray-400">auto-detected from model</span>
+              </div>
+            </div>
+            <div>
               <label class="block text-xs font-medium text-gray-500 mb-1">Response format</label>
               <select [(ngModel)]="form.response_format" (ngModelChange)="mark_dirty()"
                       class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40">
@@ -58,16 +77,44 @@
               </select>
             </div>
             <div>
-              <label class="block text-xs font-medium text-gray-500 mb-1">Temperature <span class="text-gray-400">(0 – 2)</span></label>
-              <input type="number" [(ngModel)]="form.temperature" (ngModelChange)="mark_dirty()"
-                     min="0" max="2" step="0.1"
-                     class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40" />
-            </div>
-            <div>
               <label class="block text-xs font-medium text-gray-500 mb-1">Max tokens</label>
               <input type="number" [(ngModel)]="form.max_tokens" (ngModelChange)="mark_dirty()"
                      min="1" max="32000"
                      class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40" />
+              <p class="mt-1.5 text-xs text-gray-400">Max length of the AI's response. 1 token ≈ ¾ of a word.</p>
+            </div>
+
+            <!-- Temperature — gradient slider -->
+            <div class="col-span-2 pt-1">
+              <div class="flex items-center justify-between mb-3">
+                <label class="text-xs font-medium text-gray-500">Temperature <span class="text-gray-400">(0–2)</span></label>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-semibold px-2 py-0.5 rounded-full border transition-colors"
+                        [ngClass]="active_segment(form.temperature).badge_class">
+                    {{ active_segment(form.temperature).label }}
+                  </span>
+                  <span class="text-xs font-mono text-gray-400">{{ form.temperature }}</span>
+                </div>
+              </div>
+
+              <!-- Custom styled range input -->
+              <input type="range" min="0" max="2" step="0.1"
+                     [(ngModel)]="form.temperature" (ngModelChange)="mark_dirty()"
+                     class="temp-slider"
+                     [style.color]="active_segment(form.temperature).hex" />
+
+              <!-- Zone labels -->
+              <div class="flex justify-between text-xs text-gray-400 mt-2 mb-3">
+                <span>0 · Precise</span>
+                <span>1 · Balanced</span>
+                <span>2 · Wild</span>
+              </div>
+
+              <!-- Dynamic hint box -->
+              <div class="rounded-xl border px-4 py-3 transition-colors"
+                   [ngClass]="active_segment(form.temperature).badge_class">
+                <p class="text-xs leading-relaxed">{{ active_segment(form.temperature).hint }}</p>
+              </div>
             </div>
           </div>
         </div>

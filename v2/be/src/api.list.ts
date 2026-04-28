@@ -11,13 +11,10 @@ import { auth_logout_details }   from '@apis/auth/auth-logout/auth-logout.detail
 import { auth_forgot_password_details } from '@apis/auth/auth-forgot-password/auth-forgot-password.details';
 import { auth_reset_password_details }  from '@apis/auth/auth-reset-password/auth-reset-password.details';
 
-import { post_event_details }    from '@apis/events/post-event/post-event.details';
-import { get_event_details }     from '@apis/events/get-event/get-event.details';
 
 import { list_orgs_details }     from '@apis/orgs/list-orgs/list-orgs.details';
 import { get_org_details }       from '@apis/orgs/get-org/get-org.details';
 
-import { list_projects_details } from '@apis/projects/list-projects/list-projects.details';
 
 import { list_prompts_details }  from '@apis/admin/list-prompts/list-prompts.details';
 import { get_prompt_details }    from '@apis/admin/get-prompt/get-prompt.details';
@@ -42,13 +39,8 @@ export const api_list: ApiDetails[] = [
   auth_forgot_password_details,
   auth_reset_password_details,
 
-  post_event_details,
-  get_event_details,
-
   list_orgs_details,
   get_org_details,
-
-  list_projects_details,
 
   list_prompts_details,
   get_prompt_details,

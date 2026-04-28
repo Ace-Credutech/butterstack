@@ -21,6 +21,7 @@ Intelligent software delivery OS — collapses the full lifecycle (requirements 
 3. **Multi-DB ready from Day 1.** All DB access via `db('primary')` factory in `v2/be/src/db/`. Never `import { PrismaClient }` elsewhere.
 4. **Slow-query logging mandatory.** Any DB query ≥`SLOW_QUERY_MS` (default 500ms) is logged with model/action, redacted params, duration, caller, traceId, userId, projectId.
 5. **Workers organized one-per-file** under `v2/be/src/jobs/workers/<name>.worker.ts`, registered centrally in `queue-registry.ts`.
+6. **One WebSocket connection per user — no exceptions.** `WsService` (`v2/fe/src/app/services/ws.service.ts`) is `providedIn: 'root'` and holds exactly one `WebSocket` instance. Calling `ws.on(type, handler)` registers a handler in a local Map — it does NOT open a new connection. Components may call `ws.on()` as many times as needed; they all share the single socket. Never instantiate `WsService` outside the root injector, never open a second `WebSocket` manually.
 
 ## Dev Commands
 

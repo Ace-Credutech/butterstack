@@ -2,7 +2,7 @@ import { DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOpt
 import { sequelize } from '@setup/sequelize';
 import { DocumentPassage } from './document-passage.model';
 
-export type PassageLinkType = 'references' | 'continues' | 'elaborates' | 'defines' | 'contradicts';
+export type PassageLinkType = 'references' | 'continues' | 'elaborates' | 'supersedes' | 'contradicts' | 'supports' | 'depends_on';
 
 export class DocumentPassageLink extends Model<InferAttributes<DocumentPassageLink>, InferCreationAttributes<DocumentPassageLink>> {
   declare id:               CreationOptional<string>;

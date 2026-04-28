@@ -15,6 +15,7 @@ export interface DocumentItem {
   kind:         string;
   purpose:      DocumentPurpose;
   parse_status: ParseStatus;
+  parse_error:  string | null;
   ai_name:      string | null;
   ai_summary:   string | null;
   keywords:     string[];
@@ -128,5 +129,9 @@ export class DocumentsService {
 
   get_url(id: string): Promise<GetDocumentUrlResponse> {
     return this.http.get<GetDocumentUrlResponse>(`/documents/${id}/url`);
+  }
+
+  reparse(id: string): Promise<{ code: number; message: string; data: { document_id: string; parse_status: string } }> {
+    return this.http.post<{ code: number; message: string; data: { document_id: string; parse_status: string } }>(`/documents/${id}/reparse`, {});
   }
 }

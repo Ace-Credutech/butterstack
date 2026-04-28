@@ -4,7 +4,7 @@ import { Prompt } from './prompt.model';
 import { PromptVersion } from './prompt-version.model';
 import { User } from './user.model';
 
-export type PromptRunStatus    = 'success' | 'error' | 'timeout' | 'filtered';
+export type PromptRunStatus    = 'pending' | 'success' | 'error' | 'timeout' | 'filtered';
 export type PromptRunScopeType = 'platform' | 'org' | 'user' | 'project' | 'conversation' | 'system' | 'document';
 
 export class PromptRun extends Model<InferAttributes<PromptRun>, InferCreationAttributes<PromptRun>> {

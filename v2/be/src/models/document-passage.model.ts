@@ -2,7 +2,7 @@ import { DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOpt
 import { sequelize } from '@setup/sequelize';
 import { Document } from './document.model';
 
-export type PassageType = 'section' | 'paragraph' | 'table' | 'list' | 'code' | 'quote' | 'heading';
+export type PassageType = 'objective' | 'requirement' | 'decision' | 'risk' | 'data' | 'meeting_note' | 'action_item' | 'finding' | 'constraint' | 'assumption' | 'other';
 
 export class DocumentPassage extends Model<InferAttributes<DocumentPassage>, InferCreationAttributes<DocumentPassage>> {
   declare id:          CreationOptional<string>;

@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { NgClass } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Header }  from '../../components/organisms/header/header';
 import { Button }  from '../../components/atoms/button/button';
@@ -9,9 +10,37 @@ import { AdminService, AdminPromptFull, PromptModel, PromptResponseFormat, Updat
 const MODELS: PromptModel[] = ['claude-opus-4-7', 'claude-sonnet-4-6', 'claude-haiku-4-5', 'gpt-5', 'gpt-4.1'];
 const FORMATS: PromptResponseFormat[] = ['text', 'json', 'json_schema'];
 
+const derive_provider = (model: string): 'OpenAI' | 'Anthropic' | 'Unknown' => {
+  try {
+    if (model.startsWith('gpt-') || model.startsWith('o1') || model.startsWith('o3')) return 'OpenAI';
+    if (model.startsWith('claude-')) return 'Anthropic';
+    return 'Unknown';
+  } catch {
+    return 'Unknown';
+  }
+};
+
+const TEMP_SEGMENTS = [
+  { label: 'Precise',  hex: '#3b82f6', badge_class: 'bg-blue-50 text-blue-700 border-blue-200',  hint: 'Deterministic. Same prompt always gives the same output. Use for extraction, JSON parsing, and any structured task where reliability matters.' },
+  { label: 'Focused',  hex: '#06b6d4', badge_class: 'bg-cyan-50 text-cyan-700 border-cyan-200',  hint: 'Mostly consistent with subtle variation. Good for document analysis, classification, and structured generation with a little flexibility.' },
+  { label: 'Balanced', hex: '#10b981', badge_class: 'bg-green-50 text-green-700 border-green-200', hint: 'Natural mix of accuracy and variety. Suitable for general Q&A, summaries, and conversational tasks.' },
+  { label: 'Creative', hex: '#f59e0b', badge_class: 'bg-amber-50 text-amber-700 border-amber-200', hint: 'Noticeably varied outputs. The AI explores less obvious choices. Good for brainstorming, drafting copy, and open-ended generation.' },
+  { label: 'Wild',     hex: '#ef4444', badge_class: 'bg-red-50 text-red-700 border-red-200',   hint: 'Highly unpredictable. The AI frequently picks low-probability words. Use only for ideation or creative experiments.' },
+] as const;
+
+type TempSegment = typeof TEMP_SEGMENTS[number];
+
+const active_segment = (t: number): TempSegment => {
+  if (t <= 0.3) return TEMP_SEGMENTS[0];
+  if (t <= 0.7) return TEMP_SEGMENTS[1];
+  if (t <= 1.1) return TEMP_SEGMENTS[2];
+  if (t <= 1.6) return TEMP_SEGMENTS[3];
+  return TEMP_SEGMENTS[4];
+};
+
 @Component({
   selector:    'bs-admin-prompt-edit',
-  imports:     [FormsModule, RouterLink, Header, Button, Chip],
+  imports:     [FormsModule, NgClass, RouterLink, Header, Button, Chip],
   templateUrl: './admin-prompt-edit.html',
 })
 export class AdminPromptEdit implements OnInit {
@@ -25,8 +54,10 @@ export class AdminPromptEdit implements OnInit {
   readonly prompt  = signal<AdminPromptFull | null>(null);
   readonly dirty   = signal(false);
 
-  readonly models  = MODELS;
-  readonly formats = FORMATS;
+  readonly models          = MODELS;
+  readonly formats         = FORMATS;
+  readonly derive_provider = derive_provider;
+  readonly active_segment  = active_segment;
 
   form = {
     model:           '' as PromptModel,

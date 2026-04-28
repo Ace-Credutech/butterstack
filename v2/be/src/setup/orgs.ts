@@ -24,7 +24,12 @@ const derive_org_name = (user_name: string): string => {
 
 export const find_personal_org = async (user_id: string, tx?: Transaction): Promise<Organisation | null> => {
   try {
-    return Organisation.findOne({ where: { slug: personal_org_slug(user_id) }, transaction: tx });
+    const membership = await OrganisationMember.findOne({
+      where:   { user_id },
+      include: [{ model: Organisation, as: 'org', where: { type: 'personal' } }],
+      transaction: tx,
+    });
+    return (membership as any)?.org ?? null;
   } catch (error) {
     log.warn('orgs.find_personal.failed', { user_id, error: String(normalise_error(error).message) });
     return null;
@@ -67,13 +72,20 @@ export const ensure_personal_org_for_user = async (
   }
 };
 
-export const get_user_orgs = async (user_id: string): Promise<Organisation[]> => {
+export interface OrgWithRole {
+  org:     Organisation;
+  my_role: string;
+}
+
+export const get_user_orgs = async (user_id: string): Promise<OrgWithRole[]> => {
   try {
     const memberships = await OrganisationMember.findAll({
       where:   { user_id },
       include: [{ model: Organisation, as: 'org' }],
     });
-    return memberships.map(m => (m as any).org).filter(Boolean);
+    return memberships
+      .filter(m => (m as any).org)
+      .map(m => ({ org: (m as any).org as Organisation, my_role: m.role }));
   } catch (error) {
     log.error('orgs.get_user_orgs.failed', { user_id, error: String(normalise_error(error).message) });
     throw normalise_error(error);

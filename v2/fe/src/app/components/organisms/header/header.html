@@ -1,5 +1,11 @@
 <header class="px-8 py-4 flex items-center justify-between">
-  <bs-brand-mark theme="dark" />
+  <div class="flex items-center gap-3">
+    <bs-brand-mark theme="dark" />
+    @if (auth.authenticated()) {
+      <span class="text-gray-200 select-none">/</span>
+      <bs-org-switcher />
+    }
+  </div>
 
   @if (auth.authenticated()) {
     <div class="flex items-center gap-5">

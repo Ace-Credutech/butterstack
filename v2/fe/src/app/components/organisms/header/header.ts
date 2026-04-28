@@ -6,10 +6,11 @@ import { PermissionService } from '../../../services/permission.service';
 import { BrandMark } from '../../atoms/brand-mark/brand-mark';
 import { GravityDirective } from '../../../directives/gravity.directive';
 import { UserMenu } from '../user-menu/user-menu';
+import { OrgSwitcher } from '../org-switcher/org-switcher';
 
 @Component({
   selector:    'bs-header',
-  imports:     [RouterLink, BrandMark, GravityDirective, UserMenu],
+  imports:     [RouterLink, BrandMark, GravityDirective, UserMenu, OrgSwitcher],
   templateUrl: './header.html',
 })
 export class Header {

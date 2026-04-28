@@ -31,6 +31,18 @@ export const routes: Routes = [
         canActivate: [permission_guard('admin.roles.read')],
         data: { authenticated: true },
       },
+      {
+        path: 'admin/prompts',
+        loadComponent: () => import('./pages/admin-prompts/admin-prompts').then(m => m.AdminPrompts),
+        canActivate: [permission_guard('admin.users.read')],
+        data: { authenticated: true },
+      },
+      {
+        path: 'admin/prompts/:id',
+        loadComponent: () => import('./pages/admin-prompt-edit/admin-prompt-edit').then(m => m.AdminPromptEdit),
+        canActivate: [permission_guard('admin.users.read')],
+        data: { authenticated: true },
+      },
     ],
   },
   { path: '**', redirectTo: '' },

@@ -19,6 +19,10 @@ import { get_org_details }       from '@apis/orgs/get-org/get-org.details';
 
 import { list_projects_details } from '@apis/projects/list-projects/list-projects.details';
 
+import { list_prompts_details }  from '@apis/admin/list-prompts/list-prompts.details';
+import { get_prompt_details }    from '@apis/admin/get-prompt/get-prompt.details';
+import { update_prompt_details } from '@apis/admin/update-prompt/update-prompt.details';
+
 import { list_users_details }    from '@apis/admin/list-users/list-users.details';
 import { update_user_details }   from '@apis/admin/update-user/update-user.details';
 import { list_roles_details }    from '@apis/admin/list-roles/list-roles.details';
@@ -45,6 +49,10 @@ export const api_list: ApiDetails[] = [
   get_org_details,
 
   list_projects_details,
+
+  list_prompts_details,
+  get_prompt_details,
+  update_prompt_details,
 
   list_users_details,
   update_user_details,

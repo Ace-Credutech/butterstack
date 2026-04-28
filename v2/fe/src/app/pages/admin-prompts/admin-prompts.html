@@ -1,0 +1,53 @@
+<div class="min-h-screen bg-gray-50">
+  <bs-header />
+
+  <main class="max-w-5xl mx-auto px-8 py-8">
+    <bs-section-header title="Prompts" subtitle="Every AI call goes through one of these. Edit model, temperature, system text — changes take effect immediately." />
+
+    @if (loading()) {
+      <div class="mt-8 space-y-6">
+        @for (_ of [1,2,3]; track $index) {
+          <div class="h-32 rounded-xl bg-gray-100 animate-pulse"></div>
+        }
+      </div>
+    } @else {
+      <div class="mt-8 space-y-8">
+        @for (group of groups(); track group.category) {
+          <div>
+            <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">{{ group.category }}</h2>
+            <div class="rounded-xl border border-gray-200 bg-white overflow-hidden divide-y divide-gray-100">
+              @for (p of group.prompts; track p.id) {
+                <button type="button" (click)="open(p)"
+                        class="w-full flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition text-left group">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-semibold text-gray-900">{{ p.name }}</span>
+                      <code class="text-[11px] text-gray-400 font-mono">{{ p.slug }}</code>
+                    </div>
+                    @if (p.description) {
+                      <p class="text-xs text-gray-500 mt-0.5 truncate">{{ p.description }}</p>
+                    }
+                  </div>
+
+                  @if (p.version; as v) {
+                    <div class="flex items-center gap-2 shrink-0">
+                      <bs-chip [tone]="model_tone(v.model)" variant="soft">{{ v.model }}</bs-chip>
+                      <span class="text-xs text-gray-400">v{{ v.version }}</span>
+                      <span class="text-xs text-gray-400">t={{ v.temperature }}</span>
+                      <span class="text-xs text-gray-400">{{ v.max_tokens }} tok</span>
+                      <bs-chip tone="slate" variant="soft">{{ v.response_format }}</bs-chip>
+                    </div>
+                  }
+
+                  <svg class="w-4 h-4 text-gray-300 group-hover:text-gray-500 shrink-0 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </main>
+</div>

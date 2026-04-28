@@ -1,0 +1,105 @@
+<div class="min-h-screen bg-gray-50">
+  <bs-header />
+
+  <main class="max-w-4xl mx-auto px-8 py-8">
+    @if (loading()) {
+      <div class="space-y-4">
+        <div class="h-8 w-64 rounded-lg bg-gray-100 animate-pulse"></div>
+        <div class="h-96 rounded-xl bg-gray-100 animate-pulse"></div>
+      </div>
+    } @else if (error(); as err) {
+      <div class="rounded-xl border border-red-200 bg-red-50 px-6 py-4 text-sm text-red-600">
+        <p class="font-medium">Failed to load prompt</p>
+        <p class="mt-1 text-red-400">{{ err }}</p>
+        <a routerLink="/admin/prompts" class="mt-3 inline-block text-xs text-red-500 hover:underline">← Back to prompts</a>
+      </div>
+    } @else if (prompt(); as p) {
+
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <a routerLink="/admin/prompts" class="text-xs text-gray-400 hover:text-gray-600 transition mb-1 inline-block">← Prompts</a>
+          <h1 class="text-xl font-bold text-gray-900">{{ p.name }}</h1>
+          <div class="flex items-center gap-2 mt-1">
+            <code class="text-xs text-gray-400 font-mono">{{ p.slug }}</code>
+            <bs-chip tone="slate" variant="soft">{{ p.category }}</bs-chip>
+            @if (p.version) {
+              <bs-chip tone="slate" variant="soft">v{{ p.version.version }}</bs-chip>
+            }
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <bs-button variant="secondary" (clicked)="cancel()">Cancel</bs-button>
+          <bs-button [loading]="saving()" [disabled]="!dirty()" (clicked)="save()">Save new version</bs-button>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+
+        <!-- Model & params -->
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <h2 class="text-sm font-semibold text-gray-700 mb-4">Model & Parameters</h2>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Model</label>
+              <select [(ngModel)]="form.model" (ngModelChange)="mark_dirty()"
+                      class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40">
+                @for (m of models; track m) {
+                  <option [value]="m">{{ m }}</option>
+                }
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Response format</label>
+              <select [(ngModel)]="form.response_format" (ngModelChange)="mark_dirty()"
+                      class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40">
+                @for (f of formats; track f) {
+                  <option [value]="f">{{ f }}</option>
+                }
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Temperature <span class="text-gray-400">(0 – 2)</span></label>
+              <input type="number" [(ngModel)]="form.temperature" (ngModelChange)="mark_dirty()"
+                     min="0" max="2" step="0.1"
+                     class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Max tokens</label>
+              <input type="number" [(ngModel)]="form.max_tokens" (ngModelChange)="mark_dirty()"
+                     min="1" max="32000"
+                     class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40" />
+            </div>
+          </div>
+        </div>
+
+        <!-- System text -->
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <label class="block text-sm font-semibold text-gray-700 mb-3">System text</label>
+          <textarea [(ngModel)]="form.system_text" (ngModelChange)="mark_dirty()"
+                    rows="12"
+                    class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-mono resize-y focus:outline-none focus:ring-2 focus:ring-green-500/40 leading-relaxed"></textarea>
+        </div>
+
+        <!-- User template -->
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <div class="flex items-center justify-between mb-3">
+            <label class="block text-sm font-semibold text-gray-700">User template</label>
+            <span class="text-xs text-gray-400">Use <code class="bg-gray-100 px-1 rounded">{{ '{{variable}}' }}</code> for dynamic values</span>
+          </div>
+          <textarea [(ngModel)]="form.user_template" (ngModelChange)="mark_dirty()"
+                    rows="8"
+                    class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-mono resize-y focus:outline-none focus:ring-2 focus:ring-green-500/40 leading-relaxed"></textarea>
+        </div>
+
+        <!-- Notes -->
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <label class="block text-sm font-semibold text-gray-700 mb-3">Notes <span class="font-normal text-gray-400">(optional)</span></label>
+          <textarea [(ngModel)]="form.notes" (ngModelChange)="mark_dirty()"
+                    rows="3" placeholder="Why was this version created? What changed?"
+                    class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm resize-y focus:outline-none focus:ring-2 focus:ring-green-500/40"></textarea>
+        </div>
+
+      </div>
+    }
+  </main>
+</div>

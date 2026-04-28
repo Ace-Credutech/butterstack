@@ -10,3 +10,5 @@ export { ActivityLog }          from './activity-log.model';
 export { ApiCallLog }           from './api-call-log.model';
 export { CronRun }              from './cron-run.model';
 export { PasswordResetToken }   from './password-reset-token.model';
+export { Prompt }               from './prompt.model';
+export { PromptVersion }        from './prompt-version.model';

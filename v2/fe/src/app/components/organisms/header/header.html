@@ -16,6 +16,9 @@
       @if (perm.can('admin.roles.read')) {
         <a bsGravity [radius]="120" routerLink="/admin/roles" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">Roles</a>
       }
+      @if (perm.can('admin.users.read')) {
+        <a bsGravity [radius]="120" routerLink="/admin/prompts" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">Prompts</a>
+      }
       <bs-user-menu />
     </div>
   } @else {

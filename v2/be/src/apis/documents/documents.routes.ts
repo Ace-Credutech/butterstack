@@ -401,8 +401,9 @@ const reparse_document = async (c: Context) => {
     const link = await DocumentLink.findOne({ where: { document_id: id } });
     if (!link) return err(c, 404, 'Document link not found');
 
-    await DocumentPassage.destroy({ where: { document_id: id } });
-    await DocumentEntity.destroy({ where: { document_id: id } });
+    // Keep existing passages/entities until the new parse succeeds — save_parse_results swaps
+    // them atomically inside a transaction. Pre-deleting wipes the UI for the entire reparse
+    // window and loses everything if the new parse fails.
     await doc.update({ parse_status: 'pending', parse_error: null });
 
     // BullMQ silently skips re-adds with the same jobId while the prior job still exists in Redis

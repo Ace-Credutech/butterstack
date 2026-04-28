@@ -137,6 +137,16 @@ export class DocumentsPanel implements OnInit, OnDestroy {
 
   readonly streaming_text = signal<Record<string, string>>({});
 
+  // Latest streaming text for the currently-viewed document — surfaces live AI output
+  // on the Summary banner during parse so the user sees progress regardless of which tab.
+  readonly viewed_streaming_text = computed<string | null>(() => {
+    const doc_id = this.viewed_doc()?.id;
+    if (!doc_id) return null;
+    const pending = this.runs().find(r => r.status === 'pending');
+    if (!pending) return null;
+    return this.streaming_text()[pending.id] ?? null;
+  });
+
   ngOnInit() {
     this.load();
     this.ws_unsub               = this.ws.on<any>('document.parsed',  (e) => this.on_document_parsed(e.payload));
@@ -234,8 +244,9 @@ export class DocumentsPanel implements OnInit, OnDestroy {
   }
 
   private on_run_delta(payload: any) {
-    if (!payload?.run_id || !payload?.scope_id || !payload?.chunk) return;
-    if (this.viewed_doc()?.id !== payload.scope_id) return;
+    if (!payload?.run_id || !payload?.chunk) return;
+    // Always accumulate deltas — user may switch to this doc / open the slide-over mid-stream
+    // and we want the buffered text to be there when they look.
     this.streaming_text.update(map => ({ ...map, [payload.run_id]: (map[payload.run_id] ?? '') + payload.chunk }));
   }
 
@@ -391,9 +402,9 @@ export class DocumentsPanel implements OnInit, OnDestroy {
       this.documents.update(list => list.map(d => d.id === doc.id ? { ...d, parse_status: 'pending' as const } : d));
       if (this.viewed_doc()?.id === doc.id) {
         this.viewed_doc.update(d => d ? { ...d, parse_status: 'pending' as const } : null);
-        this.runs.set([]);
-        this.content.set(null);
-        this.slide_tab.set('summary');
+        // Keep existing content + runs visible during reparse — the new run will append via WS,
+        // and save_parse_results swaps passages atomically when the new parse completes.
+        void this.load_runs();
       }
     } catch (e: any) {
       this.error.set(e?.message ?? 'Failed to queue reparse');

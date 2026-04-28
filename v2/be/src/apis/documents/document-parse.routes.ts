@@ -11,6 +11,7 @@ import { DocumentPassage }      from '@models/document-passage.model';
 import { DocumentEntity }       from '@models/document-entity.model';
 import { Prompt }               from '@models/prompt.model';
 import { PromptVersion }        from '@models/prompt-version.model';
+import { PromptRun }            from '@models/prompt-run.model';
 import { sequelize }            from '@setup/sequelize';
 
 const BUCKET          = env.MINIO_BUCKET_NAME ?? 'butterstack';
@@ -35,7 +36,7 @@ const is_text_mime  = (mime: string): boolean =>
 
 const is_image_mime = (mime: string): boolean => mime.startsWith('image/');
 
-interface ExtractPrompt { system_text: string; user_template: string; model: string; max_tokens: number }
+interface ExtractPrompt { prompt_id: string; version_id: string; system_text: string; user_template: string; model: string; max_tokens: number }
 
 const load_extract_prompt = async (): Promise<ExtractPrompt> => {
   try {
@@ -46,6 +47,8 @@ const load_extract_prompt = async (): Promise<ExtractPrompt> => {
     const version = (prompt as any)?.current_version as PromptVersion | null;
     if (!version) throw new Error(`Prompt ${EXTRACT_SLUG} not found or has no active version`);
     return {
+      prompt_id:     (prompt as any).id,
+      version_id:    version.id,
       system_text:   version.system_text,
       user_template: version.user_template,
       model:         version.model      ?? DEFAULT_MODEL,
@@ -76,7 +79,8 @@ const extract_via_text_ai = async (doc: Document, content_text: string): Promise
     const result = await run_prompt<ExtractResult>({
       slug:       EXTRACT_SLUG,
       variables:  { filename: doc.filename, content: content_text.slice(0, 30_000) },
-      scope_type: 'system',
+      scope_type: 'document',
+      scope_id:   doc.id,
     });
     return result.data;
   } catch (error) {
@@ -85,21 +89,43 @@ const extract_via_text_ai = async (doc: Document, content_text: string): Promise
   }
 };
 
-const extract_via_vision_ai = async (doc: Document, file_buffer: Buffer): Promise<ExtractResult> => {
+const log_vision_run = async (
+  prompt_id: string, version_id: string, doc: Document,
+  user_text: string, result: { text: string; tokens_in: number; tokens_out: number },
+  latency_ms: number, status: 'success' | 'error', error_message?: string,
+): Promise<void> => {
   try {
-    const { system_text, user_template, model, max_tokens } = await load_extract_prompt();
+    await PromptRun.create({
+      prompt_id,
+      prompt_version_id: version_id,
+      scope_type:    'document',
+      scope_id:      doc.id,
+      input_payload: { variables: { filename: doc.filename }, user_message: user_text } as object,
+      output_text:   result.text || null,
+      output_parsed: result.text ? (() => { try { return JSON.parse(result.text); } catch { return null; } })() : null,
+      model_used:    DEFAULT_MODEL,
+      tokens_in:     result.tokens_in,
+      tokens_out:    result.tokens_out,
+      latency_ms,
+      status,
+      error_message: error_message ?? null,
+    });
+  } catch (e) {
+    log.error('document_parse.log_vision_run.failed', { document_id: doc.id, error: String((e as any)?.message ?? e) });
+  }
+};
+
+const extract_via_vision_ai = async (doc: Document, file_buffer: Buffer): Promise<ExtractResult> => {
+  const started_at = Date.now();
+  try {
+    const { prompt_id, version_id, system_text, user_template, model, max_tokens } = await load_extract_prompt();
     const user_text = interpolate(user_template, {
       filename: doc.filename,
       content:  '[Binary file — content is in the attached image above]',
     });
-    const result = await vision_call({
-      model,
-      system_text,
-      user_text,
-      image_buffer: file_buffer,
-      image_mime:   doc.mime_type,
-      max_tokens,
-    });
+    const result = await vision_call({ model, system_text, user_text, image_buffer: file_buffer, image_mime: doc.mime_type, max_tokens });
+    const latency_ms = Date.now() - started_at;
+    void log_vision_run(prompt_id, version_id, doc, user_text, result, latency_ms, 'success');
     return strip_and_parse(result.text);
   } catch (error) {
     log.error('document_parse.extract_via_vision_ai.failed', { document_id: doc.id, error: String((error as any)?.message ?? error) });

@@ -21,6 +21,7 @@ export interface DocumentItem {
   entity_type:  DocumentEntityType | null;
   entity_id:    string | null;
   uploaded_by:  DocumentUploader | null;
+  scope_label:  string | null;
   created_at:   string;
 }
 
@@ -45,9 +46,29 @@ export interface DocumentContent {
   entities: DocumentEntity[];
 }
 
+export interface PromptRunItem {
+  id:            string;
+  prompt_slug:   string | null;
+  prompt_name:   string | null;
+  model:         string;
+  status:        string;
+  tokens_in:     number | null;
+  tokens_out:    number | null;
+  latency_ms:    number | null;
+  input_payload: { variables?: Record<string, unknown>; user_message?: string } | null;
+  output_text:   string | null;
+  output_parsed: unknown | null;
+  error_message: string | null;
+  created_at:    string;
+}
+
 export interface ListDocumentsParams {
   page?:      number;
   page_size?: number;
+}
+
+export interface ListAllDocumentsParams extends ListDocumentsParams {
+  entity_type?: DocumentEntityType;
 }
 
 export interface ListDocumentsData {
@@ -63,6 +84,7 @@ export interface UploadDocumentResponse { code: number; message: string; data: D
 export interface DeleteDocumentResponse { code: number; message: string; data: { id: string } }
 export interface GetDocumentUrlResponse { code: number; message: string; data: { url: string; expires_in: number } }
 export interface GetDocumentContentResponse { code: number; message: string; data: DocumentContent }
+export interface GetDocumentRunsResponse   { code: number; message: string; data: { items: PromptRunItem[] } }
 
 @Injectable({ providedIn: 'root' })
 export class DocumentsService {
@@ -73,6 +95,18 @@ export class DocumentsService {
     if (params.page)      qs.set('page',      String(params.page));
     if (params.page_size) qs.set('page_size', String(params.page_size));
     return this.http.get<ListDocumentsResponse>(`/documents?${qs}`);
+  }
+
+  list_all(org_id: string, params: ListAllDocumentsParams = {}): Promise<ListDocumentsResponse> {
+    const qs = new URLSearchParams({ org_id });
+    if (params.entity_type) qs.set('entity_type', params.entity_type);
+    if (params.page)        qs.set('page',        String(params.page));
+    if (params.page_size)   qs.set('page_size',   String(params.page_size));
+    return this.http.get<ListDocumentsResponse>(`/documents/all?${qs}`);
+  }
+
+  get_runs(id: string): Promise<GetDocumentRunsResponse> {
+    return this.http.get<GetDocumentRunsResponse>(`/documents/${id}/runs`);
   }
 
   upload(entity_type: DocumentEntityType, entity_id: string, file: File, purpose: DocumentPurpose = 'other'): Promise<UploadDocumentResponse> {

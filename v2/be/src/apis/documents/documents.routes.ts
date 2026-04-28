@@ -10,7 +10,13 @@ import { Document }          from '@models/document.model';
 import { DocumentLink }      from '@models/document-link.model';
 import { DocumentPassage }   from '@models/document-passage.model';
 import { DocumentEntity }    from '@models/document-entity.model';
+import { PromptRun }         from '@models/prompt-run.model';
+import { Prompt }            from '@models/prompt.model';
+import { PromptVersion }     from '@models/prompt-version.model';
 import { User }              from '@models/user.model';
+import { Project }           from '@models/project.model';
+import { Organisation }      from '@models/organisation.model';
+import { Op }                from 'sequelize';
 import type { DocumentLinkEntityType } from '@models/document-link.model';
 import { sequelize }         from '@setup/sequelize';
 import type { DocumentParsePayload } from '@src/workers/document-parse/document-parse.worker';
@@ -225,11 +231,119 @@ const get_document_url = async (c: Context) => {
   }
 };
 
+// GET /api/documents/:id/runs
+const get_document_runs = async (c: Context) => {
+  try {
+    const user = require_user(c);
+    if (!user) return err(c, 401, 'Authentication required');
+
+    const id = c.req.param('id');
+    const runs = await PromptRun.findAll({
+      where:   { scope_type: 'document', scope_id: id },
+      include: [
+        { model: Prompt,        as: 'prompt',  attributes: ['slug', 'name'] },
+        { model: PromptVersion, as: 'version', attributes: ['model', 'temperature', 'max_tokens'] },
+      ],
+      order: [['created_at', 'DESC']],
+    });
+
+    const items = runs.map(r => ({
+      id:            r.id,
+      prompt_slug:   (r as any).prompt?.slug    ?? null,
+      prompt_name:   (r as any).prompt?.name    ?? null,
+      model:         r.model_used,
+      status:        r.status,
+      tokens_in:     r.tokens_in,
+      tokens_out:    r.tokens_out,
+      latency_ms:    r.latency_ms,
+      input_payload: r.input_payload,
+      output_text:   r.output_text,
+      output_parsed: r.output_parsed,
+      error_message: r.error_message,
+      created_at:    r.created_at,
+    }));
+
+    return ok(c, { items }, 'prompt runs');
+  } catch (error) {
+    log.error('documents.get_runs.failed', { error: String((error as any)?.message ?? error) });
+    return err(c, 500, 'Failed to get runs');
+  }
+};
+
+// GET /api/documents/all?org_id=&entity_type=&page=&page_size=
+const list_all_documents = async (c: Context) => {
+  try {
+    const user = require_user(c);
+    if (!user) return err(c, 401, 'Authentication required');
+
+    const org_id            = c.req.query('org_id');
+    const entity_type_filter = c.req.query('entity_type');
+    const page      = Math.max(1, parseInt(c.req.query('page') ?? '1', 10) || 1);
+    const page_size = Math.min(MAX_PAGE_SIZE, Math.max(1, parseInt(c.req.query('page_size') ?? String(DEFAULT_PAGE_SIZE), 10) || DEFAULT_PAGE_SIZE));
+
+    if (!org_id) return err(c, 400, 'org_id is required');
+
+    const project_ids = await Project.findAll({ where: { org_id }, attributes: ['id'], paranoid: false })
+      .then(ps => ps.map(p => p.id));
+
+    const build_where = () => {
+      if (entity_type_filter === 'org')     return { entity_type: 'org',     entity_id: org_id };
+      if (entity_type_filter === 'project') return { entity_type: 'project', entity_id: { [Op.in]: project_ids.length ? project_ids : ['__none__'] } };
+      if (entity_type_filter === 'user')    return { entity_type: 'user',    entity_id: user.id };
+      return {
+        [Op.or]: [
+          { entity_type: 'org',     entity_id: org_id },
+          ...(project_ids.length ? [{ entity_type: 'project', entity_id: { [Op.in]: project_ids } }] : []),
+          { entity_type: 'user',    entity_id: user.id },
+        ],
+      };
+    };
+
+    const { count, rows: links } = await DocumentLink.findAndCountAll({
+      where:   build_where(),
+      include: [{
+        model:   Document,
+        as:      'document',
+        include: [{ model: User, as: 'uploader', attributes: ['id', 'name', 'email'] }],
+      }],
+      order:  [['created_at', 'DESC']],
+      limit:  page_size,
+      offset: (page - 1) * page_size,
+    });
+
+    const org = await Organisation.findByPk(org_id, { attributes: ['name'] });
+    const projects_map: Record<string, string> = {};
+    if (project_ids.length) {
+      const ps = await Project.findAll({ where: { id: { [Op.in]: project_ids } }, attributes: ['id', 'name'], paranoid: false });
+      for (const p of ps) projects_map[p.id] = p.name;
+    }
+
+    const scope_label = (link: DocumentLink): string => {
+      if (link.entity_type === 'org')     return org?.name ?? 'Organization';
+      if (link.entity_type === 'project') return `Project: ${projects_map[link.entity_id] ?? link.entity_id.slice(0, 8)}`;
+      if (link.entity_type === 'user')    return 'My Documents';
+      return link.entity_type;
+    };
+
+    const items = links.map(l => ({
+      ...shape_document((l as any).document as Document, l),
+      scope_label: scope_label(l),
+    }));
+
+    return ok(c, { items, total: count, page, page_size, total_pages: Math.ceil(count / page_size) }, 'documents');
+  } catch (error) {
+    log.error('documents.list_all.failed', { error: String((error as any)?.message ?? error) });
+    return err(c, 500, 'Failed to list documents');
+  }
+};
+
 export const register_document_routes = () => {
   app.use('/api/documents/*', auth_middleware);
-  app.post('/api/documents/upload',    upload_document);
-  app.get('/api/documents',            list_documents);
+  app.post('/api/documents/upload',     upload_document);
+  app.get('/api/documents/all',         list_all_documents);
+  app.get('/api/documents',             list_documents);
+  app.get('/api/documents/:id/runs',    get_document_runs);
   app.get('/api/documents/:id/content', get_document_content);
-  app.delete('/api/documents/:id',     delete_document);
-  app.get('/api/documents/:id/url',    get_document_url);
+  app.delete('/api/documents/:id',      delete_document);
+  app.get('/api/documents/:id/url',     get_document_url);
 };

@@ -25,6 +25,15 @@
     </div>
 
     <div class="flex items-center gap-2">
+      <div class="relative">
+        <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none"
+             fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
+        </svg>
+        <input type="text" [value]="search()" (input)="set_search($any($event.target).value)"
+               placeholder="Search…"
+               class="pl-7 pr-3 py-1 text-xs border border-gray-200 rounded-md text-gray-700 placeholder-gray-400 bg-white focus:outline-none focus:ring-1 focus:ring-gray-300 w-44" />
+      </div>
       <select (change)="change_page_size(+$any($event.target).value)"
               class="text-xs border border-gray-200 rounded-md px-2 py-1 text-gray-600 bg-white focus:outline-none focus:ring-1 focus:ring-gray-300">
         @for (s of page_sizes; track s) {

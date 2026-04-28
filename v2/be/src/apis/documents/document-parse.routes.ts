@@ -1,4 +1,8 @@
 import { Context } from 'hono';
+import mammoth                  from 'mammoth';
+import * as pdf_parse_pkg       from 'pdf-parse';
+const pdf_parse = (pdf_parse_pkg as any).default ?? pdf_parse_pkg;
+import * as XLSX                from 'xlsx';
 import { app }                  from '@setup/hono';
 import { get_object }           from '@setup/storage';
 import { run_prompt, create_pending_run, complete_run } from '@setup/prompts/run';
@@ -38,6 +42,53 @@ const is_text_mime  = (mime: string): boolean =>
   mime.startsWith('text/') || mime.includes('json') || mime.includes('xml') || mime.includes('csv') || mime.includes('markdown');
 
 const is_image_mime = (mime: string): boolean => mime.startsWith('image/');
+
+const is_pdf  = (mime: string): boolean => mime === 'application/pdf';
+const is_docx = (mime: string): boolean => mime === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || mime === 'application/msword';
+const is_xlsx = (mime: string): boolean => mime === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || mime === 'application/vnd.ms-excel';
+
+const extract_pdf_text = async (buffer: Buffer): Promise<string> => {
+  try {
+    const result = await pdf_parse(buffer);
+    return result.text;
+  } catch (error) {
+    log.error('document_parse.extract_pdf.failed', { error: String((error as any)?.message ?? error) });
+    throw error;
+  }
+};
+
+const extract_docx_text = async (buffer: Buffer): Promise<string> => {
+  try {
+    const result = await mammoth.extractRawText({ buffer });
+    return result.value;
+  } catch (error) {
+    log.error('document_parse.extract_docx.failed', { error: String((error as any)?.message ?? error) });
+    throw error;
+  }
+};
+
+const extract_xlsx_text = (buffer: Buffer): string => {
+  try {
+    const workbook = XLSX.read(buffer, { type: 'buffer' });
+    const sheets   = workbook.SheetNames.map(name => `Sheet: ${name}\n${XLSX.utils.sheet_to_csv(workbook.Sheets[name]!)}`);
+    return sheets.join('\n\n');
+  } catch (error) {
+    log.error('document_parse.extract_xlsx.failed', { error: String((error as any)?.message ?? error) });
+    throw error;
+  }
+};
+
+const extract_text_from_binary = async (buffer: Buffer, mime: string): Promise<string> => {
+  try {
+    if (is_pdf(mime))  return await extract_pdf_text(buffer);
+    if (is_docx(mime)) return await extract_docx_text(buffer);
+    if (is_xlsx(mime)) return extract_xlsx_text(buffer);
+    throw new Error(`No text extractor for mime: ${mime}`);
+  } catch (error) {
+    log.error('document_parse.extract_text_from_binary.failed', { mime, error: String((error as any)?.message ?? error) });
+    throw error;
+  }
+};
 
 interface ExtractPrompt { prompt_id: string; version_id: string; system_text: string; user_template: string; model: string; max_tokens: number }
 
@@ -86,7 +137,10 @@ const extract_via_text_ai = async (doc: Document, content_text: string, uploaded
       scope_id:   doc.id,
       user_id:    uploaded_by,
     });
-    return result.data;
+    // run_prompt returns the raw string when response_format='text' in the DB (the default).
+    // Normalise here so the function always returns a parsed ExtractResult regardless.
+    const data = typeof result.data === 'string' ? strip_and_parse(result.data) : result.data;
+    return data;
   } catch (error) {
     log.error('document_parse.extract_via_text_ai.failed', { document_id: doc.id, error: String((error as any)?.message ?? error) });
     throw error;
@@ -269,6 +323,11 @@ const parse_document = async (c: Context) => {
     if (is_text_mime(doc.mime_type)) {
       const content_text = file_buffer.toString('utf-8');
       extract_result     = await extract_via_text_ai(doc, content_text, uploaded_by);
+    } else if (is_pdf(doc.mime_type) || is_docx(doc.mime_type) || is_xlsx(doc.mime_type)) {
+      const content_text = await extract_text_from_binary(file_buffer, doc.mime_type);
+      extract_result     = await extract_via_text_ai(doc, content_text, uploaded_by);
+    } else if (is_image_mime(doc.mime_type)) {
+      extract_result = await extract_via_vision_ai(doc, file_buffer, uploaded_by);
     } else {
       extract_result = await extract_via_vision_ai(doc, file_buffer, uploaded_by);
     }

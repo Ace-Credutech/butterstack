@@ -67,6 +67,9 @@ export class DocumentsPanel implements OnInit, OnDestroy {
   readonly documents = signal<DocumentItem[]>([]);
   readonly error     = signal<string | null>(null);
 
+  readonly search      = signal('');
+  private search_timer: ReturnType<typeof setTimeout> | null = null;
+
   readonly page        = signal(1);
   readonly page_size   = signal(20);
   readonly total       = signal(0);
@@ -142,6 +145,7 @@ export class DocumentsPanel implements OnInit, OnDestroy {
     this.ws_unsub?.();
     this.ws_unsub_run_started?.();
     this.ws_unsub_run_completed?.();
+    if (this.search_timer) clearTimeout(this.search_timer);
   }
 
   private on_document_parsed(payload: any) {
@@ -192,11 +196,21 @@ export class DocumentsPanel implements OnInit, OnDestroy {
     );
   }
 
+  set_search(value: string) {
+    this.search.set(value);
+    if (this.search_timer) clearTimeout(this.search_timer);
+    this.search_timer = setTimeout(() => {
+      this.page.set(1);
+      this.load();
+    }, 400);
+  }
+
   async load() {
     try {
       this.loading.set(true);
       this.error.set(null);
-      const params = { page: this.page(), page_size: this.page_size() };
+      const search = this.search().trim() || undefined;
+      const params = { page: this.page(), page_size: this.page_size(), search };
 
       let res;
       if (this.is_org_mode()) {

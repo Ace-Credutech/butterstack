@@ -122,7 +122,7 @@ const upload_document = async (c: Context) => {
   }
 };
 
-// GET /api/documents?entity_type=&entity_id=&page=1&page_size=20
+// GET /api/documents?entity_type=&entity_id=&page=1&page_size=20&search=
 const list_documents = async (c: Context) => {
   try {
     const user = require_user(c);
@@ -130,22 +130,30 @@ const list_documents = async (c: Context) => {
 
     const entity_type = c.req.query('entity_type');
     const entity_id   = c.req.query('entity_id');
+    const search      = c.req.query('search')?.trim() || undefined;
     const page        = Math.max(1, parseInt(c.req.query('page') ?? '1', 10) || 1);
     const page_size   = Math.min(MAX_PAGE_SIZE, Math.max(1, parseInt(c.req.query('page_size') ?? String(DEFAULT_PAGE_SIZE), 10) || DEFAULT_PAGE_SIZE));
 
     if (!entity_type || !entity_id)           return err(c, 400, 'entity_type and entity_id are required');
     if (!VALID_ENTITY_TYPES.has(entity_type)) return err(c, 400, `Invalid entity_type: ${entity_type}`);
 
+    const doc_where = search
+      ? { [Op.or]: [{ filename: { [Op.iLike]: `%${search}%` } }, { ai_name: { [Op.iLike]: `%${search}%` } }] }
+      : undefined;
+
     const { count, rows: links } = await DocumentLink.findAndCountAll({
-      where:   { entity_type, entity_id },
-      include: [{
-        model:   Document,
-        as:      'document',
-        include: [{ model: User, as: 'uploader', attributes: ['id', 'name', 'email'] }],
+      where:    { entity_type, entity_id },
+      include:  [{
+        model:    Document,
+        as:       'document',
+        where:    doc_where,
+        required: !!search,
+        include:  [{ model: User, as: 'uploader', attributes: ['id', 'name', 'email'] }],
       }],
-      order:  [['created_at', 'DESC']],
-      limit:  page_size,
-      offset: (page - 1) * page_size,
+      order:    [['created_at', 'DESC']],
+      limit:    page_size,
+      offset:   (page - 1) * page_size,
+      subQuery: false,
     });
 
     const items       = links.map(l => shape_document((l as any).document as Document, l));
@@ -309,35 +317,43 @@ const get_document_runs = async (c: Context) => {
   }
 };
 
-// GET /api/documents/all?org_id=&entity_type=&page=&page_size=
+// GET /api/documents/all?org_id=&entity_type=&page=&page_size=&search=
 const list_all_documents = async (c: Context) => {
   try {
     const user = require_user(c);
     if (!user) return err(c, 401, 'Authentication required');
 
-    const org_id            = c.req.query('org_id');
+    const org_id             = c.req.query('org_id');
     const entity_type_filter = c.req.query('entity_type');
+    const search             = c.req.query('search')?.trim() || undefined;
     const page      = Math.max(1, parseInt(c.req.query('page') ?? '1', 10) || 1);
     const page_size = Math.min(MAX_PAGE_SIZE, Math.max(1, parseInt(c.req.query('page_size') ?? String(DEFAULT_PAGE_SIZE), 10) || DEFAULT_PAGE_SIZE));
 
     if (!org_id) return err(c, 400, 'org_id is required');
 
-    const build_where = () => {
+    const build_link_where = () => {
       if (entity_type_filter === 'org')  return { entity_type: 'org',  entity_id: org_id };
       if (entity_type_filter === 'user') return { entity_type: 'user', entity_id: user.id };
       return { [Op.or]: [{ entity_type: 'org', entity_id: org_id }, { entity_type: 'user', entity_id: user.id }] };
     };
 
+    const doc_where = search
+      ? { [Op.or]: [{ filename: { [Op.iLike]: `%${search}%` } }, { ai_name: { [Op.iLike]: `%${search}%` } }] }
+      : undefined;
+
     const { count, rows: links } = await DocumentLink.findAndCountAll({
-      where:   build_where(),
-      include: [{
-        model:   Document,
-        as:      'document',
-        include: [{ model: User, as: 'uploader', attributes: ['id', 'name', 'email'] }],
+      where:    build_link_where(),
+      include:  [{
+        model:    Document,
+        as:       'document',
+        where:    doc_where,
+        required: !!search,
+        include:  [{ model: User, as: 'uploader', attributes: ['id', 'name', 'email'] }],
       }],
-      order:  [['created_at', 'DESC']],
-      limit:  page_size,
-      offset: (page - 1) * page_size,
+      order:    [['created_at', 'DESC']],
+      limit:    page_size,
+      offset:   (page - 1) * page_size,
+      subQuery: false,
     });
 
     const org = await Organisation.findByPk(org_id, { attributes: ['name'] });

@@ -66,6 +66,7 @@ export interface PromptRunItem {
 export interface ListDocumentsParams {
   page?:      number;
   page_size?: number;
+  search?:    string;
 }
 
 export interface ListAllDocumentsParams extends ListDocumentsParams {
@@ -95,6 +96,7 @@ export class DocumentsService {
     const qs = new URLSearchParams({ entity_type, entity_id });
     if (params.page)      qs.set('page',      String(params.page));
     if (params.page_size) qs.set('page_size', String(params.page_size));
+    if (params.search)    qs.set('search',    params.search);
     return this.http.get<ListDocumentsResponse>(`/documents?${qs}`);
   }
 
@@ -103,6 +105,7 @@ export class DocumentsService {
     if (params.entity_type) qs.set('entity_type', params.entity_type);
     if (params.page)        qs.set('page',        String(params.page));
     if (params.page_size)   qs.set('page_size',   String(params.page_size));
+    if (params.search)      qs.set('search',      params.search);
     return this.http.get<ListDocumentsResponse>(`/documents/all?${qs}`);
   }
 

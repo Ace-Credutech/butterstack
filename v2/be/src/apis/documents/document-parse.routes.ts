@@ -106,7 +106,7 @@ const extract_via_vision_ai = async (doc: Document, file_buffer: Buffer, uploade
       filename: doc.filename,
       content:  '[Binary file — content is in the attached image above]',
     });
-    const input_payload = { variables: { filename: doc.filename }, user_message: user_text };
+    const input_payload = { system_text: extracted.system_text, variables: { filename: doc.filename }, user_message: user_text };
 
     await create_pending_run({ run_id, prompt_id, prompt_version_id: version_id, model, scope_type: 'document', scope_id: doc.id, user_id: uploaded_by, input_payload });
     void broadcast_to_user(uploaded_by, { type: 'run.started', payload: { run_id, scope_id: doc.id, model, prompt_slug: EXTRACT_SLUG, status: 'pending', input_payload, created_at: new Date().toISOString() } });

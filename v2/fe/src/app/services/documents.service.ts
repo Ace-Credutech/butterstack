@@ -56,7 +56,7 @@ export interface PromptRunItem {
   tokens_in:     number | null;
   tokens_out:    number | null;
   latency_ms:    number | null;
-  input_payload: { variables?: Record<string, unknown>; user_message?: string } | null;
+  input_payload: { system_text?: string; variables?: Record<string, unknown>; user_message?: string } | null;
   output_text:   string | null;
   output_parsed: unknown | null;
   error_message: string | null;

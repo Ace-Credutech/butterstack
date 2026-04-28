@@ -187,7 +187,7 @@ export const run_prompt = async <T = unknown>(input: RunPromptInput): Promise<Ru
     const user_message        = interpolate_template(version.user_template, input.variables);
     const run_id              = make_run_id();
     const started_at          = Date.now();
-    const input_payload       = { variables: input.variables, user_message };
+    const input_payload       = { system_text: version.system_text, variables: input.variables, user_message };
 
     // Insert pending run immediately so it appears in the UI before the AI call
     await create_pending_run({

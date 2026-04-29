@@ -8,7 +8,7 @@ import { FormField } from '../../components/molecules/form-field/form-field';
 import { Textarea } from '../../components/atoms/textarea/textarea';
 import { Label } from '../../components/atoms/label/label';
 import { DocumentsPanel } from '../../components/organisms/documents-panel/documents-panel';
-import { ProjectsService, ProjectStatus, StepStatus, ProjectRoleItem, RbacMatrixCell } from '../../services/projects.service';
+import { ProjectsService, ProjectStatus, StepStatus, ProjectRoleItem, RbacMatrixCell, ProjectMemberItem, StakeholderRole } from '../../services/projects.service';
 import { WsService } from '../../services/ws.service';
 import type { DocumentPurpose } from '../../services/documents.service';
 
@@ -38,6 +38,15 @@ const DEFAULT_PERMISSION_KEYS: string[] = [
   'approve',
   'export',
   'manage_members',
+];
+
+// Default capabilities shown per stakeholder role on the members table.
+// Static for Phase D — Phase E/F may derive these from RBAC + features instead.
+const STAKEHOLDER_ROLES: { value: StakeholderRole; label: string; capabilities: string[] }[] = [
+  { value: 'decider',     label: 'Decider',     capabilities: ['Approves', 'Sets direction']   },
+  { value: 'reviewer',    label: 'Reviewer',    capabilities: ['Reviews', 'Comments']          },
+  { value: 'contributor', label: 'Contributor', capabilities: ['Builds', 'Edits']              },
+  { value: 'observer',    label: 'Observer',    capabilities: ['Watches', 'Read-only']         },
 ];
 
 const DOC_PURPOSES: { value: DocumentPurpose; label: string }[] = [
@@ -105,6 +114,21 @@ export class ProjectCreateWizard implements OnDestroy {
   readonly editing_role_name   = signal('');
   readonly editing_role_desc   = signal('');
 
+  readonly stakeholder_roles  = STAKEHOLDER_ROLES;
+  readonly members            = signal<ProjectMemberItem[]>([]);
+  readonly new_member_name        = signal('');
+  readonly new_member_email       = signal('');
+  readonly new_member_designation = signal('');
+  readonly new_member_stake       = signal<StakeholderRole>('contributor');
+  readonly new_member_rank        = signal<number>(3);
+  readonly member_busy        = signal(false);
+  readonly member_error       = signal<string | null>(null);
+  readonly editing_member_id  = signal<string | null>(null);
+  readonly editing_member     = signal<{ name: string; email: string; designation: string; stakeholder_role: StakeholderRole; authority_rank: number }>({
+    name: '', email: '', designation: '', stakeholder_role: 'contributor', authority_rank: 3,
+  });
+  readonly step5_loading      = signal(false);
+
   readonly active_step_def = computed(() => this.steps.find(s => s.number === this.active_step()) ?? this.steps[0]);
 
   constructor() { void this.bootstrap(); }
@@ -130,6 +154,7 @@ export class ProjectCreateWizard implements OnDestroy {
       this.project_status.set(res.data.project_status);
       if (map.get(2) === 'done') void this.load_initial_ctx(id);
       void this.load_roles_and_matrix(id);
+      void this.load_members(id);
     } catch (e: any) {
       this.error.set(e?.message ?? 'Failed to load init state');
     }
@@ -241,6 +266,131 @@ export class ProjectCreateWizard implements OnDestroy {
       await this.load_roles_and_matrix(id);
     } catch (e: any) {
       this.role_error.set(e?.message ?? 'Failed to toggle permission');
+    }
+  }
+
+  private async load_members(project_id: string): Promise<void> {
+    try {
+      const res = await this.projects.list_members(project_id);
+      this.members.set(res.data.items);
+    } catch (e: any) {
+      this.member_error.set(e?.message ?? 'Failed to load members');
+    }
+  }
+
+  capabilities_for(role: StakeholderRole): string[] {
+    return this.stakeholder_roles.find(r => r.value === role)?.capabilities ?? [];
+  }
+
+  can_add_member(): boolean {
+    return !this.member_busy()
+      && this.new_member_name().trim().length >= 1
+      && this.new_member_email().trim().length >= 3
+      && this.new_member_designation().trim().length >= 1
+      && this.new_member_rank() >= 1;
+  }
+
+  async add_member(): Promise<void> {
+    const id = this.project_id();
+    if (!id || !this.can_add_member()) return;
+    this.member_error.set(null);
+    this.member_busy.set(true);
+    try {
+      await this.projects.add_member(id, {
+        name:             this.new_member_name().trim(),
+        email:            this.new_member_email().trim(),
+        designation:      this.new_member_designation().trim(),
+        stakeholder_role: this.new_member_stake(),
+        authority_rank:   this.new_member_rank(),
+      });
+      this.new_member_name.set('');
+      this.new_member_email.set('');
+      this.new_member_designation.set('');
+      this.new_member_stake.set('contributor');
+      this.new_member_rank.set(3);
+      await this.load_members(id);
+    } catch (e: any) {
+      this.member_error.set(e?.message ?? 'Failed to add member');
+    } finally {
+      this.member_busy.set(false);
+    }
+  }
+
+  start_edit_member(m: ProjectMemberItem): void {
+    this.editing_member_id.set(m.id);
+    this.editing_member.set({
+      name:             m.name,
+      email:            m.email,
+      designation:      m.designation,
+      stakeholder_role: m.stakeholder_role,
+      authority_rank:   m.authority_rank,
+    });
+  }
+
+  cancel_edit_member(): void {
+    this.editing_member_id.set(null);
+  }
+
+  patch_editing_member<K extends keyof ReturnType<typeof this.editing_member>>(key: K, value: ReturnType<typeof this.editing_member>[K]): void {
+    this.editing_member.set({ ...this.editing_member(), [key]: value });
+  }
+
+  async save_edit_member(): Promise<void> {
+    const id        = this.project_id();
+    const member_id = this.editing_member_id();
+    if (!id || !member_id) return;
+    this.member_error.set(null);
+    this.member_busy.set(true);
+    try {
+      const patch = this.editing_member();
+      await this.projects.update_member(id, member_id, {
+        name:             patch.name.trim(),
+        email:            patch.email.trim(),
+        designation:      patch.designation.trim(),
+        stakeholder_role: patch.stakeholder_role,
+        authority_rank:   patch.authority_rank,
+      });
+      this.cancel_edit_member();
+      await this.load_members(id);
+    } catch (e: any) {
+      this.member_error.set(e?.message ?? 'Failed to update member');
+    } finally {
+      this.member_busy.set(false);
+    }
+  }
+
+  async remove_member(m: ProjectMemberItem): Promise<void> {
+    const id = this.project_id();
+    if (!id) return;
+    if (!confirm(`Remove ${m.name} <${m.email}> from this project?`)) return;
+    this.member_error.set(null);
+    this.member_busy.set(true);
+    try {
+      await this.projects.remove_member(id, m.id);
+      await this.load_members(id);
+    } catch (e: any) {
+      this.member_error.set(e?.message ?? 'Failed to remove member');
+    } finally {
+      this.member_busy.set(false);
+    }
+  }
+
+  async continue_to_step6(): Promise<void> {
+    const id = this.project_id();
+    if (!id) return;
+    this.error.set(null);
+    this.step5_loading.set(true);
+    try {
+      await this.projects.mark_step(id, 5, 'done');
+      const next = new Map(this.step_statuses());
+      next.set(5, 'done');
+      this.step_statuses.set(next);
+      this.active_step.set(6);
+      await this.router.navigate(['/app/projects', id, 'wizard'], { queryParams: { step: 6 } });
+    } catch (e: any) {
+      this.error.set(e?.message ?? 'Failed to mark step 5 done');
+    } finally {
+      this.step5_loading.set(false);
     }
   }
 

@@ -33,7 +33,7 @@ ProjectMember.init({
   created_at:       DataTypes.DATE,
   updated_at:       DataTypes.DATE,
   deleted_at:       DataTypes.DATE,
-}, { sequelize, tableName: 'project_members' });
+}, { sequelize, tableName: 'project_members', paranoid: true });
 
 ProjectMember.belongsTo(Project, { foreignKey: 'project_id', as: 'project' });
 ProjectMember.belongsTo(User,    { foreignKey: 'user_id',    as: 'user' });

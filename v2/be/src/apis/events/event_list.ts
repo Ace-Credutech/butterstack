@@ -3,6 +3,8 @@ import { project_create_handler }    from './handlers/project/project.create';
 import { project_update_handler }    from './handlers/project/project.update';
 import { project_delete_handler }    from './handlers/project/project.delete';
 import { member_add_handler }        from './handlers/member/member.add';
+import { member_update_handler }     from './handlers/member/member.update';
+import { member_remove_handler }     from './handlers/member/member.remove';
 import { project_init_step_handler }     from './handlers/project-init/project-init-step';
 import { project_document_paste_handler } from './handlers/document/document.paste';
 import { role_create_handler }            from './handlers/role/role.create';
@@ -16,6 +18,8 @@ export const event_list: EventHandlerDetails[] = [
   project_update_handler,
   project_delete_handler,
   member_add_handler,
+  member_update_handler,
+  member_remove_handler,
   project_init_step_handler,
   project_document_paste_handler,
   role_create_handler,

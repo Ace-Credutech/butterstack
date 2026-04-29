@@ -33,6 +33,7 @@ import { list_project_documents_details }   from '@apis/projects/list-project-do
 import { get_initial_context_details }      from '@apis/projects/get-initial-context/get-initial-context.details';
 import { list_project_roles_details }       from '@apis/projects/list-project-roles/list-project-roles.details';
 import { get_rbac_matrix_details }          from '@apis/projects/get-rbac-matrix/get-rbac-matrix.details';
+import { list_project_members_details }     from '@apis/projects/list-project-members/list-project-members.details';
 
 import { post_event_details }      from '@apis/events/post-event/post-event.details';
 import { get_event_details }       from '@apis/events/get-event/get-event.details';
@@ -69,6 +70,7 @@ export const api_list: ApiDetails[] = [
   get_initial_context_details,
   list_project_roles_details,
   get_rbac_matrix_details,
+  list_project_members_details,
 
   post_event_details,
   get_event_details,

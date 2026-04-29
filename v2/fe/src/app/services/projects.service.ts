@@ -116,6 +116,31 @@ export interface RbacMatrixCell {
   allow:          boolean;
 }
 
+export type StakeholderRole = 'decider' | 'reviewer' | 'contributor' | 'observer';
+
+export interface ProjectMemberItem {
+  id:               string;
+  project_id:       string;
+  user_id:          string | null;
+  email:            string;
+  name:             string;
+  designation:      string;
+  stakeholder_role: StakeholderRole;
+  authority_rank:   number;
+  invited_by:       string | null;
+  created_at:       string;
+  updated_at:       string;
+}
+
+export interface ListMembersResponse {
+  code:    number;
+  message: string;
+  data: {
+    project_id: string;
+    items:      ProjectMemberItem[];
+  };
+}
+
 export interface RbacMatrixResponse {
   code:    number;
   message: string;
@@ -231,6 +256,37 @@ export class ProjectsService {
     return this.post_event<{ role_id: string; permission_key: string; feature_id?: string | null }>({
       type:    'role.permission.unset',
       payload: { role_id: payload.role_id, permission_key: payload.permission_key, feature_id: payload.feature_id ?? null },
+      scope:   { project_id },
+      source:  'user',
+    });
+  }
+
+  list_members(project_id: string): Promise<ListMembersResponse> {
+    return this.http.get<ListMembersResponse>(`/projects/${project_id}/members`);
+  }
+
+  add_member(project_id: string, payload: { name: string; email: string; designation: string; stakeholder_role: StakeholderRole; authority_rank: number }): Promise<PostEventResponse<{ member: ProjectMemberItem }>> {
+    return this.post_event<typeof payload, { member: ProjectMemberItem }>({
+      type:    'member.add',
+      payload,
+      scope:   { project_id },
+      source:  'user',
+    });
+  }
+
+  update_member(project_id: string, member_id: string, patch: { name?: string; email?: string; designation?: string; stakeholder_role?: StakeholderRole; authority_rank?: number }): Promise<PostEventResponse<{ member: ProjectMemberItem }>> {
+    return this.post_event<{ member_id: string } & typeof patch, { member: ProjectMemberItem }>({
+      type:    'member.update',
+      payload: { member_id, ...patch },
+      scope:   { project_id },
+      source:  'user',
+    });
+  }
+
+  remove_member(project_id: string, member_id: string): Promise<PostEventResponse<{ member: { id: string; deleted: boolean } }>> {
+    return this.post_event<{ member_id: string }, { member: { id: string; deleted: boolean } }>({
+      type:    'member.remove',
+      payload: { member_id },
       scope:   { project_id },
       source:  'user',
     });

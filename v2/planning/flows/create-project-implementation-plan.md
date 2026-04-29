@@ -152,17 +152,19 @@ After Step 2 closes (`project.init.step {step:2, status:'done'}`), the system au
 > Step 5 before 4 because it's simpler and validates the pattern. Step 4 (AI) is the heavy one.
 
 ### Backend
-- [ ] Migration: extend `project_members` with `designation`, `stakeholder_role` (enum: `decider|reviewer|contributor|observer`), `authority_rank` (int)
-- [ ] Update `member.add` handler to accept new fields
-- [ ] Handlers: `member.update`, `member.remove`
-- [ ] API: `GET /api/projects/:id/members` (already exists? confirm; add new fields to response)
+- [x] `project_members` already carries `designation`, `stakeholder_role`, `authority_rank` (folded into 005). Migration 074 adds `invited_by` UUID FK so the column matches the `ProjectMember` model (it was declared but not migrated).
+- [x] `member.add` handler — captures `invited_by = ctx.actor.id`, case-insensitive email conflict check, activity log, full state_delta of new fields.
+- [x] Handlers: `member.update`, `member.remove` (soft-delete via `paranoid: true` on the model).
+- [x] API: `GET /api/projects/:id/members` (`list-project-members`) — returns full extended fields, ordered by `authority_rank` then `created_at`.
 
 ### Frontend
-- [ ] Step 5 table: name, email, designation, stakeholderRole dropdown, authorityRank number
-- [ ] Add row inline; capability badges derived from stakeholderRole
+- [x] Step 5 panel: inline-add row (name, email, designation, stakeholder dropdown, authority rank number) → fires `member.add` event.
+- [x] Members table renders with capability badges derived from `stakeholder_role` (decider→Approves/Sets direction, reviewer→Reviews/Comments, contributor→Builds/Edits, observer→Watches/Read-only).
+- [x] Inline edit + remove rows wired to `member.update` / `member.remove`.
+- [x] "Continue to Step 6" button — fires `project.init.step {step:5, status:'done'}` → navigates to step 6.
 
 ### Done Criteria
-- User adds 3 members with full details, table renders, default capabilities shown.
+- ✅ User adds 3 members with full details, table renders, default capabilities shown; reload re-hydrates from `GET /members`.
 
 ---
 

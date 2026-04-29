@@ -10,7 +10,7 @@ export class Document extends Model<InferAttributes<Document>, InferCreationAttr
   declare filename:     string;
   declare mime_type:    string;
   declare size_bytes:   number;
-  declare storage_key:  string;
+  declare storage_key:  CreationOptional<string | null>;
   declare kind:         CreationOptional<string>;
   declare purpose:      CreationOptional<DocumentPurpose>;
   declare parse_status: CreationOptional<DocumentParseStatus>;
@@ -29,7 +29,7 @@ Document.init({
   filename:     { type: DataTypes.STRING(255),            allowNull: false },
   mime_type:    { type: DataTypes.STRING(255),            allowNull: false },
   size_bytes:   { type: DataTypes.INTEGER,               allowNull: false, defaultValue: 0 },
-  storage_key:  { type: DataTypes.STRING(255),            allowNull: false },
+  storage_key:  { type: DataTypes.STRING(255),            allowNull: true },
   kind:         { type: DataTypes.STRING(255),            allowNull: false, defaultValue: 'document' },
   purpose:      { type: DataTypes.STRING(255),            allowNull: false, defaultValue: 'other' },
   parse_status: { type: DataTypes.STRING(255),            allowNull: false, defaultValue: 'pending' },

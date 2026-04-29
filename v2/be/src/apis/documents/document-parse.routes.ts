@@ -322,6 +322,7 @@ const parse_document = async (c: Context) => {
     doc = await Document.findByPk(document_id);
     if (!doc) return err(c, 404, 'Document not found');
     if (doc.parse_status !== 'pending') return ok(c, { document_id, skipped: true });
+    if (!doc.storage_key) return ok(c, { document_id, skipped: true, reason: 'no storage_key (paste-as-text)' });
 
     const file_buffer = await get_object(BUCKET, doc.storage_key);
 

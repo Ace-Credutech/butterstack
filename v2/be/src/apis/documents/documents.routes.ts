@@ -22,7 +22,7 @@ import type { DocumentParsePayload } from '@src/workers/document-parse/document-
 import { broadcast_to_user } from '@setup/ws/ws-server';
 
 const BUCKET             = env.MINIO_BUCKET_NAME ?? 'butterstack';
-const VALID_ENTITY_TYPES = new Set<string>(['org', 'user', 'conversation']);
+const VALID_ENTITY_TYPES = new Set<string>(['org', 'user', 'conversation', 'project']);
 const DEFAULT_PAGE_SIZE  = 20;
 const MAX_PAGE_SIZE      = 100;
 
@@ -261,7 +261,7 @@ const delete_document = async (c: Context) => {
     // Cancel any in-flight parse before deleting
     if (doc.parse_status === 'pending') await cancel_pending_parse(id, 'Document deleted');
 
-    await delete_object(BUCKET, doc.storage_key);
+    if (doc.storage_key) await delete_object(BUCKET, doc.storage_key);
     await DocumentLink.destroy({ where: { document_id: id } });
     await doc.destroy();
 
@@ -281,6 +281,7 @@ const get_document_url = async (c: Context) => {
     const id  = c.req.param('id');
     const doc = await Document.findByPk(id);
     if (!doc) return err(c, 404, 'Document not found');
+    if (!doc.storage_key) return err(c, 400, 'Document has no underlying file (paste-as-text has no URL)');
 
     const url = await get_presigned_url(BUCKET, doc.storage_key, 3600);
     return ok(c, { url, expires_in: 3600 }, 'presigned url');

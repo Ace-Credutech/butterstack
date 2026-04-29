@@ -1,6 +1,6 @@
 import { Context } from 'hono';
 import mammoth                  from 'mammoth';
-import * as pdf_parse_pkg       from 'pdf-parse';
+import * as pdf_parse_pkg       from 'pdf-parse/lib/pdf-parse.js';
 const pdf_parse = (pdf_parse_pkg as any).default ?? pdf_parse_pkg;
 import * as XLSX                from 'xlsx';
 import { app }                  from '@setup/hono';

@@ -30,7 +30,7 @@ const shape_user = (u: any) => ({
   email:     u.email,
   name:      u.name,
   is_active: u.is_active,
-  role:      u.Role ? { id: u.Role.id, slug: u.Role.slug, name: u.Role.name } : null,
+  role:      u.role ? { id: u.role.id, slug: u.role.slug, name: u.role.name } : null,
   created_at: u.created_at,
 });
 
@@ -43,7 +43,7 @@ const list_users_function = async (data: list_users_function_params): Promise<li
 
   const { rows, count } = await User.findAndCountAll({
     where,
-    include: [{ model: Role }],
+    include: [{ model: Role, as: 'role' }],
     order:   [[data.sort, data.dir]],
     limit:   data.size,
     offset:  (data.page - 1) * data.size,

@@ -8,7 +8,7 @@ import { FormField } from '../../components/molecules/form-field/form-field';
 import { Textarea } from '../../components/atoms/textarea/textarea';
 import { Label } from '../../components/atoms/label/label';
 import { DocumentsPanel } from '../../components/organisms/documents-panel/documents-panel';
-import { ProjectsService, ProjectStatus, StepStatus } from '../../services/projects.service';
+import { ProjectsService, ProjectStatus, StepStatus, ProjectRoleItem, RbacMatrixCell } from '../../services/projects.service';
 import { WsService } from '../../services/ws.service';
 import type { DocumentPurpose } from '../../services/documents.service';
 
@@ -25,6 +25,20 @@ const STEPS: StepDef[] = [
 
 const slugify = (s: string): string =>
   s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').slice(0, 64);
+
+// Default permission keys offered until Phase F lands real features.
+// Boss said RBAC matrix is the heart of the system, so we ship a sane starter
+// list — user can still toggle per role. Phase F replaces this with feature-driven
+// columns once modules exist.
+const DEFAULT_PERMISSION_KEYS: string[] = [
+  'view',
+  'create',
+  'edit',
+  'delete',
+  'approve',
+  'export',
+  'manage_members',
+];
 
 const DOC_PURPOSES: { value: DocumentPurpose; label: string }[] = [
   { value: 'requirement',          label: 'Requirement'    },
@@ -79,6 +93,18 @@ export class ProjectCreateWizard implements OnDestroy {
   readonly initial_ctx_markdown = signal<string | null>(null);
   readonly initial_ctx_error    = signal<string | null>(null);
 
+  readonly roles               = signal<ProjectRoleItem[]>([]);
+  readonly rbac_cells          = signal<RbacMatrixCell[]>([]);
+  readonly permission_keys     = signal<string[]>(DEFAULT_PERMISSION_KEYS);
+  readonly new_role_name       = signal('');
+  readonly new_role_desc       = signal('');
+  readonly role_busy           = signal(false);
+  readonly role_error          = signal<string | null>(null);
+  readonly step3_loading       = signal(false);
+  readonly editing_role_id     = signal<string | null>(null);
+  readonly editing_role_name   = signal('');
+  readonly editing_role_desc   = signal('');
+
   readonly active_step_def = computed(() => this.steps.find(s => s.number === this.active_step()) ?? this.steps[0]);
 
   constructor() { void this.bootstrap(); }
@@ -103,8 +129,137 @@ export class ProjectCreateWizard implements OnDestroy {
       this.project_name.set(res.data.project_name);
       this.project_status.set(res.data.project_status);
       if (map.get(2) === 'done') void this.load_initial_ctx(id);
+      void this.load_roles_and_matrix(id);
     } catch (e: any) {
       this.error.set(e?.message ?? 'Failed to load init state');
+    }
+  }
+
+  private async load_roles_and_matrix(project_id: string): Promise<void> {
+    try {
+      const [roles_res, rbac_res] = await Promise.all([
+        this.projects.list_roles(project_id),
+        this.projects.get_rbac_matrix(project_id),
+      ]);
+      this.roles.set(roles_res.data.items);
+      this.rbac_cells.set(rbac_res.data.cells);
+      const keys = new Set<string>(DEFAULT_PERMISSION_KEYS);
+      for (const k of rbac_res.data.permission_keys) keys.add(k);
+      this.permission_keys.set(Array.from(keys));
+    } catch (e: any) {
+      this.role_error.set(e?.message ?? 'Failed to load roles');
+    }
+  }
+
+  cell_allow(role_id: string, permission_key: string): boolean {
+    const cell = this.rbac_cells().find(c => c.role_id === role_id && c.permission_key === permission_key && c.feature_id === null);
+    return !!cell?.allow;
+  }
+
+  can_add_role(): boolean {
+    return !this.role_busy() && this.new_role_name().trim().length >= 1;
+  }
+
+  async add_role(): Promise<void> {
+    const id = this.project_id();
+    if (!id || !this.can_add_role()) return;
+    this.role_error.set(null);
+    this.role_busy.set(true);
+    try {
+      await this.projects.create_role(id, {
+        name:        this.new_role_name().trim(),
+        description: this.new_role_desc().trim() || undefined,
+      });
+      this.new_role_name.set('');
+      this.new_role_desc.set('');
+      await this.load_roles_and_matrix(id);
+    } catch (e: any) {
+      this.role_error.set(e?.message ?? 'Failed to create role');
+    } finally {
+      this.role_busy.set(false);
+    }
+  }
+
+  start_edit_role(role: ProjectRoleItem): void {
+    this.editing_role_id.set(role.id);
+    this.editing_role_name.set(role.name);
+    this.editing_role_desc.set(role.description ?? '');
+  }
+
+  cancel_edit_role(): void {
+    this.editing_role_id.set(null);
+    this.editing_role_name.set('');
+    this.editing_role_desc.set('');
+  }
+
+  async save_edit_role(): Promise<void> {
+    const id      = this.project_id();
+    const role_id = this.editing_role_id();
+    if (!id || !role_id) return;
+    this.role_error.set(null);
+    this.role_busy.set(true);
+    try {
+      await this.projects.update_role(id, role_id, {
+        name:        this.editing_role_name().trim(),
+        description: this.editing_role_desc().trim() || null,
+      });
+      this.cancel_edit_role();
+      await this.load_roles_and_matrix(id);
+    } catch (e: any) {
+      this.role_error.set(e?.message ?? 'Failed to update role');
+    } finally {
+      this.role_busy.set(false);
+    }
+  }
+
+  async delete_role(role: ProjectRoleItem): Promise<void> {
+    const id = this.project_id();
+    if (!id) return;
+    if (!confirm(`Delete role "${role.name}"? Its permission grants will also be removed.`)) return;
+    this.role_error.set(null);
+    this.role_busy.set(true);
+    try {
+      await this.projects.delete_role(id, role.id);
+      await this.load_roles_and_matrix(id);
+    } catch (e: any) {
+      this.role_error.set(e?.message ?? 'Failed to delete role');
+    } finally {
+      this.role_busy.set(false);
+    }
+  }
+
+  async toggle_permission(role_id: string, permission_key: string): Promise<void> {
+    const id = this.project_id();
+    if (!id) return;
+    const next_allow = !this.cell_allow(role_id, permission_key);
+    try {
+      if (next_allow) {
+        await this.projects.set_role_permission(id, { role_id, permission_key, allow: true });
+      } else {
+        await this.projects.unset_role_permission(id, { role_id, permission_key });
+      }
+      await this.load_roles_and_matrix(id);
+    } catch (e: any) {
+      this.role_error.set(e?.message ?? 'Failed to toggle permission');
+    }
+  }
+
+  async continue_to_step4(): Promise<void> {
+    const id = this.project_id();
+    if (!id) return;
+    this.error.set(null);
+    this.step3_loading.set(true);
+    try {
+      await this.projects.mark_step(id, 3, 'done');
+      const next = new Map(this.step_statuses());
+      next.set(3, 'done');
+      this.step_statuses.set(next);
+      this.active_step.set(4);
+      await this.router.navigate(['/app/projects', id, 'wizard'], { queryParams: { step: 4 } });
+    } catch (e: any) {
+      this.error.set(e?.message ?? 'Failed to mark step 3 done');
+    } finally {
+      this.step3_loading.set(false);
     }
   }
 

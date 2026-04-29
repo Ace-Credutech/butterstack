@@ -110,16 +110,17 @@ Stepper events, document upload event, role events, sessions/AI, skeleton refine
 After Step 2 closes (`project.init.step {step:2, status:'done'}`), the system auto-builds an "initial context" artifact.
 
 ### Backend
-- [ ] Migration: `project_initial_context` (project_id PK, json_payload JSONB, markdown_text TEXT, prompt_version_id, generated_at, generated_by_event_id)
-- [ ] Worker: `initial-context.worker` — listens for step 2 done, reads all docs + passages, calls AI via `invoke_ai()` (helper from Phase E2), persists JSON + markdown
-- [ ] API: `GET /api/projects/:id/initial-context` (returns both forms)
-- [ ] **D-2**: every JSON entry includes `source: { document_id, passage_id }` so traceability is preserved.
+- [x] Migration 071: `project_initial_context` (project_id PK, status, json_payload JSONB, markdown_text TEXT, prompt_run_id, generated_at, generated_by_event_id, error_message)
+- [x] Worker: `initial-context.worker` — queued from `project.init.step` handler when step 2 → done; calls AI via `run_prompt('project.initial-context')`, persists JSON + markdown, broadcasts WS `project.initial-context.status`
+- [x] API: `GET /api/projects/:id/initial-context` (returns status + json + markdown)
+- [x] **D-2**: every JSON bullet includes `source_document_ids: string[]` so traceability is preserved (passage-level source IDs deferred — only document-level for now).
+- [ ] (Deferred until Phase E2) Migrate the `run_prompt` call to the unified `invoke_ai()` helper + `ai_call_log` row.
 
 ### Frontend
-- [x] After Step 2 done, show "Building initial context…" indicator; on completion render the generated markdown read-only as a sanity check before Step 4.
+- [x] After Step 2 done, show "Building initial context…" indicator; on completion render the generated markdown read-only as a sanity check before Step 4. Subscribes to WS `project.initial-context.status` for live updates.
 
 ### Done Criteria
-- After step 2 closes, initial context appears in DB in both JSON and markdown form, with source IDs on every entry.
+- ✅ After step 2 closes, initial context appears in DB in both JSON and markdown form, with `source_document_ids` on every bullet.
 
 ---
 
@@ -128,20 +129,21 @@ After Step 2 closes (`project.init.step {step:2, status:'done'}`), the system au
 > **DECISION-1 pending**: this phase may run **before** AI Clarification (current spec) or **after** it (boss's plan). Default below assumes spec order; revisit on user call.
 
 ### Backend
-- [ ] Migration: `project_roles` table (`id`, `project_id`, `name`, `description`, `created_at`, `created_by`)
-- [ ] Model: `ProjectRole`
-- [ ] Handlers: `role.create`, `role.update`, `role.delete`
-- [ ] API: `GET /api/projects/:id/roles`
-- [ ] **D-5**: Migration: `project_role_permissions` (id, project_id, role_id, feature_id, permission_key, allow boolean). Note: `feature_id` may not exist until Phase F — start with permission_key only, add feature_id when modules exist.
-- [ ] **D-5**: Handlers: `role.permission.set`, `role.permission.unset`
-- [ ] **D-5**: API: `GET /api/projects/:id/rbac-matrix` (joined view of roles × features × permissions)
+- [x] Migration 072: `project_roles` table (`id`, `project_id`, `name`, `description`, soft-delete via `deleted_at`, `created_by`/`updated_by`, unique on `(project_id, lower(name))` where not deleted)
+- [x] Model: `ProjectRole` (paranoid)
+- [x] Handlers: `role.create`, `role.update`, `role.delete` (cascades permissions)
+- [x] API: `GET /api/projects/:id/roles`
+- [x] **D-5**: Migration 073: `project_role_permissions` (id, project_id, role_id, permission_key, feature_id nullable, allow boolean). `feature_id` is nullable; pre-Phase F all rows live with `feature_id = NULL`. Two unique partial indexes cover both null and non-null feature_id cases.
+- [x] **D-5**: Handlers: `role.permission.set` (upsert), `role.permission.unset` (delete cell)
+- [x] **D-5**: API: `GET /api/projects/:id/rbac-matrix` (returns `roles`, `permission_keys`, `cells`)
 
 ### Frontend
-- [ ] Step 3 panel: add-role input, role chips with edit/delete
-- [ ] **D-5**: RBAC matrix editor — table of role × permission, toggle cells. Until features exist, show only permission-key column. Phase F adds the feature-column dimension.
+- [x] Step 3 panel: add-role input, role chips with inline edit/delete
+- [x] **D-5**: RBAC matrix editor — table of role × `DEFAULT_PERMISSION_KEYS` (`view`, `create`, `edit`, `delete`, `approve`, `export`, `manage_members`), toggle cells. Phase F will replace static keys with feature-driven columns.
+- [x] "Continue to Step 4" button — fires `project.init.step {step:3, status:'done'}` → navigates to step 4
 
 ### Done Criteria
-- User adds Admin/Teacher/Student roles AND sets at least one permission per role; matrix persists across reload.
+- ✅ User adds Admin/Teacher/Student roles AND toggles permissions per role; both persist across reload via `GET /roles` + `GET /rbac-matrix`.
 
 ---
 

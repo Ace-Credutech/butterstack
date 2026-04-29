@@ -90,6 +90,43 @@ export interface ListProjectsResponse {
   };
 }
 
+export interface ProjectRoleItem {
+  id:          string;
+  project_id:  string;
+  name:        string;
+  description: string | null;
+  created_at:  string;
+  updated_at:  string;
+}
+
+export interface ListRolesResponse {
+  code:    number;
+  message: string;
+  data: {
+    project_id: string;
+    items:      ProjectRoleItem[];
+  };
+}
+
+export interface RbacMatrixCell {
+  id:             string;
+  role_id:        string;
+  permission_key: string;
+  feature_id:     string | null;
+  allow:          boolean;
+}
+
+export interface RbacMatrixResponse {
+  code:    number;
+  message: string;
+  data: {
+    project_id:      string;
+    roles:           { id: string; name: string }[];
+    permission_keys: string[];
+    cells:           RbacMatrixCell[];
+  };
+}
+
 const make_uuid = (): string => crypto.randomUUID();
 
 @Injectable({ providedIn: 'root' })
@@ -144,5 +181,58 @@ export class ProjectsService {
 
   get_initial_context(project_id: string): Promise<InitialContextResult> {
     return this.http.get<InitialContextResult>(`/projects/${project_id}/initial-context`);
+  }
+
+  list_roles(project_id: string): Promise<ListRolesResponse> {
+    return this.http.get<ListRolesResponse>(`/projects/${project_id}/roles`);
+  }
+
+  get_rbac_matrix(project_id: string): Promise<RbacMatrixResponse> {
+    return this.http.get<RbacMatrixResponse>(`/projects/${project_id}/rbac-matrix`);
+  }
+
+  create_role(project_id: string, payload: { name: string; description?: string }): Promise<PostEventResponse<{ role: ProjectRoleItem }>> {
+    return this.post_event<{ name: string; description?: string }, { role: ProjectRoleItem }>({
+      type:    'role.create',
+      payload: { name: payload.name, description: payload.description },
+      scope:   { project_id },
+      source:  'user',
+    });
+  }
+
+  update_role(project_id: string, role_id: string, patch: { name?: string; description?: string | null }): Promise<PostEventResponse<{ role: ProjectRoleItem }>> {
+    return this.post_event<{ role_id: string; name?: string; description?: string | null }, { role: ProjectRoleItem }>({
+      type:    'role.update',
+      payload: { role_id, ...patch },
+      scope:   { project_id },
+      source:  'user',
+    });
+  }
+
+  delete_role(project_id: string, role_id: string): Promise<PostEventResponse<{ role: { id: string; deleted: boolean } }>> {
+    return this.post_event<{ role_id: string }, { role: { id: string; deleted: boolean } }>({
+      type:    'role.delete',
+      payload: { role_id },
+      scope:   { project_id },
+      source:  'user',
+    });
+  }
+
+  set_role_permission(project_id: string, payload: { role_id: string; permission_key: string; allow: boolean; feature_id?: string | null }): Promise<PostEventResponse<{ role_permission: RbacMatrixCell }>> {
+    return this.post_event<{ role_id: string; permission_key: string; feature_id?: string | null; allow: boolean }, { role_permission: RbacMatrixCell }>({
+      type:    'role.permission.set',
+      payload: { role_id: payload.role_id, permission_key: payload.permission_key, feature_id: payload.feature_id ?? null, allow: payload.allow },
+      scope:   { project_id },
+      source:  'user',
+    });
+  }
+
+  unset_role_permission(project_id: string, payload: { role_id: string; permission_key: string; feature_id?: string | null }): Promise<PostEventResponse> {
+    return this.post_event<{ role_id: string; permission_key: string; feature_id?: string | null }>({
+      type:    'role.permission.unset',
+      payload: { role_id: payload.role_id, permission_key: payload.permission_key, feature_id: payload.feature_id ?? null },
+      scope:   { project_id },
+      source:  'user',
+    });
   }
 }

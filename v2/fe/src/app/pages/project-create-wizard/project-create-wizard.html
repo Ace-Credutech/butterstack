@@ -197,7 +197,136 @@
               }
             }
             @case (3) {
-              <div class="text-sm text-gray-500 italic">Roles step — coming next phase. (Phase C)</div>
+              @if (!project_id()) {
+                <div class="text-sm text-gray-500 italic">Save Step 1 first to start adding roles.</div>
+              } @else {
+                <div class="space-y-6">
+                  <bs-error-alert [message]="role_error()" />
+
+                  <div class="rounded-xl border border-gray-200 bg-white p-5">
+                    <div class="mb-4">
+                      <h3 class="text-sm font-semibold text-gray-900">Add a role</h3>
+                      <p class="text-xs text-gray-500 mt-0.5">Personas inside the app you're building (e.g. Admin, Teacher, Student). Not the humans collaborating on this project — those go in Step 5.</p>
+                    </div>
+
+                    <div class="grid grid-cols-12 gap-3">
+                      <div class="col-span-12 md:col-span-4">
+                        <bs-form-field
+                          label="Role name"
+                          placeholder="e.g. Teacher"
+                          [value]="new_role_name()"
+                          (valueChange)="new_role_name.set($event)"
+                          [required]="true"
+                        />
+                      </div>
+                      <div class="col-span-12 md:col-span-6">
+                        <bs-form-field
+                          label="Description (optional)"
+                          placeholder="e.g. Creates lessons and grades students"
+                          [value]="new_role_desc()"
+                          (valueChange)="new_role_desc.set($event)"
+                        />
+                      </div>
+                      <div class="col-span-12 md:col-span-2 flex md:items-end">
+                        <bs-button
+                          type="button"
+                          [disabled]="!can_add_role()"
+                          [loading]="role_busy()"
+                          (click)="add_role()">
+                          Add role
+                        </bs-button>
+                      </div>
+                    </div>
+                  </div>
+
+                  @if (roles().length === 0) {
+                    <div class="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center text-sm text-gray-500">
+                      No roles yet. Add at least one above.
+                    </div>
+                  } @else {
+                    <div class="rounded-xl border border-gray-200 bg-white p-5">
+                      <h3 class="text-sm font-semibold text-gray-900 mb-3">Defined roles</h3>
+                      <div class="flex flex-wrap gap-2">
+                        @for (r of roles(); track r.id) {
+                          @if (editing_role_id() === r.id) {
+                            <div class="flex items-center gap-2 border border-green-300 bg-green-50 rounded-full pl-3 pr-1 py-1">
+                              <input
+                                class="text-sm bg-transparent border-none outline-none w-32"
+                                [value]="editing_role_name()"
+                                (input)="editing_role_name.set($any($event.target).value)"
+                              />
+                              <input
+                                class="text-xs text-gray-500 bg-transparent border-l border-green-300 pl-2 outline-none w-48"
+                                [placeholder]="'description'"
+                                [value]="editing_role_desc()"
+                                (input)="editing_role_desc.set($any($event.target).value)"
+                              />
+                              <button type="button" class="text-xs text-green-700 hover:underline px-1" (click)="save_edit_role()">Save</button>
+                              <button type="button" class="text-xs text-gray-500 hover:underline px-1" (click)="cancel_edit_role()">Cancel</button>
+                            </div>
+                          } @else {
+                            <div class="group inline-flex items-center gap-2 border border-gray-200 rounded-full pl-3 pr-1 py-1 bg-white hover:border-green-300 transition">
+                              <span class="text-sm font-medium text-gray-800">{{ r.name }}</span>
+                              @if (r.description) {
+                                <span class="text-xs text-gray-400">— {{ r.description }}</span>
+                              }
+                              <button type="button" class="text-[10px] text-gray-400 hover:text-green-700 px-1" (click)="start_edit_role(r)">edit</button>
+                              <button type="button" class="text-[10px] text-gray-400 hover:text-red-600 px-1" (click)="delete_role(r)">×</button>
+                            </div>
+                          }
+                        }
+                      </div>
+                    </div>
+
+                    <div class="rounded-xl border border-gray-200 bg-white p-5">
+                      <div class="mb-3">
+                        <h3 class="text-sm font-semibold text-gray-900">RBAC matrix</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Toggle which permissions each role gets. Feature columns will be added in Step 6 once the module skeleton is approved.</p>
+                      </div>
+
+                      <div class="overflow-x-auto">
+                        <table class="min-w-full text-sm">
+                          <thead>
+                            <tr class="border-b border-gray-200">
+                              <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide py-2 pr-4">Permission</th>
+                              @for (r of roles(); track r.id) {
+                                <th class="text-center text-xs font-semibold text-gray-700 py-2 px-3">{{ r.name }}</th>
+                              }
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for (key of permission_keys(); track key) {
+                              <tr class="border-b border-gray-100">
+                                <td class="py-2 pr-4 font-mono text-xs text-gray-700">{{ key }}</td>
+                                @for (r of roles(); track r.id) {
+                                  <td class="text-center py-2 px-3">
+                                    <input
+                                      type="checkbox"
+                                      class="w-4 h-4 accent-green-600 cursor-pointer"
+                                      [checked]="cell_allow(r.id, key)"
+                                      (change)="toggle_permission(r.id, key)"
+                                    />
+                                  </td>
+                                }
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  }
+
+                  <div class="flex items-center justify-end pt-2">
+                    <bs-button
+                      type="button"
+                      [disabled]="roles().length === 0"
+                      [loading]="step3_loading()"
+                      (click)="continue_to_step4()">
+                      Continue to Step 4
+                    </bs-button>
+                  </div>
+                </div>
+              }
             }
             @case (4) {
               <div class="text-sm text-gray-500 italic">AI clarification step — coming next phase. (Phase E)</div>

@@ -13,6 +13,12 @@ export const routes: Routes = [
       { path: 'forgot-password', loadComponent: () => import('./pages/forgot-password/forgot-password').then(m => m.ForgotPassword) },
       { path: 'reset-password',  loadComponent: () => import('./pages/reset-password/reset-password').then(m => m.ResetPassword) },
       { path: 'app/projects',  loadComponent: () => import('./pages/projects/projects').then(m => m.Projects),   data: { authenticated: true } },
+      { path: 'app/projects/new',
+        loadComponent: () => import('./pages/project-create-wizard/project-create-wizard').then(m => m.ProjectCreateWizard),
+        data: { authenticated: true } },
+      { path: 'app/projects/:id/wizard',
+        loadComponent: () => import('./pages/project-create-wizard/project-create-wizard').then(m => m.ProjectCreateWizard),
+        data: { authenticated: true } },
       { path: 'app/documents', loadComponent: () => import('./pages/documents/documents').then(m => m.Documents), data: { authenticated: true } },
       {
         path: 'admin/users',

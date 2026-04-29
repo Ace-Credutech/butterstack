@@ -28,7 +28,7 @@ const list_projects_function = async (data: list_projects_function_params): Prom
     code:    200,
     message: 'projects',
     data: {
-      items:       page.map(p => ({ id: p.id, name: p.name, slug: p.slug, brief: p.brief, created_at: p.created_at })),
+      items:       page.map(p => ({ id: p.id, name: p.name, slug: p.slug, brief: p.brief, status: p.status, created_at: p.created_at })),
       next_cursor,
     },
   };

@@ -27,6 +27,12 @@ import { create_role_details }   from '@apis/admin/create-role/create-role.detai
 import { update_role_details }   from '@apis/admin/update-role/update-role.details';
 import { bulk_update_users_details } from '@apis/admin/bulk-update-users/bulk-update-users.details';
 
+import { list_projects_details }   from '@apis/projects/list-projects/list-projects.details';
+import { get_init_state_details }  from '@apis/projects/get-init-state/get-init-state.details';
+
+import { post_event_details }      from '@apis/events/post-event/post-event.details';
+import { get_event_details }       from '@apis/events/get-event/get-event.details';
+
 export const api_list: ApiDetails[] = [
   health_live_details,
   health_ready_details,
@@ -52,4 +58,10 @@ export const api_list: ApiDetails[] = [
   create_role_details,
   update_role_details,
   bulk_update_users_details,
+
+  list_projects_details,
+  get_init_state_details,
+
+  post_event_details,
+  get_event_details,
 ];

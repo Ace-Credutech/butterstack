@@ -1,13 +1,49 @@
 <div class="min-h-screen bg-gray-50">
   <bs-header />
 
-  <section class="max-w-3xl mx-auto p-10 space-y-6">
-    <h1 bsGravity [radius]="200" class="text-3xl font-bold text-gray-900">Projects</h1>
-    <div bsGravity [radius]="260" class="border border-gray-100 rounded-xl p-6 bg-white shadow-sm">
-      <h2 class="text-sm font-semibold text-gray-900 mb-3">Current user (from GlobalService)</h2>
-      @if (!global.loaded()) { <p class="text-gray-400 text-sm">Loading…</p> }
-      @else if (global.current_user()) { <pre class="text-xs bg-gray-50 p-3 rounded-lg border border-gray-100 overflow-x-auto">{{ global.current_user() | json }}</pre> }
-      @else { <p class="text-red-600 text-sm">No user in context.</p> }
+  <section class="max-w-4xl mx-auto p-10 space-y-6">
+    <div class="flex items-center justify-between">
+      <h1 bsGravity [radius]="200" class="text-3xl font-bold text-gray-900">Projects</h1>
+      <bs-button (clicked)="go_to_new()">+ New project</bs-button>
     </div>
+
+    @if (loading()) {
+      <p class="text-gray-400 text-sm">Loading projects…</p>
+    } @else if (items().length === 0) {
+      <div class="border border-dashed border-gray-200 rounded-xl p-10 text-center bg-white">
+        <h2 class="text-base font-semibold text-gray-900">No projects yet</h2>
+        <p class="text-sm text-gray-500 mt-1">Create your first project to get started.</p>
+        <div class="mt-4 inline-block">
+          <bs-button (clicked)="go_to_new()">Create your first project</bs-button>
+        </div>
+      </div>
+    } @else {
+      <div class="space-y-2">
+        @for (p of items(); track p.id) {
+          <button bsGravity [radius]="200" (click)="resume(p)" class="w-full text-left border border-gray-100 rounded-xl p-4 bg-white shadow-sm hover:border-green-300 transition">
+            <div class="flex items-center justify-between">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <div class="text-sm font-semibold text-gray-900 truncate">{{ p.name }}</div>
+                  @if (p.status === 'draft') {
+                    <span class="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700">Draft</span>
+                  } @else if (p.status === 'archived') {
+                    <span class="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-gray-100 border border-gray-200 text-gray-500">Archived</span>
+                  }
+                </div>
+                <div class="text-xs text-gray-500 mt-0.5">{{ p.slug }}</div>
+                @if (p.brief) { <div class="text-xs text-gray-600 mt-2 line-clamp-2">{{ p.brief }}</div> }
+              </div>
+              <div class="text-xs text-gray-400 shrink-0 ml-3">{{ p.created_at | date:'medium' }}</div>
+            </div>
+          </button>
+        }
+      </div>
+    }
+
+    <details class="border border-gray-100 rounded-xl p-4 bg-white text-xs text-gray-500">
+      <summary class="cursor-pointer">debug: current_user</summary>
+      @if (global.current_user()) { <pre class="mt-3 bg-gray-50 p-3 rounded-lg border border-gray-100 overflow-x-auto">{{ global.current_user() | json }}</pre> }
+    </details>
   </section>
 </div>

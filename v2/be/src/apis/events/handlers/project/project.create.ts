@@ -21,6 +21,7 @@ const handler: EventHandler<Payload> = async (payload, scope, ctx, transaction) 
     name:     payload.name,
     slug:     payload.slug,
     brief:    payload.brief ?? null,
+    status:   'draft',
   } as any, { transaction });
 
   await log_activity({
@@ -28,11 +29,11 @@ const handler: EventHandler<Payload> = async (payload, scope, ctx, transaction) 
     action:      'project.create',
     entity:      'Project',
     entity_id:   project.id,
-    description: `Created project ${project.name}`,
+    description: `Created project ${project.name} (draft)`,
   }, transaction);
 
   return {
-    state_delta: { project: { id: project.id, name: project.name, slug: project.slug } },
+    state_delta: { project: { id: project.id, name: project.name, slug: project.slug, status: project.status } },
     affected_entities: { projects: [project.id] },
   };
 };

@@ -3,6 +3,8 @@ import { sequelize } from '@setup/sequelize';
 import { Organisation } from './organisation.model';
 import { User } from './user.model';
 
+export type ProjectStatus = 'draft' | 'active' | 'archived';
+
 export class Project extends Model<InferAttributes<Project>, InferCreationAttributes<Project>> {
   declare id:         CreationOptional<string>;
   declare org_id:     ForeignKey<Organisation['id']>;
@@ -10,6 +12,7 @@ export class Project extends Model<InferAttributes<Project>, InferCreationAttrib
   declare name:       string;
   declare slug:       string;
   declare brief:      CreationOptional<string | null>;
+  declare status:     CreationOptional<ProjectStatus>;
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
   declare deleted_at: CreationOptional<Date | null>;
@@ -22,6 +25,7 @@ Project.init({
   name:       { type: DataTypes.STRING, allowNull: false },
   slug:       { type: DataTypes.STRING, allowNull: false, unique: true },
   brief:      { type: DataTypes.TEXT,   allowNull: true },
+  status:     { type: DataTypes.STRING, allowNull: false, defaultValue: 'draft' },
   created_at: DataTypes.DATE,
   updated_at: DataTypes.DATE,
   deleted_at: DataTypes.DATE,

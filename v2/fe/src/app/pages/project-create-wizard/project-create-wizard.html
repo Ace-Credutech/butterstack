@@ -1,0 +1,101 @@
+<div class="min-h-screen bg-gray-50">
+  <bs-header />
+
+  <section class="max-w-6xl mx-auto p-8">
+    <div class="mb-6">
+      <div class="flex items-center gap-3">
+        <h1 class="text-2xl font-bold text-gray-900">
+          @if (project_name()) { {{ project_name() }} } @else { Create project }
+        </h1>
+        @if (project_status() === 'draft') {
+          <span class="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700">Draft</span>
+        }
+      </div>
+      <p class="text-sm text-gray-500 mt-1">Six steps. You can leave and resume anytime. Project stays in draft until you submit at the end.</p>
+    </div>
+
+    <div class="grid grid-cols-12 gap-6">
+      <aside class="col-span-12 md:col-span-4 lg:col-span-3 space-y-2">
+        @for (s of steps; track s.number) {
+          <button
+            type="button"
+            [disabled]="!project_id() && s.number !== 1"
+            [class]="'w-full text-left border rounded-xl p-4 transition disabled:opacity-50 disabled:cursor-not-allowed ' + step_classes(s.number)"
+            (click)="jump_to_step(s.number)">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="text-xs text-gray-400 font-mono">Step {{ s.number }}</div>
+                <div class="text-sm font-semibold text-gray-900">{{ s.title }}</div>
+                <div class="text-xs text-gray-500 mt-1">{{ s.subtitle }}</div>
+              </div>
+              @if (step_badge(s.number)) {
+                <span class="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-white border border-gray-200 text-gray-600">{{ step_badge(s.number) }}</span>
+              }
+            </div>
+          </button>
+        }
+      </aside>
+
+      <main class="col-span-12 md:col-span-8 lg:col-span-9">
+        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+          <div class="mb-4">
+            <div class="text-xs text-gray-400 font-mono">Step {{ active_step_def().number }} / 6</div>
+            <h2 class="text-lg font-semibold text-gray-900 mt-1">{{ active_step_def().title }}</h2>
+            <p class="text-sm text-gray-500">{{ active_step_def().subtitle }}</p>
+          </div>
+
+          <bs-error-alert [message]="error()" />
+
+          @switch (active_step()) {
+            @case (1) {
+              <form (ngSubmit)="submit_step1()" class="space-y-4">
+                <bs-form-field
+                  label="Project name"
+                  placeholder="e.g. Course planner"
+                  [value]="name()"
+                  (valueChange)="on_name_change($event)"
+                  [required]="true"
+                />
+                <bs-form-field
+                  label="Slug"
+                  placeholder="auto-generated from name"
+                  [value]="slug()"
+                  (valueChange)="on_slug_change($event)"
+                  [required]="true"
+                />
+                <div>
+                  <bs-label>Brief</bs-label>
+                  <bs-textarea
+                    placeholder="One paragraph describing what you want to build."
+                    [rows]="6"
+                    [(value)]="brief"
+                  />
+                </div>
+                <div class="pt-2">
+                  <bs-button type="submit" [disabled]="!can_submit_step1()" [loading]="loading()">
+                    @if (project_id()) { Update brief } @else { Create project }
+                  </bs-button>
+                </div>
+              </form>
+            }
+            @case (2) {
+              <div class="text-sm text-gray-500 italic">Documents step — coming next phase. (Phase B)</div>
+            }
+            @case (3) {
+              <div class="text-sm text-gray-500 italic">Roles step — coming next phase. (Phase C)</div>
+            }
+            @case (4) {
+              <div class="text-sm text-gray-500 italic">AI clarification step — coming next phase. (Phase E)</div>
+            }
+            @case (5) {
+              <div class="text-sm text-gray-500 italic">Members step — coming next phase. (Phase D)</div>
+            }
+            @case (6) {
+              <div class="text-sm text-gray-500 italic">Module skeleton step — coming next phase. (Phase F)</div>
+            }
+          }
+        </div>
+      </main>
+    </div>
+  </section>
+</div>

@@ -79,7 +79,122 @@
               </form>
             }
             @case (2) {
-              <div class="text-sm text-gray-500 italic">Documents step — coming next phase. (Phase B)</div>
+              @if (!project_id()) {
+                <div class="text-sm text-gray-500 italic">Save Step 1 first to start adding documents.</div>
+              } @else {
+                <div class="space-y-6">
+                  <div class="rounded-xl border border-gray-200 bg-white p-5">
+                    <div class="flex items-start justify-between gap-4 mb-4">
+                      <div>
+                        <h3 class="text-sm font-semibold text-gray-900">Paste content</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Paste a brief, notes, or any reference text. Stored as a virtual document.</p>
+                      </div>
+                    </div>
+
+                    <bs-error-alert [message]="paste_error()" />
+
+                    <div class="space-y-3">
+                      <bs-form-field
+                        label="Title"
+                        placeholder="e.g. Product brief from boss email"
+                        [value]="paste_title()"
+                        (valueChange)="paste_title.set($event)"
+                        [required]="true"
+                      />
+                      <div>
+                        <bs-label>Purpose</bs-label>
+                        <select
+                          class="w-full text-sm border border-gray-200 rounded-md px-3 py-2 text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-gray-300"
+                          [value]="paste_purpose()"
+                          (change)="paste_purpose.set($any($event.target).value)">
+                          @for (p of doc_purposes; track p.value) {
+                            <option [value]="p.value">{{ p.label }}</option>
+                          }
+                        </select>
+                      </div>
+                      <div>
+                        <bs-label>Content</bs-label>
+                        <bs-textarea
+                          placeholder="Paste raw text here…"
+                          [rows]="8"
+                          [(value)]="paste_content"
+                        />
+                      </div>
+                      <div class="flex items-center justify-end gap-2 pt-1">
+                        <bs-button
+                          type="button"
+                          [disabled]="!can_save_paste()"
+                          [loading]="pasting()"
+                          (click)="save_paste()">
+                          Save paste
+                        </bs-button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <bs-documents-panel
+                    #docsPanel
+                    [entity_type]="'project'"
+                    [entity_id]="project_id()"
+                  />
+
+                  <div class="flex items-center justify-end pt-2">
+                    <bs-button
+                      type="button"
+                      [loading]="step2_loading()"
+                      (click)="continue_to_step3()">
+                      Continue to Step 3
+                    </bs-button>
+                  </div>
+
+                  @if (status_for(2) === 'done') {
+                    <div class="rounded-xl border border-gray-200 bg-gray-50 p-5 space-y-3">
+                      <div class="flex items-center gap-2">
+                        <h3 class="text-sm font-semibold text-gray-900">Initial Context</h3>
+                        @switch (initial_ctx_status()) {
+                          @case ('checking') {
+                            <span class="flex items-center gap-1 text-xs text-gray-500">
+                              <span class="inline-block w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></span>
+                              Checking…
+                            </span>
+                          }
+                          @case ('building') {
+                            <span class="flex items-center gap-1 text-xs text-gray-500">
+                              <span class="inline-block w-3 h-3 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></span>
+                              Building…
+                            </span>
+                          }
+                          @case ('ready') {
+                            <span class="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-green-50 border border-green-200 text-green-700">Ready</span>
+                          }
+                          @case ('failed') {
+                            <span class="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-red-50 border border-red-200 text-red-700">Failed</span>
+                          }
+                        }
+                      </div>
+
+                      @if (initial_ctx_status() === 'checking' || initial_ctx_status() === 'building') {
+                        <p class="text-sm text-gray-500">Generating a contextual summary from your documents and brief. This takes 10–30 seconds…</p>
+                      }
+                      @if (initial_ctx_status() === 'failed') {
+                        <p class="text-sm text-red-600">{{ initial_ctx_error() ?? 'Build failed — you can still proceed.' }}</p>
+                      }
+                      @if (initial_ctx_status() === 'ready' && initial_ctx_markdown()) {
+                        <pre class="text-xs text-gray-700 font-mono whitespace-pre-wrap bg-white border border-gray-100 rounded-lg p-4 max-h-96 overflow-y-auto">{{ initial_ctx_markdown() }}</pre>
+                      }
+                    </div>
+
+                    <div class="flex items-center justify-end pt-2">
+                      <bs-button
+                        type="button"
+                        [disabled]="initial_ctx_status() === 'checking' || initial_ctx_status() === 'building'"
+                        (click)="proceed_to_step3()">
+                        Proceed to Step 3
+                      </bs-button>
+                    </div>
+                  }
+                </div>
+              }
             }
             @case (3) {
               <div class="text-sm text-gray-500 italic">Roles step — coming next phase. (Phase C)</div>

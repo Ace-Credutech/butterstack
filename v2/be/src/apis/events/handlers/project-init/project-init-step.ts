@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { ProjectInitStep, ProjectInitStepStatus } from '@models/project-init-step.model';
+import { ProjectInitialContext } from '@models/project-initial-context.model';
 import { log_activity } from '@config/common/activity-log-function';
+import { get_queue } from '@setup/queue/queue';
+import type { InitialContextBuildPayload } from '@src/workers/initial-context/initial-context.worker';
 import { EventHandlerDetails, EventHandler } from '../../event.types';
 
 const payload_schema = z.object({
@@ -34,6 +37,34 @@ const upsert_step = async (
   return { row: created, prev_status: null as ProjectInitStepStatus | null };
 };
 
+// When step 2 (Documents) transitions into 'done', kick off the Phase B.5
+// initial-context build. Handled outside the txn — failures here must not
+// roll back the step update. Idempotency: BullMQ job_id = `initial-context-{project_id}`
+// + the worker's internal route checks status='ready'/'building' and short-circuits.
+const queue_initial_context_if_step2_done = (
+  args: { project_id: string; user_id: string; step: number; status: ProjectInitStepStatus; prev_status: ProjectInitStepStatus | null; trace_id: string },
+): void => {
+  if (args.step !== 2 || args.status !== 'done') return;
+
+  // Pre-create the row in 'pending' so the FE can show "Building…" before the worker picks up.
+  void ProjectInitialContext.findOrCreate({
+    where:    { project_id: args.project_id },
+    defaults: { project_id: args.project_id, status: 'pending' } as any,
+  }).then(([row, created]) => {
+    // If it already exists in 'ready'/'failed' from a prior run, reset to pending so we rebuild.
+    if (!created && row.status !== 'building') {
+      return row.update({ status: 'pending', error_message: null });
+    }
+  }).catch(() => {});
+
+  void get_queue().publish<InitialContextBuildPayload>(
+    'projects',
+    'project.initial-context.build',
+    { project_id: args.project_id, user_id: args.user_id, trace_id: args.trace_id },
+    { delay_ms: 1000, job_id: `initial-context-${args.project_id}` },
+  ).catch(() => {});
+};
+
 const handler: EventHandler<Payload> = async (payload, scope, ctx, transaction) => {
   const { row, prev_status } = await upsert_step(
     scope.project_id,
@@ -50,6 +81,15 @@ const handler: EventHandler<Payload> = async (payload, scope, ctx, transaction) 
     entity_id:   `${scope.project_id}:${payload.step}`,
     description: `Step ${payload.step} → ${payload.status}`,
   }, transaction);
+
+  queue_initial_context_if_step2_done({
+    project_id:  scope.project_id,
+    user_id:     ctx.actor.id,
+    step:        row.step,
+    status:      row.status as ProjectInitStepStatus,
+    prev_status,
+    trace_id:    ctx.trace_id,
+  });
 
   return {
     state_delta: {

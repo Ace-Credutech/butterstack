@@ -37,6 +37,22 @@ export interface PostEventResponse<D = any> {
 export type StepStatus    = 'in-progress' | 'done' | 'stale' | null;
 export type ProjectStatus = 'draft' | 'active' | 'archived';
 
+export type InitialContextStatus = 'absent' | 'pending' | 'building' | 'ready' | 'failed';
+
+export interface InitialContextResult {
+  code:    number;
+  message: string;
+  data: {
+    project_id:    string;
+    status:        InitialContextStatus;
+    json_payload:  unknown | null;
+    markdown_text: string | null;
+    generated_at:  string | null;
+    prompt_run_id: string | null;
+    error_message: string | null;
+  };
+}
+
 export interface InitStateStep {
   step:       number;
   status:     StepStatus;
@@ -115,5 +131,18 @@ export class ProjectsService {
       scope:   { project_id },
       source:  'user',
     });
+  }
+
+  paste_document(project_id: string, payload: { title: string; content: string; purpose?: string }): Promise<PostEventResponse<{ document: { id: string; kind: string; filename: string; size: number; link_id: string } }>> {
+    return this.post_event<{ title: string; content: string; purpose?: string }, { document: { id: string; kind: string; filename: string; size: number; link_id: string } }>({
+      type:    'project.document.paste',
+      payload: { title: payload.title, content: payload.content, purpose: payload.purpose ?? 'other' },
+      scope:   { project_id },
+      source:  'user',
+    });
+  }
+
+  get_initial_context(project_id: string): Promise<InitialContextResult> {
+    return this.http.get<InitialContextResult>(`/projects/${project_id}/initial-context`);
   }
 }

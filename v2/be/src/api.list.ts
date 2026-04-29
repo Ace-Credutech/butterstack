@@ -27,8 +27,10 @@ import { create_role_details }   from '@apis/admin/create-role/create-role.detai
 import { update_role_details }   from '@apis/admin/update-role/update-role.details';
 import { bulk_update_users_details } from '@apis/admin/bulk-update-users/bulk-update-users.details';
 
-import { list_projects_details }   from '@apis/projects/list-projects/list-projects.details';
-import { get_init_state_details }  from '@apis/projects/get-init-state/get-init-state.details';
+import { list_projects_details }            from '@apis/projects/list-projects/list-projects.details';
+import { get_init_state_details }           from '@apis/projects/get-init-state/get-init-state.details';
+import { list_project_documents_details }   from '@apis/projects/list-project-documents/list-project-documents.details';
+import { get_initial_context_details }      from '@apis/projects/get-initial-context/get-initial-context.details';
 
 import { post_event_details }      from '@apis/events/post-event/post-event.details';
 import { get_event_details }       from '@apis/events/get-event/get-event.details';
@@ -61,6 +63,8 @@ export const api_list: ApiDetails[] = [
 
   list_projects_details,
   get_init_state_details,
+  list_project_documents_details,
+  get_initial_context_details,
 
   post_event_details,
   get_event_details,

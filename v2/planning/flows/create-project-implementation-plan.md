@@ -86,18 +86,19 @@ Stepper events, document upload event, role events, sessions/AI, skeleton refine
 ## Phase B — Step 2 Documents
 
 ### Backend
-- [ ] Migration: extend `documents` table if needed (`project_id`, `kind`, `storage_key`, `mime_type`, `size`, `filename`)
-- [ ] **D-1**: extend documents schema to accept paste-as-text — either add `inline_text` column on documents, or add a `kind='paste'` row that bypasses storage. Pick one.
-- [ ] API: `POST /api/uploads/sign` `{filename, mimeType, size, intendedUse}` → `{uploadUrl, storageKey, expiresAt}` (start with local/S3-compatible mock; pluggable storage adapter)
-- [ ] Handler: `project.document.upload` (creates document row, queues parser job). Accept supported types: PDF, Excel/CSV, Markdown, plain text, **and pasted text**.
-- [ ] API: `GET /api/projects/:id/documents` (list — includes pasted entries)
-- [ ] Worker: `document-parse` (already exists — confirm wiring; extracts text → `document_passages`). For paste entries, skip the parser and store text directly as a single passage.
-- [ ] **D-2**: confirm `document_passages` carries `document_id` so source attribution survives into Phase E3.
+- [x] Migration 070: `documents.storage_key` made nullable (paste-as-text rows skip storage) — **D-1**
+- [x] **D-1**: chosen path — paste rows are `kind='paste'`, `storage_key=null`, `parsed_text=raw`, `parse_status='parsed'` (no worker). Defensive guards added in `documents.routes.ts` and `document-parse.routes.ts` for null `storage_key`.
+- [x] Handler: `project.document.paste` — creates Document + DocumentLink in one txn, returns `state_delta.document`
+- [x] API: `GET /api/projects/{project_id}/documents` (list — includes pasted entries; uses existing `DocumentLink` with `entity_type='project'`)
+- [x] Reused: existing `POST /api/documents/upload` (FormData) supports `entity_type='project'` after adding to `VALID_ENTITY_TYPES`
+- [x] Reused: existing `document-parse.worker` for uploads; paste rows skip parser
+- [ ] **D-2**: confirm `document_passages` carries `document_id` so source attribution survives into Phase E3 (deferred — verify when Phase B.5 builds)
+- [ ] (Deferred — Phase B.5 / later): `POST /api/uploads/sign` presigned URL flow. Current FormData upload is sufficient for Phase B done-criteria.
 
 ### Frontend
-- [ ] Step 2 panel: drag-drop uploader, per-file progress, list of uploaded docs
-- [ ] **D-1**: add a "Paste content" textarea in Step 2 panel — submitting it creates a `kind='paste'` document
-- [ ] Use presigned URL flow: sign → PUT to storage → emit upload event
+- [x] Step 2 panel: reuses existing `<bs-documents-panel [entity_type]="'project'" [entity_id]="project_id">` — handles upload, list, search, pagination, slide-over view, parse status, reparse, delete, download
+- [x] **D-1**: "Paste content" card in Step 2 — title input + purpose dropdown + textarea + Save → fires `project.document.paste` event → refreshes panel
+- [x] "Continue to Step 3" button — fires `project.init.step {step:2, status:'done'}` → navigates to step 3
 
 ### Done Criteria
 - User uploads a PDF/Excel/MD **and pastes raw text**, all entries land in storage/db, appear in list, parse job kicks off for files.
@@ -115,7 +116,7 @@ After Step 2 closes (`project.init.step {step:2, status:'done'}`), the system au
 - [ ] **D-2**: every JSON entry includes `source: { document_id, passage_id }` so traceability is preserved.
 
 ### Frontend
-- [ ] After Step 2 done, show "Building initial context…" indicator; on completion render the generated markdown read-only as a sanity check before Step 4.
+- [x] After Step 2 done, show "Building initial context…" indicator; on completion render the generated markdown read-only as a sanity check before Step 4.
 
 ### Done Criteria
 - After step 2 closes, initial context appears in DB in both JSON and markdown form, with source IDs on every entry.

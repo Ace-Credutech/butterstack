@@ -8,6 +8,7 @@ import { migrator } from '@setup/migrator';
 import { api_list } from './api.list';
 import { register_document_routes }       from '@apis/documents/documents.routes';
 import { register_document_parse_routes } from '@apis/documents/document-parse.routes';
+import { register_initial_context_build_routes } from '@apis/projects/initial-context-build.routes';
 import { upgrade_ws, on_open, on_message, on_close, attach_bun_server, start_redis_bridge } from '@setup/ws/ws-server';
 import { setup_worker, start_workers } from '@setup/queue/setup-worker';
 import { worker_list } from './worker.list';
@@ -28,6 +29,7 @@ const register_apis = () => {
   for (const details of api_list) setup_api(details);
   register_document_routes();
   register_document_parse_routes();
+  register_initial_context_build_routes();
 };
 
 const register_workers = () => {

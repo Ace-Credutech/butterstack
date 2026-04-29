@@ -34,6 +34,8 @@ import { get_initial_context_details }      from '@apis/projects/get-initial-con
 import { list_project_roles_details }       from '@apis/projects/list-project-roles/list-project-roles.details';
 import { get_rbac_matrix_details }          from '@apis/projects/get-rbac-matrix/get-rbac-matrix.details';
 import { list_project_members_details }     from '@apis/projects/list-project-members/list-project-members.details';
+import { list_project_sessions_details }     from '@apis/projects/list-project-sessions/list-project-sessions.details';
+import { list_session_messages_details }     from '@apis/sessions/list-session-messages/list-session-messages.details';
 
 import { post_event_details }      from '@apis/events/post-event/post-event.details';
 import { get_event_details }       from '@apis/events/get-event/get-event.details';
@@ -71,6 +73,8 @@ export const api_list: ApiDetails[] = [
   list_project_roles_details,
   get_rbac_matrix_details,
   list_project_members_details,
+  list_project_sessions_details,
+  list_session_messages_details,
 
   post_event_details,
   get_event_details,

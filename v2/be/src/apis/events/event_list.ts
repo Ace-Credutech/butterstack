@@ -12,6 +12,9 @@ import { role_update_handler }            from './handlers/role/role.update';
 import { role_delete_handler }            from './handlers/role/role.delete';
 import { role_permission_set_handler }    from './handlers/role/role.permission.set';
 import { role_permission_unset_handler }  from './handlers/role/role.permission.unset';
+import { session_start_handler }          from './handlers/session/session.start';
+import { session_end_handler }            from './handlers/session/session.end';
+import { message_add_handler }            from './handlers/session/message.add';
 
 export const event_list: EventHandlerDetails[] = [
   project_create_handler,
@@ -27,4 +30,7 @@ export const event_list: EventHandlerDetails[] = [
   role_delete_handler,
   role_permission_set_handler,
   role_permission_unset_handler,
+  session_start_handler,
+  session_end_handler,
+  message_add_handler,
 ];

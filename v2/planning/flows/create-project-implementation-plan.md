@@ -173,10 +173,14 @@ After Step 2 closes (`project.init.step {step:2, status:'done'}`), the system au
 Split into **E1 → E5** sub-phases.
 
 ### E1 — Sessions + Messages (no AI yet)
-- [ ] Migrations: `sessions` (id, project_id, kind, title, started_by, ended_at), `session_participants`, `messages` (id, session_id, role 'user'|'ai'|'system', content, channel, reply_to, attachments_json, created_at)
-- [ ] Models + handlers: `session.start`, `session.end`, `message.add`
-- [ ] API: `GET /api/projects/:id/sessions?kind=...`, `GET /api/sessions/:id/messages`
-- [ ] FE: chat UI shell, multi-participant list, post message via event
+- [x] Migration 075: `sessions` (id, project_id, kind, title, started_by, ended_at, timestamps; check constraint on kind ∈ {clarification, quiz, review}; indexes on project_id and (project_id, kind))
+- [x] Migration 076: `session_participants` (session_id, user_id?, member_id?, kind ∈ {human, ai, system}, display_name, joined_at, left_at?)
+- [x] Migration 077: `messages` (session_id, project_id denorm, participant_id?, role ∈ {user, ai, system}, channel?, content, reply_to self-FK, attachments_json, created_at; index on (session_id, created_at))
+- [x] Models: `Session`, `SessionParticipant`, `Message` with associations.
+- [x] Handlers: `session.start` (auto-creates a participant for the actor; takes optional `initial_participants[]`), `session.end` (writes `ended_at`), `message.add` (resolves the actor's participant on the fly if not provided; refuses messages on ended sessions).
+- [x] API: `GET /api/projects/:id/sessions?kind=...` (returns sessions with embedded participants), `GET /api/sessions/:id/messages` (returns participants + ordered messages).
+- [x] FE: Step 4 panel — left rail with "Start session" + session list; right pane with header (participants, end button), message thread, "speaking as" selector + textarea + send button. Uses `member.add`-loaded members as initial participants when starting a session.
+- [x] "Continue to Step 5" button — fires `project.init.step {step:4, status:'done'}` → navigates to step 5.
 
 ### E2 — `invoke_ai()` helper + `ai_call_log`
 - [ ] Migration: `ai_call_log` (id, project_id, session_id?, kind, model, prompt_tokens, completion_tokens, cost_usd, latency_ms, status, created_at)

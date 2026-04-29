@@ -329,7 +329,142 @@
               }
             }
             @case (4) {
-              <div class="text-sm text-gray-500 italic">AI clarification step — coming next phase. (Phase E)</div>
+              @if (!project_id()) {
+                <div class="text-sm text-gray-500 italic">Save Step 1 first to start a clarification session.</div>
+              } @else {
+                <div class="space-y-6">
+                  <bs-error-alert [message]="session_error()" />
+
+                  <div class="grid grid-cols-12 gap-4">
+                    <aside class="col-span-12 md:col-span-4 space-y-3">
+                      <div class="rounded-xl border border-gray-200 bg-white p-4">
+                        <h3 class="text-sm font-semibold text-gray-900 mb-2">Start a session</h3>
+                        <p class="text-xs text-gray-500 mb-3">Multi-participant chat. AI joins in Phase E4 — for now, members talk to each other.</p>
+                        <bs-form-field
+                          label="Title (optional)"
+                          placeholder="e.g. Kickoff clarification"
+                          [value]="new_session_title()"
+                          (valueChange)="new_session_title.set($event)"
+                        />
+                        <div class="pt-2">
+                          <bs-button
+                            type="button"
+                            [loading]="session_busy()"
+                            (click)="start_new_session()">
+                            Start session
+                          </bs-button>
+                        </div>
+                      </div>
+
+                      <div class="rounded-xl border border-gray-200 bg-white p-4">
+                        <h3 class="text-sm font-semibold text-gray-900 mb-2">Sessions</h3>
+                        @if (sessions().length === 0) {
+                          <div class="text-xs text-gray-500 italic">No sessions yet.</div>
+                        } @else {
+                          <div class="space-y-1">
+                            @for (s of sessions(); track s.id) {
+                              <button
+                                type="button"
+                                [class]="'w-full text-left rounded-md px-3 py-2 text-sm transition border ' + (active_session_id() === s.id ? 'border-green-500 bg-green-50' : 'border-transparent hover:border-gray-200 hover:bg-gray-50')"
+                                (click)="open_session(s.id)">
+                                <div class="font-medium text-gray-800 truncate">{{ s.title || '(untitled)' }}</div>
+                                <div class="text-[10px] text-gray-500 mt-0.5">
+                                  {{ s.participants.length }} participants
+                                  @if (s.ended_at) { · ended }
+                                </div>
+                              </button>
+                            }
+                          </div>
+                        }
+                      </div>
+                    </aside>
+
+                    <section class="col-span-12 md:col-span-8 rounded-xl border border-gray-200 bg-white flex flex-col" style="min-height: 420px;">
+                      @if (!active_session_id()) {
+                        <div class="flex-1 flex items-center justify-center text-sm text-gray-500 italic p-8">
+                          Pick a session on the left, or start a new one.
+                        </div>
+                      } @else {
+                        <header class="border-b border-gray-100 p-4 flex items-start justify-between gap-3">
+                          <div>
+                            <div class="text-sm font-semibold text-gray-900">{{ active_session()?.title || '(untitled)' }}</div>
+                            <div class="text-[11px] text-gray-500 mt-0.5">
+                              @for (p of session_participants(); track p.id; let last = $last) {
+                                <span class="inline-block">
+                                  {{ p.display_name }}<span class="text-gray-300">@if (p.kind !== 'human') { · {{ p.kind }} }</span>@if (!last) { , }
+                                </span>
+                              }
+                            </div>
+                          </div>
+                          @if (!active_session()?.ended_at) {
+                            <button type="button" class="text-xs text-gray-500 hover:text-red-600" (click)="end_active_session()">End session</button>
+                          } @else {
+                            <span class="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-gray-100 border border-gray-200 text-gray-600">Ended</span>
+                          }
+                        </header>
+
+                        <div class="flex-1 overflow-y-auto p-4 space-y-3" style="max-height: 360px;">
+                          @if (session_messages().length === 0) {
+                            <div class="text-sm text-gray-500 italic">No messages yet. Send the first one below.</div>
+                          } @else {
+                            @for (m of session_messages(); track m.id) {
+                              <div class="rounded-lg border border-gray-100 bg-gray-50 p-3">
+                                <div class="flex items-center gap-2 mb-1">
+                                  <span class="text-xs font-semibold text-gray-700">{{ participant_label(m.participant_id) }}</span>
+                                  <span class="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded bg-white border border-gray-200 text-gray-500">{{ m.role }}</span>
+                                  <span class="text-[10px] text-gray-400 ml-auto">{{ m.created_at }}</span>
+                                </div>
+                                <div class="text-sm text-gray-800 whitespace-pre-wrap">{{ m.content }}</div>
+                              </div>
+                            }
+                          }
+                        </div>
+
+                        @if (!active_session()?.ended_at) {
+                          <footer class="border-t border-gray-100 p-3 space-y-2">
+                            <div class="flex items-center gap-2">
+                              <bs-label>Speaking as</bs-label>
+                              <select
+                                class="text-sm border border-gray-200 rounded-md px-2 py-1 text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-gray-300"
+                                [value]="speaking_as() ?? ''"
+                                (change)="speaking_as.set($any($event.target).value || null)">
+                                @for (p of session_participants(); track p.id) {
+                                  <option [value]="p.id">{{ p.display_name }} ({{ p.kind }})</option>
+                                }
+                              </select>
+                            </div>
+                            <div class="flex items-end gap-2">
+                              <div class="flex-1">
+                                <bs-textarea
+                                  placeholder="Type a message…"
+                                  [rows]="2"
+                                  [(value)]="new_message_text"
+                                />
+                              </div>
+                              <bs-button
+                                type="button"
+                                [disabled]="!can_send_message()"
+                                [loading]="message_busy()"
+                                (click)="send_message()">
+                                Send
+                              </bs-button>
+                            </div>
+                          </footer>
+                        }
+                      }
+                    </section>
+                  </div>
+
+                  <div class="flex items-center justify-end pt-2">
+                    <bs-button
+                      type="button"
+                      [loading]="step4_loading()"
+                      (click)="continue_to_step5()">
+                      Continue to Step 5
+                    </bs-button>
+                  </div>
+                </div>
+              }
             }
             @case (5) {
               @if (!project_id()) {

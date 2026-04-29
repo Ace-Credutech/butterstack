@@ -8,7 +8,7 @@ import { FormField } from '../../components/molecules/form-field/form-field';
 import { Textarea } from '../../components/atoms/textarea/textarea';
 import { Label } from '../../components/atoms/label/label';
 import { DocumentsPanel } from '../../components/organisms/documents-panel/documents-panel';
-import { ProjectsService, ProjectStatus, StepStatus, ProjectRoleItem, RbacMatrixCell, ProjectMemberItem, StakeholderRole } from '../../services/projects.service';
+import { ProjectsService, ProjectStatus, StepStatus, ProjectRoleItem, RbacMatrixCell, ProjectMemberItem, StakeholderRole, SessionItem, SessionMessage, SessionParticipantItem } from '../../services/projects.service';
 import { WsService } from '../../services/ws.service';
 import type { DocumentPurpose } from '../../services/documents.service';
 
@@ -129,6 +129,18 @@ export class ProjectCreateWizard implements OnDestroy {
   });
   readonly step5_loading      = signal(false);
 
+  readonly sessions             = signal<SessionItem[]>([]);
+  readonly active_session_id    = signal<string | null>(null);
+  readonly session_participants = signal<SessionParticipantItem[]>([]);
+  readonly session_messages     = signal<SessionMessage[]>([]);
+  readonly new_session_title    = signal('');
+  readonly new_message_text     = signal('');
+  readonly speaking_as          = signal<string | null>(null);
+  readonly session_busy         = signal(false);
+  readonly message_busy         = signal(false);
+  readonly session_error        = signal<string | null>(null);
+  readonly step4_loading        = signal(false);
+
   readonly active_step_def = computed(() => this.steps.find(s => s.number === this.active_step()) ?? this.steps[0]);
 
   constructor() { void this.bootstrap(); }
@@ -155,6 +167,7 @@ export class ProjectCreateWizard implements OnDestroy {
       if (map.get(2) === 'done') void this.load_initial_ctx(id);
       void this.load_roles_and_matrix(id);
       void this.load_members(id);
+      void this.load_sessions(id);
     } catch (e: any) {
       this.error.set(e?.message ?? 'Failed to load init state');
     }
@@ -372,6 +385,143 @@ export class ProjectCreateWizard implements OnDestroy {
       this.member_error.set(e?.message ?? 'Failed to remove member');
     } finally {
       this.member_busy.set(false);
+    }
+  }
+
+  private async load_sessions(project_id: string): Promise<void> {
+    try {
+      const res = await this.projects.list_sessions(project_id, 'clarification');
+      this.sessions.set(res.data.items);
+      const current = this.active_session_id();
+      if (!current && res.data.items.length > 0) {
+        await this.open_session(res.data.items[0].id);
+      } else if (current) {
+        await this.refresh_active_session();
+      }
+    } catch (e: any) {
+      this.session_error.set(e?.message ?? 'Failed to load sessions');
+    }
+  }
+
+  async open_session(session_id: string): Promise<void> {
+    this.active_session_id.set(session_id);
+    await this.refresh_active_session();
+  }
+
+  private async refresh_active_session(): Promise<void> {
+    const sid = this.active_session_id();
+    if (!sid) return;
+    try {
+      const res = await this.projects.get_session_messages(sid);
+      this.session_participants.set(res.data.participants);
+      this.session_messages.set(res.data.messages);
+      const me_id = this.find_self_participant_id(res.data.participants);
+      if (!this.speaking_as() && me_id) this.speaking_as.set(me_id);
+    } catch (e: any) {
+      this.session_error.set(e?.message ?? 'Failed to load messages');
+    }
+  }
+
+  private find_self_participant_id(participants: SessionParticipantItem[]): string | null {
+    const human = participants.find(p => p.kind === 'human' && p.user_id !== null);
+    return human?.id ?? null;
+  }
+
+  async start_new_session(): Promise<void> {
+    const id = this.project_id();
+    if (!id || this.session_busy()) return;
+    this.session_error.set(null);
+    this.session_busy.set(true);
+    try {
+      const member_participants = this.members().slice(0, 5).map(m => ({
+        kind:         'human' as const,
+        member_id:    m.id,
+        display_name: m.name,
+      }));
+      const created = await this.projects.start_session(id, {
+        kind:                 'clarification',
+        title:                this.new_session_title().trim() || null,
+        initial_participants: member_participants,
+      });
+      this.new_session_title.set('');
+      await this.load_sessions(id);
+      await this.open_session(created.session_id);
+    } catch (e: any) {
+      this.session_error.set(e?.message ?? 'Failed to start session');
+    } finally {
+      this.session_busy.set(false);
+    }
+  }
+
+  async end_active_session(): Promise<void> {
+    const project_id = this.project_id();
+    const session_id = this.active_session_id();
+    if (!project_id || !session_id) return;
+    if (!confirm('End this session? You will not be able to add messages to it.')) return;
+    this.session_busy.set(true);
+    try {
+      await this.projects.end_session(project_id, session_id);
+      await this.load_sessions(project_id);
+    } catch (e: any) {
+      this.session_error.set(e?.message ?? 'Failed to end session');
+    } finally {
+      this.session_busy.set(false);
+    }
+  }
+
+  active_session(): SessionItem | null {
+    const sid = this.active_session_id();
+    return this.sessions().find(s => s.id === sid) ?? null;
+  }
+
+  participant_label(participant_id: string | null): string {
+    if (!participant_id) return 'System';
+    return this.session_participants().find(p => p.id === participant_id)?.display_name ?? 'Unknown';
+  }
+
+  can_send_message(): boolean {
+    return !this.message_busy()
+      && !!this.active_session_id()
+      && !this.active_session()?.ended_at
+      && this.new_message_text().trim().length >= 1;
+  }
+
+  async send_message(): Promise<void> {
+    const project_id = this.project_id();
+    const session_id = this.active_session_id();
+    if (!project_id || !session_id || !this.can_send_message()) return;
+    this.message_busy.set(true);
+    try {
+      await this.projects.add_message(project_id, session_id, {
+        content:        this.new_message_text().trim(),
+        role:           'user',
+        participant_id: this.speaking_as(),
+      });
+      this.new_message_text.set('');
+      await this.refresh_active_session();
+    } catch (e: any) {
+      this.session_error.set(e?.message ?? 'Failed to send message');
+    } finally {
+      this.message_busy.set(false);
+    }
+  }
+
+  async continue_to_step5(): Promise<void> {
+    const id = this.project_id();
+    if (!id) return;
+    this.error.set(null);
+    this.step4_loading.set(true);
+    try {
+      await this.projects.mark_step(id, 4, 'done');
+      const next = new Map(this.step_statuses());
+      next.set(4, 'done');
+      this.step_statuses.set(next);
+      this.active_step.set(5);
+      await this.router.navigate(['/app/projects', id, 'wizard'], { queryParams: { step: 5 } });
+    } catch (e: any) {
+      this.error.set(e?.message ?? 'Failed to mark step 4 done');
+    } finally {
+      this.step4_loading.set(false);
     }
   }
 

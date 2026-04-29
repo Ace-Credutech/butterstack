@@ -291,4 +291,109 @@ export class ProjectsService {
       source:  'user',
     });
   }
+
+  list_sessions(project_id: string, kind?: SessionKind): Promise<ListSessionsResponse> {
+    return this.http.get<ListSessionsResponse>(`/projects/${project_id}/sessions`, kind ? { kind } : undefined);
+  }
+
+  get_session_messages(session_id: string): Promise<SessionMessagesResponse> {
+    return this.http.get<SessionMessagesResponse>(`/sessions/${session_id}/messages`);
+  }
+
+  start_session(project_id: string, payload: { kind?: SessionKind; title?: string | null; initial_participants?: SessionParticipantInput[] }): Promise<{ session_id: string; response: PostEventResponse<{ session: SessionItem }> }> {
+    const session_id = make_uuid();
+    return this.post_event<typeof payload, { session: SessionItem }>({
+      type:    'session.start',
+      payload,
+      scope:   { project_id, session_id },
+      source:  'user',
+    }).then(response => ({ session_id, response }));
+  }
+
+  end_session(project_id: string, session_id: string): Promise<PostEventResponse<{ session: { id: string; ended_at: string | null } }>> {
+    return this.post_event<Record<string, never>, { session: { id: string; ended_at: string | null } }>({
+      type:    'session.end',
+      payload: {},
+      scope:   { project_id, session_id },
+      source:  'user',
+    });
+  }
+
+  add_message(project_id: string, session_id: string, payload: { content: string; role?: 'user' | 'ai' | 'system'; channel?: string | null; reply_to?: string | null; participant_id?: string | null }): Promise<PostEventResponse<{ message: SessionMessage }>> {
+    return this.post_event<typeof payload, { message: SessionMessage }>({
+      type:    'message.add',
+      payload,
+      scope:   { project_id, session_id },
+      source:  'user',
+    });
+  }
+}
+
+export type SessionKind = 'clarification' | 'quiz' | 'review';
+export type SessionParticipantKind = 'human' | 'ai' | 'system';
+export type MessageRole = 'user' | 'ai' | 'system';
+
+export interface SessionParticipantInput {
+  kind:          SessionParticipantKind;
+  member_id?:    string | null;
+  user_id?:      string | null;
+  display_name?: string;
+}
+
+export interface SessionParticipantItem {
+  id:           string;
+  kind:         SessionParticipantKind;
+  user_id:      string | null;
+  member_id:    string | null;
+  display_name: string;
+  joined_at:    string;
+  left_at:      string | null;
+}
+
+export interface SessionItem {
+  id:           string;
+  project_id:   string;
+  kind:         SessionKind;
+  title:        string | null;
+  started_by:   string | null;
+  ended_at:     string | null;
+  created_at:   string;
+  participants: SessionParticipantItem[];
+}
+
+export interface ListSessionsResponse {
+  code:    number;
+  message: string;
+  data: {
+    project_id: string;
+    kind:       SessionKind | null;
+    items:      SessionItem[];
+  };
+}
+
+export interface SessionMessage {
+  id:               string;
+  session_id:       string;
+  project_id:       string;
+  participant_id:   string | null;
+  role:             MessageRole;
+  channel:          string | null;
+  content:          string;
+  reply_to:         string | null;
+  attachments_json: unknown | null;
+  created_at:       string;
+}
+
+export interface SessionMessagesResponse {
+  code:    number;
+  message: string;
+  data: {
+    session_id:   string;
+    project_id:   string;
+    kind:         SessionKind;
+    title:        string | null;
+    ended_at:     string | null;
+    participants: SessionParticipantItem[];
+    messages:     SessionMessage[];
+  };
 }

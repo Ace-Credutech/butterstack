@@ -1,0 +1,20 @@
+<div class="flex flex-col items-center justify-center h-full">
+  @if (status === 'idle') {
+    <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center mb-4">
+      <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+    </div>
+    <p class="text-sm font-medium text-gray-700 mb-1">Generate BRD</p>
+    <p class="text-xs text-gray-400 mb-5 text-center max-w-xs">Generate the Business Requirements Document from your project data.</p>
+    <button class="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition" (click)="generate_brd()">Generate BRD</button>
+  } @else if (status === 'generating') {
+    <span class="inline-block w-8 h-8 border-2 border-gray-200 border-t-green-600 rounded-full animate-spin mb-4"></span>
+    <p class="text-sm font-medium text-gray-700 mb-1">Generating BRD...</p>
+    <p class="text-xs text-gray-400">This may take a few moments</p>
+  } @else {
+    <div class="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center mb-4">
+      <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+    </div>
+    <p class="text-sm font-medium text-green-700 mb-1">BRD Generated</p>
+    <p class="text-xs text-gray-400 text-center max-w-xs">Content will appear here once connected.</p>
+  }
+</div>

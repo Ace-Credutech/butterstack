@@ -1,0 +1,26 @@
+<div class="flex flex-col h-full border border-gray-100 rounded-lg bg-white overflow-hidden">
+  <div class="flex-1 overflow-y-auto p-4 space-y-3">
+    @for (msg of messages; track $index) {
+      @if (msg.role === 'ai') {
+        <div class="flex gap-2.5 items-start">
+          <span class="w-6 h-6 rounded-full bg-green-600 text-white flex items-center justify-center text-[10px] font-medium shrink-0">AI</span>
+          <div class="rounded-lg px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap bg-gray-50 text-gray-700 max-w-[85%]">{{ msg.content }}</div>
+        </div>
+      } @else {
+        <div class="flex gap-2.5 items-start justify-end">
+          <div class="rounded-lg px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap bg-green-600 text-white max-w-[85%]">{{ msg.content }}</div>
+          <span class="w-6 h-6 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-[10px] font-medium shrink-0">You</span>
+        </div>
+      }
+    }
+  </div>
+
+  <div class="border-t border-gray-100 p-3">
+    <div class="flex gap-2">
+      <input type="text" class="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600 transition" placeholder="Type your message..." [(ngModel)]="user_input" (keydown)="on_key($event)" />
+      <button class="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition" (click)="send()">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+      </button>
+    </div>
+  </div>
+</div>

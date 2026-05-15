@@ -1,0 +1,44 @@
+<div class="flex items-center">
+  @for (step of steps; track step.id; let last = $last) {
+
+    @if (step.id === active) {
+      <!-- Active step: blue circle, light blue border pill -->
+      <button class="flex items-center gap-2.5 px-4 py-2.5 rounded-full border-2 border-blue-400 bg-blue-50/50 cursor-pointer select-none transition" (click)="step_click.emit(step.id)">
+        <span class="w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-semibold shrink-0">{{ step.id }}</span>
+        <div class="text-left pr-1">
+          <div class="text-[13px] font-semibold text-gray-800 leading-tight">{{ step.label }}</div>
+          <div class="text-[11px] text-gray-500 leading-tight">{{ step.sub }}</div>
+        </div>
+      </button>
+    } @else if (completed.includes(step.id)) {
+      <!-- Completed step: green check, light green border pill -->
+      <button class="flex items-center gap-2.5 px-4 py-2.5 rounded-full border-2 border-green-300 bg-green-50/50 cursor-pointer select-none hover:bg-green-50 transition" (click)="step_click.emit(step.id)">
+        <span class="w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center text-xs shrink-0">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+        </span>
+        <div class="text-left pr-1">
+          <div class="text-[13px] font-semibold text-green-700 leading-tight">{{ step.label }}</div>
+          <div class="text-[11px] text-green-500 leading-tight">{{ step.sub }}</div>
+        </div>
+      </button>
+    } @else {
+      <!-- Inactive step: gray number, no border -->
+      <button class="flex items-center gap-2.5 px-4 py-2.5 rounded-full border-2 border-transparent cursor-pointer select-none hover:bg-gray-50 transition" (click)="step_click.emit(step.id)">
+        <span class="w-7 h-7 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-xs font-semibold shrink-0">{{ step.id }}</span>
+        <div class="text-left pr-1">
+          <div class="text-[13px] font-medium text-gray-500 leading-tight">{{ step.label }}</div>
+          <div class="text-[11px] text-gray-400 leading-tight">{{ step.sub }}</div>
+        </div>
+      </button>
+    }
+
+    @if (!last) {
+      @if (completed.includes(step.id)) {
+        <div class="flex-1 h-0.5 bg-green-400 mx-2 min-w-[40px]"></div>
+      } @else {
+        <div class="flex-1 h-0.5 bg-gray-200 mx-2 min-w-[40px]"></div>
+      }
+    }
+
+  }
+</div>

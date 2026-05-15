@@ -1,0 +1,104 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <span class="text-sm text-gray-500">Module &amp; Feature List</span>
+    <div class="flex items-center gap-2">
+      @if (selected.length) {
+        <span class="text-xs text-gray-400">{{ selected.length }} selected</span>
+        <button class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-medium transition flex items-center gap-1.5" (click)="open_comment()">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+          Regenerate Selected
+        </button>
+      }
+      <button class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-medium transition">Regenerate All</button>
+    </div>
+  </div>
+
+  <div class="border border-gray-100 rounded-lg bg-white">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-gray-100">
+          <th class="px-3 py-2.5 w-10">
+            <input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300 text-green-600 focus:ring-green-600 cursor-pointer" [checked]="all_page_selected" (change)="toggle_all()" />
+          </th>
+          <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-12">#</th>
+          <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Module</th>
+          <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Sub Module</th>
+          <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Feature</th>
+          <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of paged_rows; track row.sr_no; let i = $index) {
+          @if (selected.includes(row.sr_no)) {
+            <tr class="border-t border-gray-50 bg-green-50/50">
+              <td class="px-3 py-2.5">
+                <input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300 text-green-600 focus:ring-green-600 cursor-pointer" [checked]="true" (change)="toggle_row(row.sr_no)" />
+              </td>
+              <td class="px-4 py-2.5 text-gray-400 text-sm">{{ row.sr_no }}</td>
+              <td class="px-3 py-2"><input type="text" class="w-full px-2 py-1.5 border border-transparent bg-transparent text-sm text-gray-700 focus:outline-none focus:bg-white focus:border-gray-200 focus:ring-1 focus:ring-green-600 rounded transition" placeholder="Module name" [(ngModel)]="rows[get_row_index(i)].module" (ngModelChange)="check_data()" /></td>
+              <td class="px-3 py-2"><input type="text" class="w-full px-2 py-1.5 border border-transparent bg-transparent text-sm text-gray-700 focus:outline-none focus:bg-white focus:border-gray-200 focus:ring-1 focus:ring-green-600 rounded transition" placeholder="Sub module" [(ngModel)]="rows[get_row_index(i)].sub_module" /></td>
+              <td class="px-3 py-2"><input type="text" class="w-full px-2 py-1.5 border border-transparent bg-transparent text-sm text-gray-700 focus:outline-none focus:bg-white focus:border-gray-200 focus:ring-1 focus:ring-green-600 rounded transition" placeholder="Feature name" [(ngModel)]="rows[get_row_index(i)].feature" (ngModelChange)="check_data()" /></td>
+              <td class="px-3 py-2"><input type="text" class="w-full px-2 py-1.5 border border-transparent bg-transparent text-sm text-gray-700 focus:outline-none focus:bg-white focus:border-gray-200 focus:ring-1 focus:ring-green-600 rounded transition" placeholder="Description" [(ngModel)]="rows[get_row_index(i)].description" /></td>
+            </tr>
+          } @else {
+            <tr class="border-t border-gray-50 hover:bg-gray-50/50 transition">
+              <td class="px-3 py-2.5">
+                <input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300 text-green-600 focus:ring-green-600 cursor-pointer" [checked]="false" (change)="toggle_row(row.sr_no)" />
+              </td>
+              <td class="px-4 py-2.5 text-gray-400 text-sm">{{ row.sr_no }}</td>
+              <td class="px-3 py-2"><input type="text" class="w-full px-2 py-1.5 border border-transparent bg-transparent text-sm text-gray-700 focus:outline-none focus:bg-white focus:border-gray-200 focus:ring-1 focus:ring-green-600 rounded transition" placeholder="Module name" [(ngModel)]="rows[get_row_index(i)].module" (ngModelChange)="check_data()" /></td>
+              <td class="px-3 py-2"><input type="text" class="w-full px-2 py-1.5 border border-transparent bg-transparent text-sm text-gray-700 focus:outline-none focus:bg-white focus:border-gray-200 focus:ring-1 focus:ring-green-600 rounded transition" placeholder="Sub module" [(ngModel)]="rows[get_row_index(i)].sub_module" /></td>
+              <td class="px-3 py-2"><input type="text" class="w-full px-2 py-1.5 border border-transparent bg-transparent text-sm text-gray-700 focus:outline-none focus:bg-white focus:border-gray-200 focus:ring-1 focus:ring-green-600 rounded transition" placeholder="Feature name" [(ngModel)]="rows[get_row_index(i)].feature" (ngModelChange)="check_data()" /></td>
+              <td class="px-3 py-2"><input type="text" class="w-full px-2 py-1.5 border border-transparent bg-transparent text-sm text-gray-700 focus:outline-none focus:bg-white focus:border-gray-200 focus:ring-1 focus:ring-green-600 rounded transition" placeholder="Description" [(ngModel)]="rows[get_row_index(i)].description" /></td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+    @if (total_pages > 1) {
+      <div class="flex items-center justify-between px-4 py-2.5 border-t border-gray-100">
+        <span class="text-xs text-gray-400">Showing {{ (page - 1) * per_page + 1 }}–{{ page * per_page > rows.length ? rows.length : page * per_page }} of {{ rows.length }}</span>
+        <div class="flex items-center gap-1">
+          @if (page > 1) {
+            <button class="w-7 h-7 flex items-center justify-center rounded text-gray-500 hover:bg-gray-100 transition" (click)="page = page - 1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+          }
+          @for (p of [1, 2]; track p) {
+            @if (p === page) {
+              <button class="w-7 h-7 flex items-center justify-center rounded text-xs font-medium bg-green-600 text-white">{{ p }}</button>
+            } @else {
+              <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-gray-500 hover:bg-gray-100 transition" (click)="page = p">{{ p }}</button>
+            }
+          }
+          @if (page < total_pages) {
+            <button class="w-7 h-7 flex items-center justify-center rounded text-gray-500 hover:bg-gray-100 transition" (click)="page = page + 1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+@if (comment_modal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/30" (click)="comment_modal = false"></div>
+    <div class="relative bg-white rounded-xl shadow-lg p-5 w-full max-w-sm">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-sm font-medium text-gray-700">Regenerate {{ selected.length }} feature{{ selected.length > 1 ? 's' : '' }}</span>
+        <button class="text-gray-300 hover:text-gray-500 text-lg leading-none transition" (click)="comment_modal = false">&times;</button>
+      </div>
+      <div class="flex flex-wrap gap-1 mb-3">
+        @for (s of selected; track s) {
+          <span class="px-2 py-0.5 bg-green-50 text-green-700 text-[10px] font-medium rounded">{{ get_feature_label(s) }}</span>
+        }
+      </div>
+      <textarea class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm placeholder:text-gray-400 focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600 resize-y transition" rows="3" placeholder="What should change for these features?" [(ngModel)]="comment_text"></textarea>
+      <div class="flex justify-end mt-3">
+        <button class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition" (click)="submit_comment()">Regenerate</button>
+      </div>
+    </div>
+  </div>
+}

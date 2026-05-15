@@ -10,7 +10,7 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         @for (p of projects; track p.id; let i = $index) {
-          <div class="border border-gray-100 rounded-lg p-5 bg-white hover:border-gray-200 hover:shadow-sm transition cursor-pointer" (click)="open_project()">
+          <div class="border border-gray-100 rounded-lg p-5 bg-white hover:border-gray-200 hover:shadow-sm transition cursor-pointer" (click)="open_project(p.id)">
             <div class="flex items-start justify-between mb-3">
               <span [class]="'inline-flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium text-white ' + card_colors[i % 3]">{{ p.name[0] }}</span>
               <span class="text-xs text-gray-400">{{ p.ago }}</span>

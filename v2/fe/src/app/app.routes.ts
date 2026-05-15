@@ -12,7 +12,8 @@ export const routes: Routes = [
       { path: 'register',     loadComponent: () => import('./pages/register/register').then(m => m.Register),  data: { authenticated: false }       },
       { path: 'forgot-password', loadComponent: () => import('./pages/forgot-password/forgot-password').then(m => m.ForgotPassword) },
       { path: 'reset-password',  loadComponent: () => import('./pages/reset-password/reset-password').then(m => m.ResetPassword) },
-      { path: 'app/projects',  loadComponent: () => import('./pages/project/project').then(m => m.Project),     data: { authenticated: true } },
+      { path: 'app/projects',      loadComponent: () => import('./pages/project/project').then(m => m.Project),               data: { authenticated: true } },
+      { path: 'app/projects/:id',  loadComponent: () => import('./pages/project-detail/project-detail').then(m => m.ProjectDetail), data: { authenticated: true } },
       { path: 'app/documents', loadComponent: () => import('./pages/documents/documents').then(m => m.Documents), data: { authenticated: true } },
       {
         path: 'admin/users',

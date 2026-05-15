@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Header } from '../../components/organisms/header/header';
 import { GlobalService } from '../../services/global.service';
 import { ProjectStepper } from './project-stepper/project-stepper';
@@ -15,6 +16,7 @@ import { StepBrd } from './step-brd/step-brd';
 })
 export class Project {
   global = inject(GlobalService);
+  private router = inject(Router);
 
   view = 'list';
 
@@ -33,7 +35,11 @@ export class Project {
   active_step = 1;
   completed_steps: number[] = [];
 
-  open_project() {
+  open_project(id?: string) {
+    if (id) {
+      this.router.navigate(['/app/projects', id]);
+      return;
+    }
     this.active_step = 1;
     this.completed_steps = [];
     this.view = 'init';
@@ -59,7 +65,9 @@ export class Project {
       ago:         'just now',
     });
     this.modal_open = false;
-    this.open_project();
+    this.active_step = 1;
+    this.completed_steps = [];
+    this.view = 'init';
   }
 
   go_to_step(step: number) {

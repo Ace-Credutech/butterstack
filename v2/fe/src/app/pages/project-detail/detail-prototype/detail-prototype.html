@@ -1,0 +1,92 @@
+<div class="flex-1 h-full overflow-hidden bg-[#f8f9fa]">
+  @if (feature_name) {
+    <div class="flex h-full">
+      <!-- Left: entity label -->
+      <div class="border-r border-[#e5e7eb] bg-white p-4 shrink-0" style="width:200px">
+        <div class="flex items-center gap-2.5">
+          <span class="w-8 h-8 rounded-lg bg-[#16a34a] text-white flex items-center justify-center text-sm font-bold shrink-0">+</span>
+          <span class="text-[13px] font-semibold text-gray-800">{{ feature_name }}</span>
+        </div>
+      </div>
+
+      <!-- Right: prototype content -->
+      <div class="flex-1 overflow-y-auto bg-white">
+        <!-- Sub-topbar -->
+        <div class="flex items-center justify-between px-8 py-2.5 border-b border-[#e5e7eb]">
+          <span class="text-[12.5px] text-[#888]">{{ module_path }}</span>
+          <span class="text-[12.5px] text-[#333] font-medium">{{ author }}</span>
+        </div>
+
+        <div class="px-8 py-6" style="padding: 24px 32px">
+          <!-- Page title -->
+          <h1 class="text-[20px] font-bold text-[#111] mb-4">{{ page_title }}</h1>
+
+          <!-- Action buttons -->
+          @if (actions.length) {
+            <div class="flex items-center gap-3 mb-6">
+              @for (a of actions; track a.label) {
+                @if (a.primary) {
+                  <button class="px-[18px] py-[7px] bg-[#16a34a] text-white rounded-[7px] text-[13px] font-medium">{{ a.label }}</button>
+                } @else {
+                  <button class="px-[18px] py-[7px] border-[1.5px] border-[#d1d5db] text-gray-600 rounded-[7px] text-[13px] font-medium hover:bg-gray-50 transition">{{ a.label }}</button>
+                }
+              }
+            </div>
+          }
+
+          <!-- Stats cards -->
+          @if (stats.length) {
+            <div class="grid grid-cols-4 gap-3 mb-6">
+              @for (s of stats; track s.label) {
+                <div class="border border-[#e5e7eb] rounded-lg p-[14px_16px]">
+                  <div class="text-[12px] text-[#888] mb-1">{{ s.label }}</div>
+                  <div class="text-[22px] font-bold text-[#111]">{{ s.value }}</div>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Search + Filters -->
+          <div class="flex items-center gap-3 mb-6">
+            <div class="flex-1 flex items-center gap-2 px-3 py-2 border border-[#e5e7eb] rounded-[7px] bg-white">
+              <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              <span class="text-[13px] text-gray-400">Search User...</span>
+            </div>
+            <button class="flex items-center gap-1.5 px-4 py-2 border border-[#e5e7eb] rounded-[7px] bg-white text-[13px] text-gray-600 hover:bg-gray-50 transition">
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+              Filters
+            </button>
+          </div>
+
+          <!-- Role Assignment section -->
+          <div class="border border-[#e5e7eb] rounded-lg p-4 mb-6">
+            <div class="text-[13px] font-medium text-gray-700 mb-3">Role Assignment</div>
+            <div class="mb-3">
+              <div class="flex items-center justify-between px-3 py-2.5 border border-[#e5e7eb] rounded-[7px] bg-white cursor-pointer">
+                <span class="text-[13px] text-gray-400">Select role assignment...</span>
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              </div>
+            </div>
+            <label class="flex items-center gap-2.5 mb-4 cursor-pointer">
+              <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#16a34a] focus:ring-[#16a34a]" />
+              <span class="text-[13px] text-gray-700">Document-Level Permissions</span>
+            </label>
+            <button class="w-full py-[10px] bg-[#16a34a] hover:bg-[#15803d] text-white rounded-[7px] text-[13px] font-semibold transition">Assign Role</button>
+          </div>
+
+          <!-- Access Control Settings section -->
+          <div class="border border-[#e5e7eb] rounded-lg p-4">
+            <div class="text-[15px] font-semibold text-[#111]">Access Control Settings</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="flex items-center justify-center h-full">
+      <div class="text-center">
+        <svg class="w-12 h-12 text-gray-200 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        <p class="text-[13px] text-gray-400">Select a feature from the sidebar</p>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,56 @@
+<div class="h-screen flex flex-col">
+  <!-- Global header -->
+  <bs-header />
+
+  <!-- Tab bar + 3-panel layout -->
+  <div class="flex flex-1 overflow-hidden">
+    <!-- Left sidebar -->
+    <bs-detail-sidebar
+      [project_name]="project_name"
+      [tree]="module_tree"
+      [selected_id]="selected_feature_id"
+      (select)="on_feature_select($event)"
+    />
+
+    <!-- Center column: tabs + content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <bs-detail-tabs
+        [active_tab]="active_tab"
+        [active_device]="active_device"
+        [selected_module]="selected_module_name"
+        (tab_click)="active_tab = $event"
+        (device_click)="active_device = $event"
+      />
+
+      @if (active_tab === 'details') {
+        <bs-tab-details />
+      }
+      @if (active_tab === 'prototype') {
+        <bs-detail-prototype
+          [feature_name]="selected_feature?.name || ''"
+          [author]="selected_feature?.author || ''"
+          [module_path]="selected_feature?.module_path || ''"
+          [page_title]="selected_feature?.page_title || ''"
+          [actions]="selected_feature?.actions || []"
+          [stats]="selected_feature?.stats || []"
+        />
+      }
+      @if (active_tab === 'brd') {
+        <bs-tab-brd [project_name]="project_name" />
+      }
+      @if (active_tab === 'excel') {
+        <bs-tab-excel />
+      }
+      @if (active_tab === 'mindmap') {
+        <bs-tab-mindmap [project_name]="project_name" />
+      }
+    </div>
+
+    <!-- Right sidebar: conversations -->
+    <bs-detail-conversations
+      [conversations]="conversations"
+      (select)="on_conversation_select($event)"
+      (new_click)="on_new_conversation()"
+    />
+  </div>
+</div>

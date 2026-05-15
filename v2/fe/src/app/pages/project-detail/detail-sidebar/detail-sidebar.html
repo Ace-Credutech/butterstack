@@ -1,0 +1,82 @@
+<aside class="border-r border-[#e5e7eb] bg-white flex flex-col h-full overflow-hidden" style="width:210px;min-width:210px">
+  <!-- Top actions -->
+  <div class="flex items-center justify-end gap-1.5 px-3 py-2 border-b border-gray-50">
+    <button class="w-6 h-6 flex items-center justify-center rounded text-gray-400 hover:bg-gray-100 transition">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
+    </button>
+    <button class="w-6 h-6 flex items-center justify-center rounded text-gray-400 hover:bg-gray-100 transition">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+    </button>
+  </div>
+
+  <!-- Project title -->
+  <div class="px-3 py-2.5">
+    <div class="flex items-center gap-1.5">
+      <svg class="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+      <span class="text-[12.5px] font-medium text-gray-800 truncate">{{ project_name }}</span>
+    </div>
+  </div>
+
+  <!-- Module tree -->
+  <div class="flex-1 overflow-y-auto px-1.5 py-0.5">
+    @for (node of flat_tree; track node.id) {
+      <div [style.padding-left.px]="node.depth * 16 + 4">
+        <button
+          class="w-full flex items-center gap-1 px-1.5 rounded text-left transition group"
+          [ngClass]="{
+            'bg-green-50 text-green-700 font-medium': node.id === selected_id || is_active_folder(node.id),
+            'text-gray-700 hover:bg-gray-50': node.id !== selected_id && !is_active_folder(node.id)
+          }"
+          [style.padding-top.px]="5"
+          [style.padding-bottom.px]="5"
+          (click)="on_click(node)"
+        >
+          @if (node.has_children) {
+            @if (is_expanded(node.id)) {
+              <svg class="w-2.5 h-2.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            } @else {
+              <svg class="w-2.5 h-2.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            }
+            <svg class="w-3.5 h-3.5 shrink-0" [style.color]="is_active_folder(node.id) ? '#16a34a' : '#eab308'" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"></path></svg>
+          } @else {
+            <span class="w-2.5 shrink-0"></span>
+            <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+          }
+          <span class="text-[12px] truncate flex-1">{{ node.name }}</span>
+
+          <!-- Badge (red) for folders -->
+          @if (node.has_children && node.badge) {
+            <span class="ml-auto text-[8px] font-bold text-white rounded-full flex items-center justify-center shrink-0" style="background:#ef4444;width:16px;height:16px">{{ node.badge }}</span>
+          }
+          <!-- Green dot for folders without badge -->
+          @if (node.has_children && !node.badge && node.dot_color) {
+            <span class="ml-auto rounded-full shrink-0" style="width:7px;height:7px;background:#22c55e"></span>
+          }
+          <!-- Score dots for leaves -->
+          @if (!node.has_children && node.score) {
+            <span class="ml-auto flex items-center shrink-0" style="gap:2px">
+              <span class="rounded-full" style="width:7px;height:7px;background:#ef4444"></span>
+              <span class="rounded-full" style="width:7px;height:7px;background:#f59e0b"></span>
+              <span class="rounded-full" style="width:7px;height:7px;background:#22c55e"></span>
+              <span class="text-[11px]" style="color:#888;margin-left:3px">{{ node.score }}</span>
+            </span>
+          }
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- History -->
+  <div class="border-t border-[#e5e7eb] px-3 py-2.5">
+    <div class="text-[10px] font-semibold uppercase" style="color:#aaa;letter-spacing:0.08em">History</div>
+    <p class="text-[11.5px] italic mt-1" style="color:#ccc">No versions yet</p>
+  </div>
+
+  <!-- Start Meeting -->
+  <div class="border-t border-[#e5e7eb] px-3 py-2">
+    <button class="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-[12px] font-medium text-gray-600 hover:bg-gray-50 border border-[#e5e7eb] rounded-lg transition">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      Start Meeting
+    </button>
+  </div>
+</aside>

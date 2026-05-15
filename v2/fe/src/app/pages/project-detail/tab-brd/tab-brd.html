@@ -1,0 +1,54 @@
+<div class="flex-1 h-full overflow-y-auto bg-gray-100 p-6">
+  <div class="max-w-3xl mx-auto bg-white rounded-xl border border-gray-100 p-8">
+    <!-- Logo -->
+    <div class="flex items-center gap-2 mb-6">
+      <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+        <span class="text-white text-xs font-bold">+</span>
+      </div>
+      <span class="text-sm font-semibold text-gray-800">butterstack</span>
+    </div>
+
+    <!-- Title -->
+    <h1 class="text-2xl font-bold text-gray-900 mb-1">Business Requirements Document</h1>
+    <p class="text-base font-medium text-green-600 mb-1">{{ project_name }}</p>
+    <p class="text-xs text-gray-400 mb-6">Generated: 15 May 2026 &middot; Project Level</p>
+
+    <div class="h-0.5 bg-green-500 mb-8"></div>
+
+    <!-- Document Control Sheet -->
+    <h2 class="text-lg font-bold text-gray-900 mb-4">Document Control Sheet</h2>
+    <table class="w-full text-sm mb-8">
+      <tbody>
+        @for (row of control_sheet; track row.label) {
+          <tr class="border-b border-gray-50">
+            <td class="py-2.5 pr-4 text-green-600 font-medium w-40">{{ row.label }}</td>
+            <td class="py-2.5 text-gray-700">{{ row.value }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <!-- Revision History -->
+    <h2 class="text-lg font-bold text-gray-900 mb-4">Revision History</h2>
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-gray-100">
+          <th class="py-2 text-left text-xs font-semibold text-gray-400 uppercase">Version</th>
+          <th class="py-2 text-left text-xs font-semibold text-gray-400 uppercase">Date</th>
+          <th class="py-2 text-left text-xs font-semibold text-gray-400 uppercase">Author</th>
+          <th class="py-2 text-left text-xs font-semibold text-gray-400 uppercase">Comments</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (rev of revisions; track rev.version) {
+          <tr class="border-b border-gray-50">
+            <td class="py-2.5 text-gray-700">{{ rev.version }}</td>
+            <td class="py-2.5 text-gray-700">{{ rev.date }}</td>
+            <td class="py-2.5 text-gray-700">{{ rev.author }}</td>
+            <td class="py-2.5 text-gray-700">{{ rev.comments }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

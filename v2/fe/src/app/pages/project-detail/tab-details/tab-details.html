@@ -1,0 +1,47 @@
+<div class="flex-1 h-full overflow-y-auto bg-white p-6">
+  <!-- Module header -->
+  <div class="flex items-center justify-between mb-1">
+    <h1 class="text-[20px] font-bold" style="color:#111">{{ module_name }}</h1>
+    <div class="flex items-baseline gap-1">
+      <span class="text-[20px] font-bold" style="color:#d97706">{{ avg_fcs }}%</span>
+      <span class="text-[12px]" style="color:#aaa">avg FCS</span>
+    </div>
+  </div>
+  <p class="text-[13px] mb-5" style="color:#aaa">Module Overview</p>
+
+  <!-- Aggregate confidence -->
+  <div class="border border-[#e5e7eb] rounded-lg p-4 mb-5">
+    <div class="flex items-center gap-4">
+      <span class="text-[13px] text-gray-600 shrink-0">Aggregate confidence</span>
+      <div class="flex-1 rounded-full overflow-hidden" style="height:10px;background:#f0f0f0">
+        <div class="h-full rounded-full" style="width: 58%; background: linear-gradient(90deg, #16a34a 0%, #84cc16 100%);"></div>
+      </div>
+      <span class="text-[13px] shrink-0" style="color:#888">{{ avg_fcs }}%</span>
+    </div>
+  </div>
+
+  <!-- Features sorted by lowest confidence -->
+  <div class="border border-[#e5e7eb] rounded-lg">
+    <div class="text-[11px] font-bold uppercase px-4 py-3.5 border-b border-[#e5e7eb]" style="color:#aaa;letter-spacing:0.06em">Features — Sorted by Lowest Confidence</div>
+
+    <div class="divide-y divide-gray-100">
+      @for (f of features; track f.name) {
+        <div class="px-4 py-3.5">
+          <div class="flex items-start gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="text-[14px] font-bold mb-1" style="color:#111">{{ f.name }}</div>
+              <p class="text-[12px] leading-relaxed line-clamp-2" style="color:#888">{{ f.description }}</p>
+            </div>
+            <div class="flex items-center gap-3 shrink-0 pt-1">
+              <div class="w-20 rounded-full overflow-hidden" style="height:7px;background:#f0f0f0">
+                <div class="h-full rounded-full" [style.width.%]="f.score" [style.background]="f.score >= 60 ? '#eab308' : '#d97706'"></div>
+              </div>
+              <span class="text-[13px] font-bold w-9 text-right" [style.color]="f.score >= 60 ? '#ca8a04' : '#d97706'">{{ f.score }}%</span>
+              <button class="text-[12px] font-medium" style="color:#2563eb">Answer</button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

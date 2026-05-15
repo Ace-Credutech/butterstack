@@ -1,0 +1,88 @@
+<div class="flex-1 h-full overflow-hidden flex flex-col" style="background:#ffffff">
+  <!-- Toolbar -->
+  <div class="flex items-center justify-between px-4 bg-white shrink-0" style="height:48px;border-bottom:1px solid #e5e7eb">
+    <div class="flex items-center gap-2">
+      <button class="bg-white hover:bg-gray-50 transition text-[13px] text-gray-600 font-medium" style="border:1px solid #d1d5db;border-radius:6px;padding:6px 14px" (click)="expand_all()">Expand all</button>
+      <button class="bg-white hover:bg-gray-50 transition text-[13px] text-gray-600 font-medium" style="border:1px solid #d1d5db;border-radius:6px;padding:6px 14px" (click)="collapse_all()">Collapse all</button>
+      <button class="bg-white hover:bg-gray-50 transition text-[13px] text-gray-600 font-medium" style="border:1px solid #d1d5db;border-radius:6px;padding:6px 14px" (click)="reset_view()">Reset view</button>
+      <span class="text-[13px] ml-3" style="color:#aaa">Drag canvas &middot; wheel to zoom &middot; click node to collapse</span>
+    </div>
+    <div class="flex items-center gap-4">
+      @for (item of legend; track item.label) {
+        <div class="flex items-center gap-1.5">
+          <span class="rounded-full" [style.background]="item.color" style="width:10px;height:10px"></span>
+          <span class="text-[12px]" style="color:#555">{{ item.label }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Canvas wrapper -->
+  <div class="flex-1 overflow-hidden relative" #canvas_wrap [style.cursor]="dragging ? 'grabbing' : 'grab'" style="user-select:none;background:#ffffff">
+    <div class="absolute" style="width:3000px;transform-origin:0 0;will-change:transform" [style.height.px]="canvas_h" [style.transform]="transform">
+
+      <!-- SVG lines -->
+      <svg style="position:absolute;top:0;left:0;width:3000px;pointer-events:none" [style.height.px]="canvas_h">
+        @for (l of lines; track $index) {
+          <path [attr.d]="get_bezier(l)" fill="none" stroke="#c8cdd3" stroke-width="1.5" />
+        }
+      </svg>
+
+      <!-- Nodes -->
+      @for (n of flat; track n.id) {
+
+        <!-- ROOT -->
+        @if (n.type === 'root') {
+          <div class="absolute flex items-center select-none" style="background:#16a34a;color:white;font-weight:600;font-size:14px;padding:10px 20px;border-radius:22px;white-space:nowrap;gap:8px;transition:opacity 0.2s"
+               [style.left.px]="n.x" [style.top.px]="n.y">
+            <span class="mm-btn flex items-center justify-center rounded-full shrink-0 cursor-pointer" style="width:20px;height:20px;background:white;color:#16a34a;font-size:13px;font-weight:700" (click)="toggle(n, $event)">{{ n.expanded ? '−' : '+' }}</span>
+            <span>{{ n.label }}</span>
+            <span style="font-size:13px;opacity:0.85;margin-left:8px;color:white;position:relative;z-index:1">{{ n.count }}</span>
+          </div>
+        }
+
+        <!-- MODULE -->
+        @if (n.type === 'module') {
+          <div class="absolute flex items-center select-none" style="background:#dcfce7;border:1.5px solid #86efac;color:#166534;font-size:13px;font-weight:500;padding:8px 16px;border-radius:20px;white-space:nowrap;gap:8px;transition:opacity 0.2s"
+               [style.left.px]="n.x" [style.top.px]="n.y">
+            @if (n.children.length) {
+              <span class="mm-btn flex items-center justify-center rounded-full shrink-0 cursor-pointer" style="width:18px;height:18px;background:#86efac;color:#166534;font-size:11px;font-weight:700" (click)="toggle(n, $event)">{{ n.expanded ? '−' : '+' }}</span>
+            }
+            <span>{{ n.label }}</span>
+            @if (n.count) {
+              <span style="font-size:12px;color:#4ade80;margin-left:4px">{{ n.count }}</span>
+            }
+          </div>
+        }
+
+        <!-- SUBMODULE -->
+        @if (n.type === 'submodule') {
+          <div class="absolute flex items-center select-none" style="background:#dbeafe;border:1px solid #93c5fd;color:#1e40af;font-size:12.5px;padding:6px 14px;border-radius:18px;white-space:nowrap;gap:8px;max-width:240px;transition:opacity 0.2s"
+               [style.left.px]="n.x" [style.top.px]="n.y">
+            <span class="flex items-center justify-center rounded shrink-0" style="width:16px;height:16px;background:#86efac;color:#166534;font-size:11px;font-weight:700;border-radius:4px">+</span>
+            <span class="truncate">{{ n.label }}</span>
+            @if (n.count) {
+              <span class="shrink-0" style="font-size:11px;color:#60a5fa;margin-left:auto">{{ n.count }}</span>
+            }
+          </div>
+        }
+
+        <!-- FEATURE -->
+        @if (n.type === 'feature') {
+          <div class="absolute flex items-center select-none" style="background:#dbeafe;border:1px solid #93c5fd;color:#1e40af;font-size:12.5px;padding:6px 14px;border-radius:18px;white-space:nowrap;gap:8px;max-width:220px;transition:opacity 0.2s"
+               [style.left.px]="n.x" [style.top.px]="n.y">
+            <span class="truncate">{{ n.label }}</span>
+          </div>
+        }
+
+        <!-- PAGE -->
+        @if (n.type === 'page') {
+          <div class="absolute flex items-center select-none" style="background:#ede9fe;border:1px solid #c4b5fd;color:#6d28d9;font-size:12.5px;padding:6px 16px;border-radius:18px;white-space:nowrap;gap:8px;max-width:280px;transition:opacity 0.2s"
+               [style.left.px]="n.x" [style.top.px]="n.y">
+            <span class="truncate">{{ n.label }}</span>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>
